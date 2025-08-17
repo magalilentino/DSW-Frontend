@@ -15,3 +15,13 @@ lightbox.addEventListener('click', (e) => {
     lightbox.style.display = 'none';
   }
 });
+
+const topContent = document.querySelector('.top-content');
+
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 100) {
+    topContent.classList.add('show');
+  } else {
+    topContent.classList.remove('show');
+  }
+});
