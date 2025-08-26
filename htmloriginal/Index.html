@@ -159,7 +159,12 @@
                 <span class="badge badge-outline-success mb-3">Ofertas</span>
               </div>
 
-              <button class="btn btn-dark w-100 mb-3">Reservar ahora</button>
+              <button
+                class="btn w-100 mb-3"
+                style="background-color: #1f2937; color: #f8f9fa"
+              >
+                Reservar ahora
+              </button>
 
               <p>
                 <i class="bi bi-clock"></i>
@@ -246,7 +251,244 @@
           </div>
         </div>
       </section>
+      <section class="container my-5">
+        <h2 class="text-center mb-4">Nuestros Servicios</h2>
+        <div
+          id="serviciosCarrusel"
+          class="carousel slide"
+          data-bs-ride="carousel"
+        >
+          <div class="carousel-inner">
+            <!-- Servicio 1 -->
+            <div class="carousel-item active">
+              <div class="row justify-content-center align-items-center">
+                <div class="col-md-5">
+                  <img
+                    src="../Images/foto1.avif"
+                    class="d-block w-100 rounded"
+                    alt="Corte + Barba"
+                  />
+                </div>
+                <div class="col-md-5">
+                  <h5>Corte + Barba</h5>
+                  <p>
+                    Disfruta de un corte moderno y arreglo de barba con estilo
+                    personalizado.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Servicio 2 -->
+            <div class="carousel-item">
+              <div class="row justify-content-center align-items-center">
+                <div class="col-md-5">
+                  <img
+                    src="../Images/foto2.avif"
+                    class="d-block w-100 rounded"
+                    alt="Cabello Largo"
+                  />
+                </div>
+                <div class="col-md-5">
+                  <h5>Cabello Largo</h5>
+                  <p>
+                    Tratamiento y corte de cabello largo, manteniendo salud y
+                    brillo.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Servicio 3 -->
+            <div class="carousel-item">
+              <div class="row justify-content-center align-items-center">
+                <div class="col-md-5">
+                  <img
+                    src="../Images/foto3.avif"
+                    class="d-block w-100 rounded"
+                    alt="Corte de Barba"
+                  />
+                </div>
+                <div class="col-md-5">
+                  <h5>Corte de Barba</h5>
+                  <p>
+                    Barba perfectamente delineada y estilizada según tu rostro.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controles del carrusel -->
+          <button
+            class="carousel-control-prev"
+            type="button"
+            data-bs-target="#serviciosCarrusel"
+            data-bs-slide="prev"
+          >
+            <span class="carousel-control-prev-icon"></span>
+            <span class="visually-hidden">Anterior</span>
+          </button>
+          <button
+            class="carousel-control-next"
+            type="button"
+            data-bs-target="#serviciosCarrusel"
+            data-bs-slide="next"
+          >
+            <span class="carousel-control-next-icon"></span>
+            <span class="visually-hidden">Siguiente</span>
+          </button>
+        </div>
+      </section>
+      <section class="container my-5">
+        <h2 class="text-center mb-4">Recomendaciones</h2>
+        <div class="row justify-content-center">
+          <!-- Recomendación 1 -->
+          <div class="col-md-4 mb-3">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body">
+                <p class="card-text">
+                  "Excelente atención y ambiente muy agradable. Salí muy
+                  satisfecho con mi corte."
+                </p>
+                <div class="d-flex align-items-center mt-3">
+                  <img
+                    src="../Images/foto3.avif"
+                    alt="Cliente 1"
+                    class="rounded-circle me-2"
+                    width="50"
+                    height="50"
+                  />
+                  <div>
+                    <h6 class="mb-0">Juan Pérez</h6>
+                    <small class="text-muted">5.0 ★</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recomendación 2 -->
+          <div class="col-md-4 mb-3">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body">
+                <p class="card-text">
+                  "Los estilistas son muy profesionales y atentos. Me encantó el
+                  resultado."
+                </p>
+                <div class="d-flex align-items-center mt-3">
+                  <img
+                    src="../Images/foto3.avif"
+                    alt="Cliente 2"
+                    class="rounded-circle me-2"
+                    width="50"
+                    height="50"
+                  />
+                  <div>
+                    <h6 class="mb-0">María López</h6>
+                    <small class="text-muted">5.0 ★</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recomendación 3 -->
+          <div class="col-md-4 mb-3">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body">
+                <p class="card-text">
+                  "Muy buen servicio, puntualidad y cortes con estilo.
+                  ¡Recomendado!"
+                </p>
+                <div class="d-flex align-items-center mt-3">
+                  <img
+                    src="../Images/foto3.avif"
+                    alt="Cliente 3"
+                    class="rounded-circle me-2"
+                    width="50"
+                    height="50"
+                  />
+                  <div>
+                    <h6 class="mb-0">Carlos Gómez</h6>
+                    <small class="text-muted">5.0 ★</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
+    <footer class="bg-white text-dark pt-5 pb-4 border-top">
+      <div class="container">
+        <div class="row">
+          <!-- Sección 1: Sobre la peluquería -->
+          <div class="col-md-4 mb-4">
+            <h5>Peluquería</h5>
+            <p>
+              Ofrecemos cortes, peinados y tratamientos de alta calidad para que
+              siempre luzcas genial.
+            </p>
+          </div>
+
+          <!-- Sección 2: Enlaces rápidos -->
+          <div class="col-md-4 mb-4">
+            <h5>Enlaces</h5>
+            <ul class="list-unstyled">
+              <li>
+                <a href="Index.html" class="text-dark text-decoration-none"
+                  >Inicio</a
+                >
+              </li>
+              <li>
+                <a
+                  href="SobreNosotros.html"
+                  class="text-dark text-decoration-none"
+                  >Sobre Nosotros</a
+                >
+              </li>
+              <li>
+                <a href="Contacto.html" class="text-dark text-decoration-none"
+                  >Contacto</a
+                >
+              </li>
+              <li>
+                <a href="Login.html" class="text-dark text-decoration-none"
+                  >Iniciar Sesión</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <!-- Sección 3: Contacto y redes sociales -->
+          <div class="col-md-4 mb-4">
+            <h5>Contacto</h5>
+            <p>
+              <i class="bi bi-geo-alt-fill"></i> Calle 123, Rosario, Santa Fe
+            </p>
+            <p><i class="bi bi-telephone-fill"></i> +54 341 1234567</p>
+            <p><i class="bi bi-envelope-fill"></i> info@peluqueria.com</p>
+            <div class="mt-2">
+              <a href="#" class="text-dark me-2"
+                ><i class="bi bi-facebook"></i
+              ></a>
+              <a href="#" class="text-dark me-2"
+                ><i class="bi bi-instagram"></i
+              ></a>
+              <a href="#" class="text-dark"><i class="bi bi-twitter"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <hr class="bg-dark" />
+
+        <div class="text-center">
+          &copy; 2025 Peluquería. Todos los derechos reservados.
+        </div>
+      </div>
+    </footer>
+
     <!-- Lightbox -->
     <div id="lightbox" class="lightbox">
       <img id="lightbox-img" src="" alt="Imagen ampliada" />
