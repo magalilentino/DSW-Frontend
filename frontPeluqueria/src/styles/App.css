@@ -45,9 +45,6 @@ display: none;
   margin: 0 auto;
 }
 
-
-
-
 .badge-outline-success {
 color: #218a01;
 border: 2px solid #218a01;
@@ -58,7 +55,7 @@ border-radius: 0.25rem;
 }
 
 .servicios p {
-color: #141414;
+color: #111827;
 font-size: 17px;
 font-family: sans-serif;
 }
@@ -130,3 +127,80 @@ cursor: pointer;
   height: 150px; 
   object-fit: cover
 }
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-image: none;
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+}
+
+.carousel-control-prev-icon::after {
+  content: '❮';
+  color: black;
+  font-size: 2rem;
+}
+
+.carousel-control-next-icon::after {
+  content: '❯';
+  color: black;
+  font-size: 2rem;
+}
+
+/* Login */
+
+    .left-side {
+      flex: 1;
+      background: url('../Images/FotoLogin.jpg') no-repeat center center;
+      background-size: cover;
+    }
+
+    .right-side {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: white;
+    }
+
+    .login-box {
+      width: 550px;
+      padding: 30px;
+      border-radius: 10px;
+    }
+
+    .login-box p {
+      text-align: center;
+      font-weight: bold;
+      font-family: 'Poppins', 'Roboto', sans-serif;
+      font-size: 17px;
+    }
+    
+
+    .login-box h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 10px;
+      background: #000000;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .login-box button:hover {
+      background: #272727;
+    }
