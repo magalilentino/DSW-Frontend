@@ -8,6 +8,7 @@ import Logo from "../assets/Logo.png";
 import Foto1 from "../assets/foto1.avif";
 import Foto2 from "../assets/foto2.avif";
 import Foto3 from "../assets/foto3.avif";
+import { Link } from "react-router-dom";
 
 function App() {
   return (
@@ -36,7 +37,7 @@ function App() {
                   <a className="nav-link" href="/sobrenosotros">Sobre Nosotros</a>
                 </li>
                 <li className="nav-item">
-                  <a className="boton-nav btn btn-light" href="/login">Iniciar sesión</a>
+                  <Link className="boton-nav btn btn-light" to="/login">Iniciar sesión</Link>
                 </li>
                 <li className="nav-item">
                   <a className="boton-nav btn btn-light" href="/register">Registrar</a>
