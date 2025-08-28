@@ -1,19 +1,104 @@
 
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 interface RegisterProps {
   onToggleMode: () => void;
 }
 
+interface RegisterResponse {
+  message: string;
+}
+
 function Register({ onToggleMode }: RegisterProps) {
+
+  const [nombre, setNombre] = useState<string>("");
+  const [apellido, setApellido] = useState<string>("");
+  const [dni, setDni]= useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [telefono, setTelefono] = useState<string>("");
+  const [clave, setClave] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+      try {
+      const res = await fetch("http://localhost:3000/api/persona/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ dni, clave, nombre, apellido, telefono, email}),
+      });
+
+      const data: RegisterResponse = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Error en el registro");
+      }
+
+      alert("Registro exitoso");
+      navigate("/login");
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Ocurrió un error desconocido.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <h2>Registrarse</h2>
-      <form>
-        <input type="text" name="dni" placeholder="DNI" required />
-        <input type="password" name="clave" placeholder="Contraseña" required />
-        <input type="text" name="nombre" placeholder="Nombre" required />
-        <input type="text" name="apellido" placeholder="Apellido" required />
-        <input type="tel" name="telefono" placeholder="Teléfono" required />
-        <input type="email" name="email" placeholder="Email" required />
+      <form onSubmit={handleSubmit}>
+        <input 
+          type="text" 
+          placeholder="DNI" 
+          value={dni}
+          onChange={(e) => setDni(e.target.value)}
+          required />
+        <input 
+          type="text" 
+          placeholder="Nombre" 
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          required />
+        <input 
+          type="text" 
+          placeholder="Apellido" 
+          value={apellido}
+          onChange={(e) => setApellido(e.target.value)}
+          required />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input 
+          type="tel" 
+          placeholder="Teléfono"
+          value={telefono}
+          onChange={(e) => setTelefono(e.target.value)}
+          required />
+        <input
+          type="password"
+          placeholder="Contraseña"
+          value={clave}
+          onChange={(e) => setClave(e.target.value)}
+          required
+          className="mt-2"
+        />
+
+        {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
+
         <button type="submit" className="button-usser">
           Registrarse
         </button>
