@@ -19,43 +19,42 @@ function Login({ onToggleMode }: LoginProps) {
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  e.preventDefault();
+  setError("");
+  setLoading(true);
 
-    try {
-      const res = await fetch("http://localhost:3000/api/persona/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, clave }),
-      });
+  try {
+    const res = await fetch("http://localhost:3000/api/persona/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, clave }),
+    });
 
-      const data: LoginResponse = await res.json();
+    const data: LoginResponse = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.message || "Error en login");
-      }
-
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("tipoUsuario", data.type);
-
-      alert("Login exitoso como " + data.type);
-
-      if (data.type === "cliente") {
-        navigate("/cliente");
-      } else if (data.type === "peluquero") {
-        navigate("/peluquero");
-      }
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Ocurrió un error desconocido.");
-      }
-    } finally {
-      setLoading(false);
+    if (!res.ok) {
+      throw new Error(data.message || "Error en login");
     }
-  };
+
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("tipoUsuario", data.type);
+
+
+    if (data.type === "cliente") {
+      navigate("/reserve");
+    } else if (data.type === "peluquero") {
+      navigate("/turnos");
+    }
+  } catch (err) {
+    if (err instanceof Error) {
+      setError(err.message);
+    } else {
+      setError("Ocurrió un error desconocido.");
+    }
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <>

@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import About from "./pages/About";
 import Auth from "./pages/Auth";
+import Reserve from "./pages/Reserve.tsx";
 
 function App() {
   return (
@@ -9,9 +9,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth" element={<Auth />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/sobrenosotros" element={<About />} />
-        <Route path="/contacto" element={<About />} />
+        <Route path="/reserve" element={<Reserve />} />
       </Routes>
     </Router>
   );

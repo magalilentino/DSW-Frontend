@@ -31,7 +31,7 @@ function Register({ onToggleMode }: RegisterProps) {
       const res = await fetch("http://localhost:3000/api/persona/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ dni, clave, nombre, apellido, telefono, email}),
+        body: JSON.stringify({ dni, clave, nombre, apellido, telefono, email, type:"cliente"}),
       });
 
       const data: RegisterResponse = await res.json();
