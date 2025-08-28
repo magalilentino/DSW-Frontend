@@ -1,0 +1,124 @@
+/* Login */
+    .login-logo {
+      display: block;
+      margin: 0 auto 20px;
+      width: 120px;
+      height: auto;
+    }
+
+    .auth-container {
+      display: flex;
+      height: 100vh;
+      background-color: #212121;
+    }
+
+    .left-side {
+      flex: 1;
+      background: url('../assets/FotoLogin.jpg') no-repeat center center;
+      background-size: cover;
+    }
+
+    .right-side {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: white;
+    }
+
+    .auth-box {
+      width: 550px;
+      padding: 30px;
+      border-radius: 10px;
+    }
+
+    .auth-box p {
+      text-align: center;
+      font-weight: bold;
+      font-family: 'Poppins', 'Roboto', sans-serif;
+      font-size: 17px;
+    }
+
+    .auth-box h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .auth-box input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .button-usser {
+      width: 100%;
+      padding: 10px;
+      background: #000000;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .button-usser:hover {
+      background: #272727;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 1.5rem 0;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      flex: 1;
+      border-bottom: 1px solid #a7a7a7;
+    }
+
+    .divider::before {
+      margin-right: 0.5em;
+    }
+
+    .divider::after {
+      margin-left: 0.5em;
+    }
+
+    .divider span {
+      color: #a7a7a7;
+      font-weight: 500;
+    }
+
+    .button-guest {
+      width: 100%;
+      padding: 10px;
+      background: #969696;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .button-guest:hover {
+      background: #9b9b9b;
+    }
+
+    .register-link {
+      display: block;
+      text-align: center;
+      color: #38a5ff;
+      text-decoration: none;
+      margin-top: 0.5rem;
+    }
+
+    .register-link:hover {
+      text-decoration: underline;
+    }
