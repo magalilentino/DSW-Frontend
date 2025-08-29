@@ -10,15 +10,15 @@ const fotos = [
 
 function Galeria(){
     return (
-        <section className="presentacion">
-            <div className="galeria">
-                <div className="left">
-                    <img src={fotos[0].src} alt={fotos[0].alt} className="lightbox-img" loading="lazy" />
+        <section className="home-presentacion">
+            <div className="home-galeria">
+                <div className="home-left">
+                    <img src={fotos[0].src} alt={fotos[0].alt} loading="lazy" />
                 </div>
-                <div className="right">
+                <div className="home-right">
                 {fotos.slice(1).map((foto, i) => (
                     <div key={i} className="foto">
-                        <img src={foto.src} alt={foto.alt} className="lightbox-img" loading="lazy" />
+                        <img src={foto.src} alt={foto.alt} loading="lazy" />
                     </div>
                 ))}
                 </div>

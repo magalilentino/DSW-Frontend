@@ -99,14 +99,18 @@ function Register({ onToggleMode }: RegisterProps) {
 
         {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
 
-        <button type="submit" className="button-usser">
-          Registrarse
+        <button
+          type="submit"
+          className="auth-button-usser"
+          disabled={loading}
+        >
+          {loading ? "Registrando..." : "Registrarse"}
         </button>
       </form>
       <p className="pt-3">
         ¿Ya tienes cuenta?{" "}
         <span
-          className="register-link"
+          className="auth-register-link"
           onClick={onToggleMode}
           style={{ cursor: "pointer" }}
         >

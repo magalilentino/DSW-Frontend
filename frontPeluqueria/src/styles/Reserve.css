@@ -1,0 +1,81 @@
+/* Serivicios */
+
+
+.badge-outline-success {
+  color: #218a01;
+  border: 2px solid #218a01;
+  background-color: transparent;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;    
+  border-radius: 0.25rem; 
+  display: inline-block;
+}
+
+.servicios p {
+color: #111827;
+font-size: 17px;
+font-family: sans-serif;
+}
+
+.list-group p {
+color:#757575;
+}
+
+.btn-reservar{
+border: 1px solid #d4d4d4;
+color: #141414;
+background-color: transparent;
+transition: background-color 0.5s, color 0.5s;
+}
+
+.btn-reservar:hover {
+  border: 1px solid #d4d4d4;
+  background-color: #f4f4f4;
+}
+
+.btn-todo{
+font-size: 16px;
+font-weight: bold;
+border: 2px solid #d4d4d4;
+color: #141414;
+background-color: transparent;
+transition: background-color 0.5s, color 0.5s;
+}
+
+.btn-todo:hover {
+  border: 2px solid #d4d4d4;
+  background-color: #d4d4d4;
+}
+
+.top-content {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-20px); 
+  transition: opacity 1s ease, transform 1s ease, max-height 1s ease;
+  background-color: #f8f9fa; 
+  padding: 15px;
+  border-radius: 12px;
+}
+
+.top-content.show {
+  max-height: 500px; 
+  opacity: 1;
+  transform: translateY(0); 
+}
+
+.back-button {
+  align-items: center;
+  width: 40px !important;
+  height: 40px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.back-button:hover {
+  background-color: #f5f5f5;
+  border-color: #999;
+}

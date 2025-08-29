@@ -1,6 +1,6 @@
 import "..//styles/Auth.css";
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import Login from "../components/auth/Login";
 import Register from "../components/auth/Register";
 
@@ -24,10 +24,12 @@ function Auth() {
 
   return (
     <div className="auth-container">
-      <div className="left-side"></div>
-      <div className="right-side">
+      <div className="auth-left-side"></div>
+      <div className="auth-right-side">
         <div className="auth-box">
-          <img src="/Logo.png" alt="Logo" className="login-logo" />
+          <Link to="/">
+            <img src="/Logo.png" alt="Logo" className="auth-login-logo"/>
+          </Link>
           {isRegistering ? (
             <Register onToggleMode={toggleMode} />
           ) : (

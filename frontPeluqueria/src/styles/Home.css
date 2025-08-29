@@ -1,11 +1,11 @@
-
-/* Fotos */
-.presentacion {
-width: 100%;
-margin-bottom: 40px;
+/* Contenedor principal de la sección de presentación */
+.home-presentacion {
+  width: 100%;
+  margin-bottom: 40px;
 }
 
-.galeria {
+/* Contenedor de la galería de fotos en la sección de presentación */
+.home-galeria {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 12px;
@@ -14,121 +14,143 @@ margin-bottom: 40px;
   margin: 0 auto;
 }
 
-.left img,
-.right img {
+/* Estilo de las imágenes dentro de la galería izquierda y derecha */
+.home-left img,
+.home-right img {
   width: 100%;
-  height: auto;
+  height: 100%;
   object-fit: cover;
   border-radius: 12px;
 }
 
-.right {
-display: grid;
-gap: 12px;
-grid-template-rows: 1fr 1fr;
+/* Contenedor derecho dentro de la galería: organiza imágenes en dos filas */
+.home-right {
+  display: grid;
+  gap: 12px;
+  grid-template-rows: 1fr 1fr;
 }
 
-/* Responsive */
+/* Media query: ocultar la galería en pantallas pequeñas */
 @media (max-width: 768px) {
-.galeria {
-display: none;
-}
+  .home-galeria {
+    display: none;
+  }
 }
 
-/* Serivicios */
-.servicios {
+/* Contenedor de la sección de servicios */
+.home-servicios {
   width: 85%;
   max-width: 1600px;
   margin: 0 auto;
 }
 
-.badge-outline-success {
+/* Párrafos dentro de la sección de servicios */
+.home-servicios p {
+  color: #000000;
+  font-size: 17px;
+  font-family: sans-serif;
+}
+
+/* Botón individual de "Reservar" */
+.home-btn-reservar {
+  padding: 6px 14px;
+  border: 1px solid #dddddd;
+  color: rgb(0, 0, 0);
+  border-radius: 50px;
+  cursor: pointer;
+  transition: 0.5s;
+}
+
+/* Hover del botón "Reservar" */
+.home-btn-reservar:hover {
+  border: 1px solid #cccccc;
+  color: black;
+}
+
+/* Botón "Ver todo" */
+.home-btn-todo {
+  padding: 5px 15px;
+  border: 2px solid #dddddd;
+  border-radius: 8px;
+  background-color: transparent;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+/* Hover del botón "Ver todo" */
+.home-btn-todo:hover {
+  background-color: #dddddd;
+}
+
+/* Botón de "Reservar general" que ocupa todo el ancho */
+.home-btn-reservar-general {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: #141414;
+  color: white;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+/* Hover del botón general */
+.home-btn-reservar-general:hover {
+  background-color: #272727;
+}
+
+/* Badge (etiqueta pequeña) con borde y color verde */
+.home-badge-outline-success {
   color: #218a01;
   border: 2px solid #218a01;
   background-color: transparent;
   padding: 0.25rem 0.5rem;
-  font-size: 0.75rem;    
-  border-radius: 0.25rem; 
+  font-size: 0.75rem;
+  border-radius: 0.25rem;
   display: inline-block;
 }
 
-.servicios p {
-color: #111827;
-font-size: 17px;
-font-family: sans-serif;
+/* Imagen circular (ej. avatar o logo) */
+.home-circulo {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
 }
 
-.list-group p {
-color:#757575;
-}
-
-.btn-reservar{
-border: 1px solid #d4d4d4;
-color: #141414;
-background-color: transparent;
-transition: background-color 0.5s, color 0.5s;
-}
-
-
-.btn-reservar:hover {
-  border: 1px solid #d4d4d4;
-  background-color: #f4f4f4;
-}
-
-.btn-todo{
-font-size: 16px;
-font-weight: bold;
-border: 2px solid #d4d4d4;
-color: #141414;
-background-color: transparent;
-transition: background-color 0.5s, color 0.5s;
-}
-
-.btn-todo:hover {
-  border: 2px solid #d4d4d4;
-  background-color: #d4d4d4;
-}
-
-.top-content {
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transform: translateY(-20px); 
-  transition: opacity 1s ease, transform 1s ease, max-height 1s ease;
-  background-color: #f8f9fa; 
-  padding: 15px;
-  border-radius: 12px;
-}
-
-.top-content.show {
-  max-height: 500px; 
-  opacity: 1;
-  transform: translateY(0); 
-}
-
-/* estilistas */
-.circulo {
-  width: 150px; 
-  height: 150px; 
-  object-fit: cover
-}
-
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
+/* Controles del carrusel (prev y next) */
+.home-carousel-control-prev-icon,
+.home-carousel-control-next-icon {
   background-image: none;
   width: 30px;
   height: 30px;
   display: inline-block;
 }
 
-.carousel-control-prev-icon::after {
+/* Icono previo del carrusel */
+.home-carousel-control-prev-icon::after {
   content: '❮';
   color: black;
   font-size: 2rem;
 }
 
-.carousel-control-next-icon::after {
+/* Icono siguiente del carrusel */
+.home-carousel-control-next-icon::after {
   content: '❯';
   color: black;
   font-size: 2rem;
+}
+
+/* Item individual de un servicio */
+.home-servicio-item {
+  border: 1px solid #dddddd;
+  border-radius: 12px;
+  padding: 12px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Hover sobre el item de servicio */
+.home-servicio-item:hover {
+  border-color: #cccccc;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }

@@ -81,21 +81,18 @@ function Login({ onToggleMode }: LoginProps) {
         <button
           type="submit"
           disabled={loading}
-          className="button-usser mt-2"
+          className="auth-button-usser mt-2"
         >
           {loading ? "Cargando..." : "Ingresar"}
         </button>
       </form>
-      <div className="divider">
+      <div className="auth-divider">
         <span>o</span>
       </div>
-      {/* 
-      <button className="button-guest">Reservar como invitado</button>
-      */}
       <p className="pt-3">
         ¿No tiene cuenta aún?{" "}
         <span
-          className="register-link"
+          className="auth-register-link"
           onClick={onToggleMode}
           style={{ cursor: "pointer" }}
         >

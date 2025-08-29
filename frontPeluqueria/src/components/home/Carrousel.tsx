@@ -35,7 +35,7 @@ function Carrousel() {
           data-bs-target="#serviciosCarrusel"
           data-bs-slide="prev"
         >
-          <span className="carousel-control-prev-icon"></span>
+          <span className="home-carousel-control-prev-icon"></span>
           <span className="visually-hidden">Anterior</span>
         </button>
 
@@ -45,7 +45,7 @@ function Carrousel() {
           data-bs-target="#serviciosCarrusel"
           data-bs-slide="next"
         >
-          <span className="carousel-control-next-icon"></span>
+          <span className="home-carousel-control-next-icon"></span>
           <span className="visually-hidden">Siguiente</span>
         </button>
       </div>

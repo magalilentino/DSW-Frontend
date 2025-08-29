@@ -7,7 +7,6 @@ import Estilista from "../components/home/Estilista";
 import Carrousel from "../components/home/Carrousel";
 import Recomendacion from "../components/home/Recomendacion";
 
-
 function Home() {
   return (
     <>
