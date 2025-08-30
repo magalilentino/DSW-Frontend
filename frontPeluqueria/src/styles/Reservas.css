@@ -1,0 +1,36 @@
+.reservas-servicio {
+  width: 85%;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.reservas-servicio p {
+  color: #000000;
+  font-size: 15px;
+  font-family: sans-serif;
+}
+
+.reservas-servicio-item {
+  border: 1px solid #dddddd;
+  border-radius: 12px;
+  padding: 12px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.reservas-servicio-item:hover {
+  border-color: #cccccc;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.reservas-steps span {
+  color: #999;
+}
+
+.reservas-steps span.active {
+  color: #555;
+}
+
+.reservas-steps span.current {
+  color: #000;
+  font-weight: bold;
+}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface LoginProps {
@@ -16,7 +16,17 @@ function Login({ onToggleMode }: LoginProps) {
   const [clave, setClave] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [remember, setRemember] = useState<boolean>(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const type = localStorage.getItem("type");
+    if (token && type) {
+      if (type === "cliente") navigate("/reserve");
+      else if (type === "peluquero") navigate("/turnos");
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
@@ -33,12 +43,13 @@ function Login({ onToggleMode }: LoginProps) {
     const data: LoginResponse = await res.json();
 
     if (!res.ok) {
-      throw new Error(data.message || "Error en login");
+      throw new Error(data?.message || `Error ${res.status}: No se pudo iniciar sesión`);
     }
 
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("tipoUsuario", data.type);
-
+    if (remember) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("type", data.type);
+      }
 
     if (data.type === "cliente") {
       navigate("/reserve");
@@ -75,7 +86,16 @@ function Login({ onToggleMode }: LoginProps) {
           required
           className="mt-2"
         />
-
+        <div className="auth-remember-container">
+          <label className="auth-remember-label">
+            <input
+              type="checkbox"
+              checked={remember}
+              onChange={() => setRemember(!remember)}
+            />
+            Recuérdame
+          </label>
+        </div>
         {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
 
         <button

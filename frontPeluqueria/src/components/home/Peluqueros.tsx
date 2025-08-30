@@ -16,8 +16,8 @@ useEffect(() => {
       return res.json();
     })
     .then((data) => {
-      console.log(data); // <--- revisa qué estructura tiene la respuesta
-      setPeluqueros(data.data || data); // usa `data` si no hay `data.data`
+      console.log(data);
+      setPeluqueros(data.data || data);
     })
     .catch((err) => setError(err.message))
     .finally(() => setLoading(false));
@@ -33,10 +33,10 @@ return (
     <div className="row justify-content-center">
       {peluqueros.map((peluquero, index) => (
         <div key={index} className="col-6 col-md-3 mb-4">
-          <div className="position-relative d-inline-block">
+          <div>
             <img
               src={Foto3}
-              className="rounded-circle img-fluid"
+              className="rounded-circle"
               style={{ width: "120px", height: "120px", objectFit: "cover" }}
             />
           </div>

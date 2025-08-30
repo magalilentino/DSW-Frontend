@@ -38,16 +38,16 @@
 }
 
 /* Contenedor de la sección de servicios */
-.home-servicios {
+.home-servicio {
   width: 85%;
   max-width: 1600px;
   margin: 0 auto;
 }
 
 /* Párrafos dentro de la sección de servicios */
-.home-servicios p {
+.home-servicio p {
   color: #000000;
-  font-size: 17px;
+  font-size: 15px;
   font-family: sans-serif;
 }
 
@@ -58,13 +58,13 @@
   color: rgb(0, 0, 0);
   border-radius: 50px;
   cursor: pointer;
+  font-weight: 500;
   transition: 0.5s;
 }
 
 /* Hover del botón "Reservar" */
 .home-btn-reservar:hover {
   border: 1px solid #cccccc;
-  color: black;
 }
 
 /* Botón "Ver todo" */
@@ -74,8 +74,8 @@
   border-radius: 8px;
   background-color: transparent;
   cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s;
+  font-weight: 500;
+  transition: 0.4s;
 }
 
 /* Hover del botón "Ver todo" */

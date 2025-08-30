@@ -113,3 +113,22 @@
     .auth-register-link:hover {
       text-decoration: underline;
     }
+
+    .auth-remember-container {
+      width: 100%;
+      margin: 10px 0 0 0;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      padding-left: 2px;
+    }
+
+    .auth-remember-label {
+      font-size: 15px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+    }
