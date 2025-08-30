@@ -1,10 +1,11 @@
-import type { ServicioItem } from "./Reservas";
+import type { ServicioItem } from "../home/Servicio.tsx";
 
 interface PrecioProps {
   servicio: ServicioItem | null;
+  onNextStep: () => void;
 }
 
-function Precio({ servicio }: PrecioProps) {
+function Precio({ servicio, onNextStep }: PrecioProps) {
   return (
     <div className="col-lg-4">
       <div className="border p-3 rounded">
@@ -19,7 +20,11 @@ function Precio({ servicio }: PrecioProps) {
             )}
           </span>
         </div>
-        <button className="btn btn-reservar-general w-100 mb-3 text-light bg-dark">
+        <button
+          className="servicio-continuar-btn mb-3"
+          disabled={!servicio}
+          onClick={() => servicio && onNextStep()}
+        >
           Continuar
         </button>
       </div>

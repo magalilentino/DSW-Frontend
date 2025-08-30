@@ -5,7 +5,7 @@
 }
 
 .reservas-servicio p {
-  color: #000000;
+  color: #343a40;
   font-size: 15px;
   font-family: sans-serif;
 }
@@ -23,14 +23,79 @@
 }
 
 .reservas-steps span {
-  color: #999;
+  color: #343a40;
 }
 
 .reservas-steps span.active {
-  color: #555;
+  color: #343a40;
 }
 
 .reservas-steps span.current {
-  color: #000;
+  color: #343a40;
   font-weight: bold;
+}
+
+.reservas-back-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.reservas-back-button svg {
+  stroke: #495057;
+  width: 20px;
+  height: 20px;
+}
+
+.reservas-back-button:hover {
+  background-color: #e0e0e0;
+}
+
+.servicio-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px; /* puntas suaves */
+  border: white;
+  background-color: #ffffff; /* fondo por defecto */
+  color: #343a40; /* color del + */
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.servicio-btn.selected {
+  background-color: #343a40; /* fondo oscuro si está seleccionado */
+  color: #ffffff; /* + en blanco */
+}
+
+.servicio-btn:hover {
+  background-color: #e0e0e0; /* se oscurece un poco al pasar */
+  color: #343a40;
+}
+
+.servicio-continuar-btn {
+  width: 100%;
+  padding: 10px 0;
+  background-color: #343a40; /* gris oscuro principal */
+  color: #ffffff; /* texto en blanco */
+  border: none;
+  border-radius: 8px; /* esquinas suaves */
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.servicio-continuar-btn:disabled {
+  background-color: #adb5bd; /* gris más claro cuando está deshabilitado */
+  cursor: not-allowed;
 }

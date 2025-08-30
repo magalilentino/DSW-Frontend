@@ -1,22 +1,20 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react"
-
-export interface ServicioItem {
-  nombreServicio: string;
-  cantTurnos: number;
-  precio?: number;
-}
+import type { PeluqueroItem } from "../home/Peluqueros"
+import type { ServicioItem } from "../home/Servicio"
+import Foto3 from "../../assets/foto3.avif";
 
 interface ReservasProps {
   onSelectServicio: (servicio: ServicioItem) => void;
   servicioSeleccionado: ServicioItem | null;
+  step: number;
 }
 
-function Reservas({ onSelectServicio, servicioSeleccionado }: ReservasProps) {
+function Reservas({ onSelectServicio, servicioSeleccionado, step }: ReservasProps) {
   const [servicios, setServicios] = useState<ServicioItem[]>([]);
+  const [peluqueros, setPeluqueros] = useState<PeluqueroItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [step] = useState(1);
 
 useEffect(() => {
   const fetchServicios = async () => {
@@ -34,23 +32,45 @@ useEffect(() => {
   fetchServicios();
 }, []);
 
-  if (loading) return <p>Cargando servicios...</p>;
-  if (error) return <p>Error: {error}</p>;
+useEffect(() => {
+  const fetchPeluqueros = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/api/persona/peluquero/findAllPeluquero");
+      if (!res.ok) throw new Error("Error al cargar los peluqueros");
+      const data = await res.json();
+      setPeluqueros(data.data || data);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchPeluqueros();
+}, []);
 
   return (
     <div className="col-lg-8 my-4">
       <div className="reservas-steps mb-4">
         <span className={step === 1 ? "current" : step > 1 ? "active" : ""}>
-          Servicios <i className="bi bi-chevron-right"></i>
+          Servicios 
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+            <path d="M9 6l6 6-6 6"/>
+          </svg>
         </span>
         <span className={step === 2 ? "current" : step > 2 ? "active" : ""}>
-          Profesional <i className="bi bi-chevron-right"></i>
+          Profesional
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+            <path d="M9 6l6 6-6 6"/>
+          </svg>
         </span>
         <span className={step === 3 ? "current" : step > 3 ? "active" : ""}>
-          Hora <i className="bi bi-chevron-right"></i>
+          Hora
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+            <path d="M9 6l6 6-6 6"/>
+          </svg>
         </span>
         <span className={step === 4 ? "current" : ""}>
-          Confirmar <i className="bi bi-chevron-right"></i>
+          Confirmar
         </span>
       </div>
 
@@ -77,10 +97,8 @@ useEffect(() => {
                 </div>
                 <button
                   type="button"
-                  className={`btn ${
-                    s.nombreServicio === servicioSeleccionado?.nombreServicio
-                      ? "btn-dark"
-                      : "btn-outline-dark"
+                  className={`servicio-btn ${
+                  s.nombreServicio === servicioSeleccionado?.nombreServicio ? "selected" : ""
                   }`}
                   onClick={() => onSelectServicio(s)}
                 >
@@ -89,6 +107,24 @@ useEffect(() => {
               </motion.li>
             ))}
           </ul>
+        </>
+      )
+      }
+      {step === 2 && (
+        <>
+        <h2 className="mb-4">Peluqueros</h2>
+        <div className="my-4 row"> 
+          {peluqueros.map((peluquero, index) => (
+            <div key={index} className="col-6 col-md-3 mb-4">
+              <img
+                src={Foto3}
+                className="rounded-circle mb-2"
+                style={{ width: "120px", height: "120px", objectFit: "cover" }}
+              />
+              <h5 style={{ marginLeft: "29px" }}>{peluquero.nombre}</h5>
+            </div>
+          ))}
+        </div>
         </>
       )}
     </div>

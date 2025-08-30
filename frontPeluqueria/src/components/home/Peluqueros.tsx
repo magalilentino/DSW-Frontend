@@ -1,10 +1,11 @@
 import Foto3 from "../../assets/foto3.avif";
 import { useEffect, useState } from "react";
 
-interface PeluqueroItem {
+export interface PeluqueroItem {
   nombre: string;
 }
-function Estilista() {
+
+export function Estilista() {
   const [peluqueros, setPeluqueros] = useState<PeluqueroItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

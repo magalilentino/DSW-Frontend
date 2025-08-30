@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react"
 import { useNavigate } from "react-router-dom";
 
-interface ServicioItem {
+export interface ServicioItem {
   nombreServicio: string;
   cantTurnos: number;
   precio?: number;
