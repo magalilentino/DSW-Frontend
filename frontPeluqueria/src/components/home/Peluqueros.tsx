@@ -2,7 +2,7 @@ import Foto3 from "../../assets/foto3.avif";
 import { useEffect, useState } from "react";
 
 export interface PeluqueroItem {
-  nombre: string;
+  nombre: string; 
 }
 
 export function Estilista() {
