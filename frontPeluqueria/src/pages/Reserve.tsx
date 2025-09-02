@@ -3,11 +3,13 @@ import "../styles/Reservas.css";
 import Footer from "../components/general/Footer";
 import Reservas from "../components/reserve/Reservas";
 import type { ServicioItem } from "../components/home/Servicio.tsx";
+import type { PeluqueroItem } from "../components/home/Peluqueros.tsx";
 import Precio from "../components/reserve/Precio.tsx";
 
 function Reserve() {
   const [step, setStep] = useState(1);
   const [servicioSeleccionado, setServicioSeleccionado] = useState<ServicioItem | null>(null);
+  const [peluqueroSeleccionado, setPeluqueroSeleccionado] = useState<PeluqueroItem | null>(null);
 
   return (
     <>
@@ -31,11 +33,16 @@ function Reserve() {
           <Reservas 
             onSelectServicio={setServicioSeleccionado}
             servicioSeleccionado={servicioSeleccionado}
+            onSelectPeluquero={setPeluqueroSeleccionado}
+            peluqueroSeleccionado={peluqueroSeleccionado}
             step={step}
           />
+
           <Precio 
             servicio={servicioSeleccionado} 
+            peluquero={peluqueroSeleccionado}
             onNextStep={() => setStep(step + 1)}
+            step={step}
           />
           </div>
         <button
