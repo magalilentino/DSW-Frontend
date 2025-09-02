@@ -9,6 +9,7 @@ interface LoginResponse {
   message: string;
   token: string;
   type: string;
+  nombre: string;
 }
 
 function Login({ onToggleMode }: LoginProps) {
@@ -24,7 +25,7 @@ function Login({ onToggleMode }: LoginProps) {
     const type = localStorage.getItem("type");
     if (token && type) {
       if (type === "cliente") navigate("/reserve");
-      else if (type === "peluquero") navigate("/turnos");
+      else if (type === "peluquero") navigate("/admin");
     }
   }, [navigate]);
 
@@ -46,15 +47,19 @@ function Login({ onToggleMode }: LoginProps) {
       throw new Error(data?.message || `Error ${res.status}: No se pudo iniciar sesión`);
     }
 
-    if (remember) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("type", data.type);
-      }
+    // if (remember) {
+    //     localStorage.setItem("token", data.token);
+    //     localStorage.setItem("type", data.type);
+    //   } // esto hace que solo se guarde el token cuando tocas remember
+
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("type", data.type);
+    localStorage.setItem("nombre", data.nombre);
 
     if (data.type === "cliente") {
       navigate("/reserve");
     } else if (data.type === "peluquero") {
-      navigate("/turnos");
+      navigate("/admin");
     }
   } catch (err) {
     if (err instanceof Error) {

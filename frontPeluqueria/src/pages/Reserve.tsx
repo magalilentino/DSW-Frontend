@@ -38,6 +38,20 @@ function Reserve() {
             onNextStep={() => setStep(step + 1)}
           />
           </div>
+        <button
+          className="logout-button"
+          onClick={() => {
+            // Elimina datos del usuario
+            localStorage.removeItem("token"); 
+            localStorage.removeItem("type"); 
+            localStorage.removeItem("nombre");  
+
+            window.location.href = "/";
+          }}
+          >
+          Cerrar sesión
+        </button>
+
         </section>
       </main>
       <Footer />

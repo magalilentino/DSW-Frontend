@@ -99,3 +99,17 @@
   background-color: #adb5bd; /* gris más claro cuando está deshabilitado */
   cursor: not-allowed;
 }
+
+/*logout*/
+.logout-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 10px;
+}
+.logout-button:hover {
+  background-color: #c82333;
+}
