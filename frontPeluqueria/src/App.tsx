@@ -4,6 +4,8 @@ import Auth from "./pages/Auth";
 import Reserve from "./pages/Reserve.tsx";
 import Admin from "./pages/Admin.tsx";
 import Categoria from "./components/Admin/Categoria.tsx";
+import CrearCategoria from "./components/Admin/CrearCategoria.tsx";
+import ActualizarCategoria from "./components/Admin/ActualizarCategoria.tsx";
 
 
 function App() {
@@ -15,6 +17,8 @@ function App() {
         <Route path="/reserve" element={<Reserve />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/categoria" element={<Categoria />} />
+        <Route path="/categoria/crear" element={<CrearCategoria />} />
+        <Route path="/categoria/actualizar/:idCategoria" element={<ActualizarCategoria />}/>
       </Routes>
     </Router>
   );

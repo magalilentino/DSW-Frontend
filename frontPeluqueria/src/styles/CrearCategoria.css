@@ -1,0 +1,54 @@
+.crear-categoria-container {
+  padding: 40px;
+  background-color: #f4f6f8;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.crear-categoria-form {
+  background-color: white;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  max-width: 400px;
+  margin-top: 20px;
+}
+
+.crear-categoria-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.crear-categoria-form input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.crear-categoria-form button {
+  background-color: #2c3e50;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.crear-categoria-form button:hover {
+  background-color: #1a252f;
+}
+
+.error {
+  color: red;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.success {
+  color: green;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
