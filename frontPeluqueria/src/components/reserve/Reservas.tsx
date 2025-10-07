@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react"
 import type { PeluqueroItem } from "../home/Peluqueros"
 import type { ServicioItem } from "../home/Servicio"
+import {CalendarioDias} from "./Calendar"
 import Foto3 from "../../assets/foto3.avif";
+
 
 interface ReservasProps {
   onSelectServicio: (servicio: ServicioItem) => void;
@@ -12,40 +14,9 @@ interface ReservasProps {
   step: number;
 }
 
-//prueba
-interface Horario {
-  inicio: string;
-  fin: string;
-}
-
-// Datos de ejemplo
-const horariosPorDia: Record<string, Horario[]> = {
-  Lunes: [
-    { inicio: "09:00", fin: "13:00" },
-    { inicio: "14:00", fin: "18:00" },
-  ],
-  Martes: [
-    { inicio: "10:00", fin: "16:00" },
-  ],
-  Miércoles: [],
-  Jueves: [
-    { inicio: "09:00", fin: "12:00" },
-    { inicio: "13:00", fin: "17:00" },
-  ],
-  Viernes: [
-    { inicio: "10:00", fin: "15:00" },
-  ],
-  Sábado: [],
-  Domingo: [],
-};
-//prueba
-
 function Reservas({ onSelectServicio, servicioSeleccionado, onSelectPeluquero, peluqueroSeleccionado, step }: ReservasProps) {
   const [servicios, setServicios] = useState<ServicioItem[]>([]);
   const [peluqueros, setPeluqueros] = useState<PeluqueroItem[]>([]);
-  const [diaSeleccionado, setDiaSeleccionado] = useState<string>("Lunes"); //prueba
-  const [horarioSeleccionado, setHorarioSeleccionado] = useState<Horario | null>(null);//prueba
-  const horariosDelDia = horariosPorDia[diaSeleccionado];//prueba
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -171,43 +142,7 @@ useEffect(() => {
           )}
           {step === 3 && (
             <>
-              <div className="calendario">
-                <h3>Seleccione un horario</h3>
-
-                {/* Selector de días */}
-                <div className="dias">
-                  {Object.keys(horariosPorDia).map(d => (
-                    <button
-                      key={d}
-                      onClick={() => setDiaSeleccionado(d)}
-                      style={{ fontWeight: diaSeleccionado === d ? "bold" : "normal" }}
-                    >
-                      {d}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Lista de horarios */}
-                <ul>
-                  {horariosDelDia.length === 0 && <li>No hay horarios disponibles</li>}
-                  {horariosDelDia.map((h, i) => (
-                    <li key={i}>
-                      <button
-                        onClick={() => setHorarioSeleccionado(h)}
-                        style={{
-                          backgroundColor: horarioSeleccionado === h ? "lightgreen" : "white",
-                        }}
-                      >
-                        {h.inicio} - {h.fin}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-
-                {horarioSeleccionado && (
-                  <p>Seleccionaste: {horarioSeleccionado.inicio} - {horarioSeleccionado.fin}</p>
-                )}
-              </div>
+              <CalendarioDias/>
             </>
         )}
     </div>
