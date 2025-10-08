@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../../styles/Categoria.css";
+import "../../../styles/Categoria.css";
 
 interface Categoria {
   idCategoria: number;
