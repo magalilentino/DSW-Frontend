@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
+import { motion } from "framer-motion";
 dayjs.locale("es");
 
 interface DiaItem {
@@ -11,8 +12,8 @@ interface DiaItem {
 export function CalendarioDias() {
   const [diaSeleccionado, setDiaSeleccionado] = useState<string>("");
   const [startIndex, setStartIndex] = useState(0);
+  const [direction, setDirection] = useState(0); // 1 = next, -1 = prev
 
-  // Generamos 60 días desde hoy
   const dias: DiaItem[] = Array.from({ length: 60 }).map((_, i) => {
     const fecha = dayjs().add(i, "day");
     return {
@@ -24,57 +25,100 @@ export function CalendarioDias() {
   const diasVisibles = dias.slice(startIndex, startIndex + 7);
 
   const next = () => {
-    if (startIndex + 7 < dias.length) setStartIndex(startIndex + 1);
+    if (startIndex + 7 < dias.length) {
+      setDirection(1);
+      setStartIndex(startIndex + 7);
+    }
   };
 
   const prev = () => {
-    if (startIndex > 0) setStartIndex(startIndex - 1);
+    if (startIndex > 0) {
+      setDirection(-1);
+      setStartIndex(Math.max(startIndex - 7, 0));
+    }
   };
 
-  // Mostrar el mes del primer día visible
   const mesActual = dayjs(diasVisibles[0].fecha).format("MMMM YYYY");
 
   return (
-    <div className="flex flex-col items-center mt-4 w-full">
-      {/* Mes arriba */}
-      <h2 className="text-lg font-semibold mb-2">{mesActual}</h2>
+    <div className="text-center my-4">
+      <h2 className="mb-4 fs-3">{mesActual}</h2>
 
-      {/* Fila única con flechas y días */}
-      <div className="flex items-center w-full max-w-3xl gap-2">
-        {/* Flecha izquierda */}
-        <button
+      <div className="d-flex justify-content-center align-items-center gap-2">
+        {/* Botón previo */}
+        <div
+          className={`clickable`}
           onClick={prev}
-          className="px-3 py-2 bg-gray-300 rounded disabled:opacity-50"
-          disabled={startIndex === 0}
+          onMouseDown={(e) => e.preventDefault()}
+          style={{
+            cursor: startIndex === 0 ? "not-allowed" : "pointer",
+            opacity: startIndex === 0 ? 0.5 : 1,
+          }}
         >
-          ◀
-        </button>
-
-        {/* Dias centrales */}
-        <div className="flex justify-center gap-3 flex-1">
-          {diasVisibles.map((d) => (
-            <button
-              key={d.fecha}
-              onClick={() => setDiaSeleccionado(d.fecha)}
-              className={`px-4 py-2 rounded-2xl border text-center transition-all whitespace-nowrap ${
-                diaSeleccionado === d.fecha
-                  ? "bg-black text-white"
-                  : "bg-gray-100 hover:bg-gray-200"
-              }`}
-            >
-              <p className="text-sm font-semibold">{d.label}</p>
-            </button>
-          ))}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="30"
+            height="30"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            viewBox="0 0 24 24"
+          >
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
         </div>
 
-        {/* Flecha derecha */}
-        <button
+        {/* Contenedor de días animado */}
+        <div className="d-flex flex-grow-1 overflow-hidden gap-2">
+          <motion.div
+            key={startIndex} // se anima cada vez que cambie startIndex
+            initial={{ x: direction > 0 ? 300 : -300, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: direction > 0 ? -300 : 300, opacity: 0 }}
+            transition={{ type: "tween", duration: 0.3 }}
+            className="d-flex flex-grow-1 gap-2"
+          >
+            {diasVisibles.map((d) => (
+              <button
+                key={d.fecha}
+                className={`btn ${
+                  diaSeleccionado === d.fecha
+                    ? "btn-dark text-white"
+                    : "btn-light"
+                } flex-grow-1 fs-5`}
+                onClick={() => setDiaSeleccionado(d.fecha)}
+              >
+                {d.label}
+              </button>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* Botón siguiente */}
+        <div
+          className={`clickable`}
           onClick={next}
-          className="px-3 py-2 bg-gray-300 rounded disabled:opacity-50"
-          disabled={startIndex + 7 >= dias.length}
+          style={{
+            cursor: startIndex + 7 >= dias.length ? "not-allowed" : "pointer",
+            opacity: startIndex + 7 >= dias.length ? 0.5 : 1,
+          }}
         >
-          ▶
-        </button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="30"
+            height="30"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            viewBox="0 0 24 24"
+          >
+            <path d="M9 6l6 6-6 6" />
+          </svg>
+        </div>
       </div>
     </div>
   );

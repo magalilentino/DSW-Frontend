@@ -142,9 +142,9 @@ useEffect(() => {
           )}
           {step === 3 && (
             <>
-              <CalendarioDias/>
+              <CalendarioDias />
             </>
-        )}
+          )}
     </div>
   );
 }
