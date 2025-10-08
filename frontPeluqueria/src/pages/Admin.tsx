@@ -12,6 +12,7 @@ const sections = [
   { label: "Producto", path: "/producto" },
   { label: "Marca", path: "/marca" },
   { label: "Categoría", path: "/categoria" },
+  { label: "Atencion", path: "/atencion" },
   { label: "Perfil", path: "/perfil" },
 ];
 

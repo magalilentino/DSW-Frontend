@@ -3,9 +3,9 @@ import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import Reserve from "./pages/Reserve.tsx";
 import Admin from "./pages/Admin.tsx";
-import Categoria from "./components/Admin/Categoria.tsx";
-import CrearCategoria from "./components/Admin/CrearCategoria.tsx";
-import ActualizarCategoria from "./components/Admin/ActualizarCategoria.tsx";
+import Categoria from "./components/Admin/categoria/Categoria.tsx";
+import CrearCategoria from "./components/Admin/categoria/CrearCategoria.tsx";
+import ActualizarCategoria from "./components/Admin/categoria/ActualizarCategoria.tsx";
 
 
 function App() {
