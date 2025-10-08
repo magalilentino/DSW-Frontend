@@ -1,7 +1,7 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
-import { motion } from "framer-motion";
 dayjs.locale("es");
 
 interface DiaItem {
@@ -9,10 +9,14 @@ interface DiaItem {
   fecha: string;
 }
 
-export function CalendarioDias() {
-  const [diaSeleccionado, setDiaSeleccionado] = useState<string>("");
+interface CalendarProps {
+  diaSeleccionado: string;
+  onSelectDia: (fecha: string) => void;
+}
+
+export function CalendarioDias({ diaSeleccionado, onSelectDia }: CalendarProps) {
   const [startIndex, setStartIndex] = useState(0);
-  const [direction, setDirection] = useState(0); // 1 = next, -1 = prev
+  const [direction, setDirection] = useState(0);
 
   const dias: DiaItem[] = Array.from({ length: 60 }).map((_, i) => {
     const fecha = dayjs().add(i, "day");
@@ -23,6 +27,7 @@ export function CalendarioDias() {
   });
 
   const diasVisibles = dias.slice(startIndex, startIndex + 7);
+  const mesActual = dayjs(diasVisibles[0].fecha).format("MMMM YYYY");
 
   const next = () => {
     if (startIndex + 7 < dias.length) {
@@ -38,42 +43,24 @@ export function CalendarioDias() {
     }
   };
 
-  const mesActual = dayjs(diasVisibles[0].fecha).format("MMMM YYYY");
-
   return (
-    <div className="text-center my-4">
+    <div className="text-center my-4" style={{ userSelect: "none" }}>
       <h2 className="mb-4 fs-3">{mesActual}</h2>
 
       <div className="d-flex justify-content-center align-items-center gap-2">
-        {/* Botón previo */}
         <div
-          className={`clickable`}
+          className="clickable"
           onClick={prev}
-          onMouseDown={(e) => e.preventDefault()}
-          style={{
-            cursor: startIndex === 0 ? "not-allowed" : "pointer",
-            opacity: startIndex === 0 ? 0.5 : 1,
-          }}
+          style={{ cursor: startIndex === 0 ? "not-allowed" : "pointer", opacity: startIndex === 0 ? 0.5 : 1 }}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="30"
-            height="30"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            viewBox="0 0 24 24"
-          >
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </div>
 
-        {/* Contenedor de días animado */}
-        <div className="d-flex flex-grow-1 overflow-hidden gap-2">
+        <div className="flex-grow-1 overflow-hidden gap-2">
           <motion.div
-            key={startIndex} // se anima cada vez que cambie startIndex
+            key={startIndex}
             initial={{ x: direction > 0 ? 300 : -300, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: direction > 0 ? -300 : 300, opacity: 0 }}
@@ -83,12 +70,8 @@ export function CalendarioDias() {
             {diasVisibles.map((d) => (
               <button
                 key={d.fecha}
-                className={`btn ${
-                  diaSeleccionado === d.fecha
-                    ? "btn-dark text-white"
-                    : "btn-light"
-                } flex-grow-1 fs-5`}
-                onClick={() => setDiaSeleccionado(d.fecha)}
+                className={`btn ${diaSeleccionado === d.fecha ? "btn-dark text-white" : "btn-light"} flex-grow-1 fs-5`}
+                onClick={() => onSelectDia(d.fecha)}
               >
                 {d.label}
               </button>
@@ -96,26 +79,12 @@ export function CalendarioDias() {
           </motion.div>
         </div>
 
-        {/* Botón siguiente */}
         <div
-          className={`clickable`}
+          className="clickable"
           onClick={next}
-          style={{
-            cursor: startIndex + 7 >= dias.length ? "not-allowed" : "pointer",
-            opacity: startIndex + 7 >= dias.length ? 0.5 : 1,
-          }}
+          style={{ cursor: startIndex + 7 >= dias.length ? "not-allowed" : "pointer", opacity: startIndex + 7 >= dias.length ? 0.5 : 1 }}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="30"
-            height="30"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            viewBox="0 0 24 24"
-          >
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
             <path d="M9 6l6 6-6 6" />
           </svg>
         </div>
