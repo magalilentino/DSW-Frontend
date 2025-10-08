@@ -1,2 +1,104 @@
+import { useEffect, useState } from "react";
+import "../styles/Reservas.css";
+import Footer from "../components/general/Footer";
+import Reservas from "../components/reserve/Reservas";
+import Precio from "../components/reserve/Precio.tsx";
+import type { ServicioItem } from "../components/home/Servicio.tsx";
+import type { PeluqueroItem } from "../components/home/Peluqueros.tsx";
 
+function Reserve() {
+  const [step, setStep] = useState(1);
+
+  const [servicios, setServicios] = useState<ServicioItem[]>([]);
+  const [serviciosSeleccionados, setServiciosSeleccionados] = useState<ServicioItem[]>([]);
+  const [peluqueroSeleccionado, setPeluqueroSeleccionado] = useState<PeluqueroItem | null>(null);
+  const [bloquesSeleccionados, setBloquesSeleccionados] = useState<{ inicio: string; fin: string }[]>([]);
+
+  // Cargar servicios
+  useEffect(() => {
+    const fetchServicios = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/api/servicio/findAll");
+        if (!res.ok) throw new Error("Error al cargar servicios");
+        const data = await res.json();
+        setServicios(data.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchServicios();
+  }, []);
+
+  const onNextStep = () => setStep(prev => prev + 1);
+
+  return (
+    <>
+      <main>
+        <section className="reservas-servicio my-4">
+          <button
+            className="reservas-back-button"
+            onClick={() => {
+              if (step === 1) {
+                window.location.href = "/";
+              } else {
+                setStep(step - 1);
+                if (step === 2) {
+                  setServiciosSeleccionados([]);
+                } else if (step === 3) {
+                  setPeluqueroSeleccionado(null);
+                  setBloquesSeleccionados([]);
+                }
+              }
+            }}
+          >
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+          </button>
+
+          <div className="row">
+            <Reservas
+              step={step}
+              setStep={setStep}                      
+              onNextStep={() => setStep(step + 1)}
+              servicios={servicios}                    
+              serviciosSeleccionados={serviciosSeleccionados}
+              setServiciosSeleccionados={setServiciosSeleccionados}
+              peluqueroSeleccionado={peluqueroSeleccionado}
+              setPeluqueroSeleccionado={setPeluqueroSeleccionado}
+              bloquesSeleccionados={bloquesSeleccionados}
+              setBloquesSeleccionados={setBloquesSeleccionados}
+            />
+
+
+            <Precio
+              peluquero={peluqueroSeleccionado}
+              bloquesSeleccionados={bloquesSeleccionados}
+              step={step}
+              onNextStep={onNextStep}
+              servicios={servicios}
+              serviciosSeleccionados={serviciosSeleccionados}
+              setServiciosSeleccionados={setServiciosSeleccionados}
+            />
+          </div>
+
+          <button
+            className="logout-button"
+            onClick={() => {
+              localStorage.removeItem("token");
+              localStorage.removeItem("type");
+              localStorage.removeItem("nombre");
+              window.location.href = "/";
+            }}
+          >
+            Cerrar sesión
+          </button>
+        </section>
+      </main>
+      <Footer />
+    </>
+  );
+}
+
+export default Reserve;
 
