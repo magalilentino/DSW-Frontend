@@ -43,11 +43,18 @@ const Atencion: React.FC = () => {
 
 
     const handleFinalizar = (idAtencion: number) => {
-        window.location.href = `/atencion/finalizar/${idAtencion}`;
+        window.location.href = `/atencion/serviciosDeAtencion/${idAtencion}`;
     };
 
-    const handleCancelar = (idAtencion: number) => {
-        window.location.href = `/atencion/cancelar/${idAtencion}`;
+    const handleCancelar = async (idAtencion: number) => {
+        try {
+            await fetch(`http://localhost:3000/api/atencion/cancelar/${idAtencion}`, {
+            method: "UPDATE",
+        });
+        setAtenciones((prev) => prev.filter((a) => a.idAtencion !== idAtencion));
+        } catch {
+        alert("Error al eliminar la categoría.");
+        }
     };
 
 
