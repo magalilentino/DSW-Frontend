@@ -12,7 +12,10 @@
     "@types/react-router-dom": "^5.3.3",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
+<<<<<<< HEAD
+=======
     "dayjs": "^1.11.18",
+>>>>>>> e7b614373887f9caffd8f3055652c9eb98173714
     "framer-motion": "^12.23.22",
     "motion": "^12.23.12",
     "react": "^19.2.0",

@@ -3,9 +3,10 @@ import { motion } from "motion/react"
 import { useNavigate } from "react-router-dom";
 
 export interface ServicioItem {
+  codServicio: number;
   nombreServicio: string;
   cantTurnos: number;
-  precio?: number;
+  precio: number;
 }
 
 function Servicio() {
@@ -60,8 +61,8 @@ function Servicio() {
                 <div>
                   <h5>{s.nombreServicio}</h5>
                   <p className="mb-1">
-                    Duración: {Math.floor((s.cantTurnos * 40) / 60)} h{" "}  
-                    {(s.cantTurnos * 40) % 60} min
+                    Duración: {Math.floor((s.cantTurnos * 45) / 60)} h{" "}  
+                    {(s.cantTurnos * 45) % 60} min
                   </p>
                   <small>{s.precio} ARS</small>
                 </div>
