@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../styles/CrearCategoria.css";
+import "../../../styles/CrearCategoria.css";
 
 const CrearCategoria: React.FC = () => {
   const [nombreCategoria, setNombreCategoria] = useState("");

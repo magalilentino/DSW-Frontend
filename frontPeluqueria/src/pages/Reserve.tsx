@@ -12,7 +12,7 @@ function Reserve() {
   const [servicios, setServicios] = useState<ServicioItem[]>([]);
   const [serviciosSeleccionados, setServiciosSeleccionados] = useState<ServicioItem[]>([]);
   const [peluqueroSeleccionado, setPeluqueroSeleccionado] = useState<PeluqueroItem | null>(null);
-  const [bloquesSeleccionados, setBloquesSeleccionados] = useState<{ inicio: string; fin: string }[]>([]);
+  const [bloquesSeleccionados, setBloquesSeleccionados] = useState<{ idBloque: number; inicio: string; fin: string }[]>([]);
 
   // Cargar servicios
   useEffect(() => {
@@ -59,7 +59,7 @@ function Reserve() {
           <div className="row">
             <Reservas
               step={step}
-              setStep={setStep}                      
+              setStep={setStep}                  
               onNextStep={() => setStep(step + 1)}
               servicios={servicios}                    
               serviciosSeleccionados={serviciosSeleccionados}
