@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../../styles/Atencion.css";
+// import "../../styles/Atencion.css";
 
 interface Atencion {
     idAtencion: number;
@@ -18,8 +18,18 @@ const Atencion: React.FC = () => {
 
     
     useEffect(() => {
-    fetch("http://localhost:3000/api/atencion/pendientes")
-        .then((res) => res.json())
+    const token = localStorage.getItem("token");
+
+    fetch("http://localhost:3000/api/atencion/pendientes", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    })
+        .then((res) => {
+            if (!res.ok) throw new Error("No autorizado");
+            return res.json();
+    })
         .then((data) => {
             console.log("Respuesta de atenciones:", data);
             setAtenciones(data.data); 

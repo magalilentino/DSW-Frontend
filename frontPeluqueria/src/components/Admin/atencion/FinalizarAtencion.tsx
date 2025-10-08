@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import "../../styles/ActualizarCategoria.css";
+// import React, { useEffect, useState } from "react";
+// import { useParams, useNavigate } from "react-router-dom";
+// import "../../styles/ActualizarCategoria.css";
 
 // const FinaliarAtencion: React.FC = () => {
 //     const { idAtencion } = useParams();

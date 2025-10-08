@@ -6,6 +6,7 @@ import Admin from "./pages/Admin.tsx";
 import Categoria from "./components/Admin/categoria/Categoria.tsx";
 import CrearCategoria from "./components/Admin/categoria/CrearCategoria.tsx";
 import ActualizarCategoria from "./components/Admin/categoria/ActualizarCategoria.tsx";
+import Atencion from "./components/Admin/atencion/Atencion.tsx";
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/categoria" element={<Categoria />} />
         <Route path="/categoria/crear" element={<CrearCategoria />} />
         <Route path="/categoria/actualizar/:idCategoria" element={<ActualizarCategoria />}/>
+        <Route path="/atencion" element={<Atencion/>}/>
       </Routes>
     </Router>
   );
