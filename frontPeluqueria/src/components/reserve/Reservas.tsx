@@ -4,6 +4,9 @@ import type { ServicioItem } from "../home/Servicio";
 import type { PeluqueroItem } from "../home/Peluqueros";
 import { CalendarioDias } from "./Calendar";
 import Foto3 from "../../assets/foto3.avif";
+import dayjs from "dayjs";
+import "dayjs/locale/es";
+dayjs.locale("es");
 
 interface ReservasProps {
   step: number;
@@ -72,7 +75,7 @@ export default function Reservas({
       const fetchBloques = async () => {
         try {
           const res = await fetch(
-            `http://localhost:3000/api/turno/disponibles?peluqueroId=${peluqueroSeleccionado.idPersona}&fecha=${diaSeleccionado}`
+            `http://localhost:3000/api/bloque/libres?idPersona=${peluqueroSeleccionado.idPersona}&fecha=${diaSeleccionado}`
           );
           const data = await res.json();
           setBloquesLibres(data);
@@ -100,44 +103,54 @@ export default function Reservas({
     setBloquesSeleccionados([]); // limpiar bloques al cambiar peluquero
   };
 
-  // ------------------- Confirmar reserva -------------------
-  const confirmarReserva = async () => {
-    if (!clienteId) {
-      alert("Debes iniciar sesión para reservar");
-      return;
-    }
-    if (!peluqueroSeleccionado || serviciosSeleccionados.length === 0 || bloquesSeleccionados.length === 0) {
-      alert("Debes seleccionar servicios, peluquero y horario");
-      return;
-    }
+// ------------------- Confirmar reserva -------------------
+const confirmarReserva = async () => {
+  if (!clienteId) {
+    alert("Debes iniciar sesión para reservar");
+    return;
+  }
+  if (!peluqueroSeleccionado || serviciosSeleccionados.length === 0 || bloquesSeleccionados.length === 0) {
+    alert("Debes seleccionar servicios, peluquero y horario");
+    return;
+  }
 
-    try {
-      const res = await fetchConToken('http://localhost:3000/api/atencion', {
-        method: 'POST',
-        body: JSON.stringify({
-          cliente: Number(clienteId),
-          peluquero: peluqueroSeleccionado.idPersona,
-          servicios: serviciosSeleccionados.map(s => s.codServicio),
-          fechaInicio: diaSeleccionado,
-          bloques: bloquesSeleccionados
-        })
-      });
+  // 🔹 Validación del día (martes a sábado)
+  const dia = dayjs(diaSeleccionado).day(); // 0 = domingo, 1 = lunes
+  if (dia === 0 || dia === 1) {
+    alert("Solo se pueden reservar turnos de martes a sábado");
+    return;
+  }
 
-      const data = await res.json();
-      if (res.ok) {
-        alert("Reserva confirmada!");
-        setStep(1);
-        setServiciosSeleccionados([]);
-        setPeluqueroSeleccionado(null);
-        setBloquesSeleccionados([]);
-      } else {
-        alert("Error al reservar: " + data.message);
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Error al reservar");
+  try {
+    const res = await fetchConToken("http://localhost:3000/api/atencion", {
+      method: "POST",
+      body: JSON.stringify({
+        idCliente: Number(clienteId),
+        idPeluquero: peluqueroSeleccionado.idPersona,
+        idServicios: serviciosSeleccionados.map(s => s.codServicio),
+        idBloques: bloquesSeleccionados.map(b => b.idBloque),
+        fecha: diaSeleccionado
+      })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      alert("Reserva confirmada ✅");
+      // Limpiar estado
+      setStep(1);
+      setServiciosSeleccionados([]);
+      setPeluqueroSeleccionado(null);
+      setBloquesSeleccionados([]);
+      setDiaSeleccionado("");
+    } else {
+      alert("Error al reservar: " + (data.message || "Error desconocido"));
     }
-  };
+  } catch (err) {
+    console.error(err);
+    alert("Error al reservar");
+  }
+};
 
   return (
     <div className="col-lg-8 my-4">
