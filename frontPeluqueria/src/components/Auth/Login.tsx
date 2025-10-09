@@ -10,6 +10,7 @@ interface LoginResponse {
   token: string;
   type: string;
   nombre: string;
+  idPersona: number; 
 }
 
 function Login({ onToggleMode }: LoginProps) {
@@ -30,47 +31,44 @@ function Login({ onToggleMode }: LoginProps) {
   }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-  setError("");
-  setLoading(true);
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
-  try {
-    const res = await fetch("http://localhost:3000/api/persona/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, clave }),
-    });
+    try {
+      const res = await fetch("http://localhost:3000/api/persona/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, clave }),
+      });
 
-    const data: LoginResponse = await res.json();
+      const data: LoginResponse = await res.json();
 
-    if (!res.ok) {
-      throw new Error(data?.message || `Error ${res.status}: No se pudo iniciar sesión`);
+      if (!res.ok) {
+        throw new Error(data?.message || `Error ${res.status}: No se pudo iniciar sesión`);
+      }
+
+      
+      localStorage.setItem("token", data.token); //
+      localStorage.setItem("type", data.type);
+      localStorage.setItem("nombre", data.nombre); //
+      localStorage.setItem("idPersona", String(data.idPersona)); 
+
+      if (data.type === "cliente") {
+        navigate("/reserve");
+      } else if (data.type === "peluquero") {
+        navigate("/admin");
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Ocurrió un error desconocido.");
+      }
+    } finally {
+      setLoading(false);
     }
-
-    // if (remember) {
-    //     localStorage.setItem("token", data.token);
-    //     localStorage.setItem("type", data.type);
-    //   } // esto hace que solo se guarde el token cuando tocas remember
-
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("type", data.type);
-    localStorage.setItem("nombre", data.nombre);
-
-    if (data.type === "cliente") {
-      navigate("/reserve");
-    } else if (data.type === "peluquero") {
-      navigate("/admin");
-    }
-  } catch (err) {
-    if (err instanceof Error) {
-      setError(err.message);
-    } else {
-      setError("Ocurrió un error desconocido.");
-    }
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <>
@@ -129,3 +127,4 @@ function Login({ onToggleMode }: LoginProps) {
 }
 
 export default Login;
+
