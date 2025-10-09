@@ -40,7 +40,7 @@ function Register({ onToggleMode }: RegisterProps) {
       }
 
       alert("Registro exitoso");
-      navigate("/login");
+      navigate("/Servicio");
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);

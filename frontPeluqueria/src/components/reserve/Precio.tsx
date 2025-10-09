@@ -3,45 +3,103 @@ import type { PeluqueroItem } from "../home/Peluqueros.tsx";
 
 interface PrecioProps {
   peluquero: PeluqueroItem | null;
-  bloquesSeleccionados?: { inicio: string; fin: string }[];
+  bloquesSeleccionados: { inicio: string; fin: string }[];
   onNextStep: () => void;
   step: number;
-  servicios: ServicioItem[];
   serviciosSeleccionados: ServicioItem[];
   setServiciosSeleccionados: React.Dispatch<React.SetStateAction<ServicioItem[]>>;
+  diaSeleccionado: string;
 }
 
 export default function Precio({
   peluquero,
-  bloquesSeleccionados = [],
-  step,
+  bloquesSeleccionados,
   onNextStep,
+  step,
   serviciosSeleccionados,
   setServiciosSeleccionados,
+  diaSeleccionado,
 }: PrecioProps) {
-  const onSelectServicio = (s: ServicioItem) => {
-    if (serviciosSeleccionados.some(serv => serv.nombreServicio === s.nombreServicio)) {
-      setServiciosSeleccionados(prev => prev.filter(serv => serv.nombreServicio !== s.nombreServicio));
-    } else {
-      setServiciosSeleccionados(prev => [...prev, s]);
-    }
-  };
-
   const totalPrecio = serviciosSeleccionados.reduce((sum, s) => sum + (s.precio ?? 0), 0);
   const totalDuracionMin = serviciosSeleccionados.reduce((sum, s) => sum + s.cantTurnos * 45, 0);
   const horas = Math.floor(totalDuracionMin / 60);
   const minutos = totalDuracionMin % 60;
 
+  const onSelectServicio = (servicio: ServicioItem) => {
+    setServiciosSeleccionados(prev =>
+      prev.some(s => s.codServicio === servicio.codServicio)
+        ? prev.filter(s => s.codServicio !== servicio.codServicio)
+        : [...prev, servicio]
+    );
+  };
+
+  const confirmarReserva = async () => {
+    const clienteIdString = localStorage.getItem("idPersona");
+
+    if (
+      !peluquero ||
+      bloquesSeleccionados.length === 0 ||
+      serviciosSeleccionados.length === 0 ||
+      !diaSeleccionado ||
+      !clienteIdString
+    ) {
+      alert("Faltan datos para confirmar la reserva. Asegúrese de haber iniciado sesión y seleccionado todos los campos.");
+      return;
+    }
+
+    const payload = {
+      clienteId: parseInt(clienteIdString),
+      peluqueroId: peluquero.idPersona,
+      fecha: diaSeleccionado,
+      horaInicio: bloquesSeleccionados[0].inicio,
+      duracion: totalDuracionMin,
+      servicios: serviciosSeleccionados.map(s => s.codServicio),
+    };
+
+    try {
+      const res = await fetch("http://localhost:3000/api/atencion/crear", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        throw new Error(`Error en la petición: ${res.statusText}`);
+      }
+
+      const data = await res.json();
+      console.log("Atención creada:", data);
+      alert(`¡Reserva confirmada con éxito! ID: ${data.atencionId}`);
+      // Aquí podrías redirigir al usuario o limpiar el estado global
+    } catch (err) {
+      console.error("Error al crear atención:", err);
+      alert("Hubo un error al confirmar la reserva. Inténtalo de nuevo.");
+    }
+  };
+
+  const handleContinue = () => {
+    if (step === 3) {
+      confirmarReserva();
+    } else {
+      onNextStep();
+    }
+  };
+
+  const isButtonDisabled =
+    (step === 1 && serviciosSeleccionados.length === 0) ||
+    (step === 2 && !peluquero) ||
+    (step === 3 && bloquesSeleccionados.length === 0);
+
   return (
     <div className="col-lg-4">
       <div className="border p-3 rounded">
-        <h2 className="mb-2">Servicios seleccionados</h2>
+        <h2 className="mb-2">Resumen de la Reserva</h2>
 
         {serviciosSeleccionados.length === 0 ? (
           <p>No hay servicios seleccionados</p>
         ) : (
-          serviciosSeleccionados.map((s, i) => (
-            <div key={i} className="d-flex justify-content-between align-items-center mb-2">
+          serviciosSeleccionados.map(s => (
+            <div key={s.codServicio} className="d-flex justify-content-between align-items-center mb-2">
               <div>
                 <h6>{s.nombreServicio}</h6>
                 <small>
@@ -54,6 +112,7 @@ export default function Precio({
                 type="button"
                 className="servicio-btn selected"
                 onClick={() => onSelectServicio(s)}
+                aria-label={`Quitar ${s.nombreServicio}`}
               >
                 -
               </button>
@@ -68,21 +127,18 @@ export default function Precio({
         </small>
         {peluquero && <h6 className="mt-2">Peluquero: {peluquero.nombre}</h6>}
         {bloquesSeleccionados.length > 0 && (
-          <div className="mt-2">
-            <h6>Horario seleccionado:</h6>
-            <p>
-              {bloquesSeleccionados[0].inicio} - {bloquesSeleccionados[bloquesSeleccionados.length - 1].fin}
-            </p>
-          </div>
+          <h6 className="mt-2">
+            Horario: {bloquesSeleccionados[0].inicio} - {bloquesSeleccionados[bloquesSeleccionados.length - 1].fin}
+          </h6>
         )}
       </div>
 
       <button
-        className="servicio-continuar-btn mt-3"
-        disabled={(step === 1 && serviciosSeleccionados.length === 0) || (step === 2 && !peluquero) || (step === 3 && bloquesSeleccionados.length === 0)}
-        onClick={onNextStep}
+        className="servicio-continuar-btn mt-3 w-100"
+        disabled={isButtonDisabled}
+        onClick={handleContinue}
       >
-        Continuar
+        {step === 3 ? "Confirmar Reserva" : "Continuar"}
       </button>
     </div>
   );
