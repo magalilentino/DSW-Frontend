@@ -23,7 +23,7 @@ const Atencion: React.FC = () => {
     fetch("http://localhost:3000/api/atencion/pendientes", {
     method: "GET",
     headers: {
-      Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
     },
     })
         .then((res) => {
