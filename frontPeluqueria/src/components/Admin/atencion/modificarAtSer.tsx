@@ -50,7 +50,7 @@ const ModificarAtSer: React.FC = () => {
             if (filtroCategoria) query.append('idCategoria', filtroCategoria);
             
             try {
-                const url = `http://localhost:3000/api/productos?${query.toString()}`;
+                const url = `http://localhost:3000/api/producto/listarProductos?${query.toString()}`;
 
                 const res = await fetch(url, {
                     headers: { Authorization: `Bearer ${token}` },
