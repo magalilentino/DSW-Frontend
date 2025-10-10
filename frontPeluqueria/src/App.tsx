@@ -8,6 +8,7 @@ import CrearCategoria from "./components/Admin/categoria/CrearCategoria.tsx";
 import ActualizarCategoria from "./components/Admin/categoria/ActualizarCategoria.tsx";
 import Atencion from "./components/Admin/atencion/Atencion.tsx";
 import AtencionServicio from "./components/Admin/atencion/ServiciosDeAtencion.tsx";
+import Servicio from "./components/home/Servicio.tsx";
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         <Route path="/auth" element={<Auth />} />
         <Route path="/reserve" element={<Reserve />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/Servicio" element={<Servicio />} />
         <Route path="/categoria" element={<Categoria />} />
         <Route path="/categoria/crear" element={<CrearCategoria />} />
         <Route path="/categoria/actualizar/:idCategoria" element={<ActualizarCategoria />}/>
@@ -29,3 +31,6 @@ function App() {
 }
 
 export default App;
+
+
+

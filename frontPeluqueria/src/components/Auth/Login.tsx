@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../general/AuthContext";
 
 interface LoginProps {
   onToggleMode: () => void;
@@ -10,7 +11,7 @@ interface LoginResponse {
   token: string;
   type: string;
   nombre: string;
-  idPersona: number; 
+  idPersona: number;
 }
 
 function Login({ onToggleMode }: LoginProps) {
@@ -18,12 +19,13 @@ function Login({ onToggleMode }: LoginProps) {
   const [clave, setClave] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [remember, setRemember] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     const type = localStorage.getItem("type");
+
     if (token && type) {
       if (type === "cliente") navigate("/reserve");
       else if (type === "peluquero") navigate("/admin");
@@ -48,11 +50,12 @@ function Login({ onToggleMode }: LoginProps) {
         throw new Error(data?.message || `Error ${res.status}: No se pudo iniciar sesión`);
       }
 
-      
-      localStorage.setItem("token", data.token); //
-      localStorage.setItem("type", data.type);
-      localStorage.setItem("nombre", data.nombre); //
-      localStorage.setItem("idPersona", String(data.idPersona)); 
+      login({
+        token: data.token,
+        type: data.type,
+        nombre: data.nombre,
+        idPersona: data.idPersona,
+      });
 
       if (data.type === "cliente") {
         navigate("/reserve");
@@ -89,16 +92,6 @@ function Login({ onToggleMode }: LoginProps) {
           required
           className="mt-2"
         />
-        <div className="auth-remember-container">
-          <label className="auth-remember-label">
-            <input
-              type="checkbox"
-              checked={remember}
-              onChange={() => setRemember(!remember)}
-            />
-            Recuérdame
-          </label>
-        </div>
         {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
 
         <button
@@ -127,4 +120,3 @@ function Login({ onToggleMode }: LoginProps) {
 }
 
 export default Login;
-

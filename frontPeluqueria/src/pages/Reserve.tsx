@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "../styles/Reservas.css";
-import Footer from "../components/general/Footer";
-import Reservas from "../components/reserve/Reservas";
+import Footer from "../components/general/Footer.tsx";
+import Reservas from "../components/reserve/Reservas.tsx";
 import Precio from "../components/reserve/Precio.tsx";
 import type { ServicioItem } from "../components/home/Servicio.tsx";
 import type { PeluqueroItem } from "../components/home/Peluqueros.tsx";
@@ -12,7 +12,8 @@ function Reserve() {
   const [servicios, setServicios] = useState<ServicioItem[]>([]);
   const [serviciosSeleccionados, setServiciosSeleccionados] = useState<ServicioItem[]>([]);
   const [peluqueroSeleccionado, setPeluqueroSeleccionado] = useState<PeluqueroItem | null>(null);
-  const [bloquesSeleccionados, setBloquesSeleccionados] = useState<{ idBloque: number; inicio: string; fin: string }[]>([]);
+  const [bloquesSeleccionados, setBloquesSeleccionados] = useState<{ inicio: string; fin: string }[]>([]);
+  const [diaSeleccionado, setDiaSeleccionado] = useState<string>("");
 
   // Cargar servicios
   useEffect(() => {
@@ -68,31 +69,19 @@ function Reserve() {
               setPeluqueroSeleccionado={setPeluqueroSeleccionado}
               bloquesSeleccionados={bloquesSeleccionados}
               setBloquesSeleccionados={setBloquesSeleccionados}
+              diaSeleccionado={diaSeleccionado}
+              setDiaSeleccionado={setDiaSeleccionado}
             />
-
-
             <Precio
               peluquero={peluqueroSeleccionado}
               bloquesSeleccionados={bloquesSeleccionados}
               step={step}
               onNextStep={onNextStep}
-              servicios={servicios}
               serviciosSeleccionados={serviciosSeleccionados}
               setServiciosSeleccionados={setServiciosSeleccionados}
+              diaSeleccionado={diaSeleccionado}
             />
           </div>
-
-          <button
-            className="logout-button"
-            onClick={() => {
-              localStorage.removeItem("token");
-              localStorage.removeItem("type");
-              localStorage.removeItem("nombre");
-              window.location.href = "/";
-            }}
-          >
-            Cerrar sesión
-          </button>
         </section>
       </main>
       <Footer />
