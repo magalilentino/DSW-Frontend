@@ -16,7 +16,7 @@ function Header() {
               {user ? (
                 <>
                   <li className="nav-item">
-                    <Link className="nav-link" to="/">Mi perfil</Link>
+                    <Link className="nav-link" to="/perfil">Mi perfil</Link>
                   </li>
                   <li className="nav-item">
                     <button className="nav-link" onClick={logout}>Cerrar sesión</button>

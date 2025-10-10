@@ -34,48 +34,53 @@ export default function Precio({
   };
 
   const confirmarReserva = async () => {
-    const clienteIdString = localStorage.getItem("idPersona");
+  const clienteIdString = localStorage.getItem("idPersona");
+  const token = localStorage.getItem("token"); 
 
-    if (
-      !peluquero ||
-      bloquesSeleccionados.length === 0 ||
-      serviciosSeleccionados.length === 0 ||
-      !diaSeleccionado ||
-      !clienteIdString
-    ) {
-      alert("Faltan datos para confirmar la reserva. Asegúrese de haber iniciado sesión y seleccionado todos los campos.");
-      return;
-    }
+  if (
+    !peluquero ||
+    bloquesSeleccionados.length === 0 ||
+    serviciosSeleccionados.length === 0 ||
+    !diaSeleccionado ||
+    !clienteIdString ||
+    !token
+  ) {
+    alert("Faltan datos para confirmar la reserva o no has iniciado sesión.");
+    return;
+  }
 
-    const payload = {
-      clienteId: parseInt(clienteIdString),
-      peluqueroId: peluquero.idPersona,
-      fecha: diaSeleccionado,
-      horaInicio: bloquesSeleccionados[0].inicio,
-      duracion: totalDuracionMin,
-      servicios: serviciosSeleccionados.map(s => s.codServicio),
-    };
-
-    try {
-      const res = await fetch("http://localhost:3000/api/atencion/crear", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        throw new Error(`Error en la petición: ${res.statusText}`);
-      }
-
-      const data = await res.json();
-      console.log("Atención creada:", data);
-      alert(`¡Reserva confirmada con éxito! ID: ${data.atencionId}`);
-      // Aquí podrías redirigir al usuario o limpiar el estado global
-    } catch (err) {
-      console.error("Error al crear atención:", err);
-      alert("Hubo un error al confirmar la reserva. Inténtalo de nuevo.");
-    }
+  const payload = {
+    clienteId: parseInt(clienteIdString),
+    peluqueroId: peluquero.idPersona,
+    fecha: diaSeleccionado,
+    horaInicio: bloquesSeleccionados[0].inicio,
+    duracion: totalDuracionMin,
+    servicios: serviciosSeleccionados.map(s => s.codServicio),
   };
+
+  try {
+    const res = await fetch("http://localhost:3000/api/atencion/crear", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // 👈 clave
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Error en la petición: ${res.statusText}`);
+    }
+
+    const data = await res.json();
+    console.log("Atención creada:", data);
+    alert(`¡Reserva confirmada con éxito! ID: ${data.atencionId}`);
+  } catch (err) {
+    console.error("Error al crear atención:", err);
+    alert("Hubo un error al confirmar la reserva. Inténtalo de nuevo.");
+  }
+};
+
 
   const handleContinue = () => {
     if (step === 3) {
