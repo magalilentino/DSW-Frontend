@@ -2,40 +2,37 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 // import "../../styles/Atencion.css";
 
-interface Servicio {
-    codServicio: number;
-    nombreServicio: string;
-    descripcion: string;
-    precio: number; 
-
-}
-
-interface AtencionParams {
-    idAtencion: string; // React Router siempre devuelve el valor como string
+interface AtSer {
+    idAtSer: number;
+    servicio: {
+        codServicio: number;
+        nombreServicio: string;
+    }
 }
 
 
-const Servicio: React.FC = () => {
-    const [servicios, setServicios] = useState<Servicio[]>([]);
+// interface AtencionParams {
+//     idAtencion: string; // React Router siempre devuelve el valor como string
+// }
+
+
+const serviciosDeAtencion: React.FC = () => {
+    const [atSers, setAtSer] = useState<AtSer[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
     const { idAtencion } = useParams();  // Hook para obtener parámetros de ruta
 
     useEffect(() => {
-        // Validación preliminar si falta el ID
-        if (!idAtencion) {
-            setError("Error: El ID de la Atención no se encontró en la ruta.");
-            setLoading(false);
-            return;
-        }
+    if (!idAtencion) {
+        setError("Error: ID de Atención no encontrado.");
+        setLoading(false);
+        return;
+    }
 
-        const token = localStorage.getItem("token");
-
-        fetch(`http://localhost:3000/api/atenciones/${idAtencion}/serviciosDeAtencion`, {
+        fetch(`http://localhost:3000/api/atSer/${idAtencion}/serviciosPorAtencion`, {
             method: "GET",
             headers: {
-                Authorization: `Bearer ${token}`,
             },
         })
         .then((res) => {
@@ -46,7 +43,7 @@ const Servicio: React.FC = () => {
         })
         .then((data) => {
             console.log("Respuesta de servicios:", data);
-            setServicios(data.data || []); 
+            setAtSer(data.data || []); 
             setLoading(false);
         })
         .catch((err) => {
@@ -58,8 +55,8 @@ const Servicio: React.FC = () => {
     }, [idAtencion]); 
 
 
-    const handleModificar = (codServicio: number) => {
-        window.location.href = `/atencion/modificarServicio/${codServicio}`;
+    const handleModificar = (idAtSer: number) => {
+        window.location.href = `/atencion/modificarAtSer/${idAtSer}`;
     };
 
 
@@ -79,19 +76,15 @@ const Servicio: React.FC = () => {
                 <tr>
                 <th>ID</th>
                 <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Precio</th>
                 </tr>
             </thead>
             <tbody>
-                {servicios.map((s) => (
-                <tr key={s.codServicio}>
-                    <td>{s.codServicio}</td>
-                    <td>{s.nombreServicio}</td>
-                    <td>{s.descripcion}</td>
-                    <td>{s.precio}</td>
+                {atSers.map((as) => (
+                <tr key={as.idAtSer}>
+                    <td>{as.servicio.codServicio}</td>
+                    <td>{as.servicio.nombreServicio}</td>
                     <td>
-                    <button className="action-button update" onClick={() => handleModificar(s.codServicio)}>
+                    <button className="action-button update" onClick={() => handleModificar(as.idAtSer)}>
                         modificar
                     </button>
         
@@ -103,6 +96,6 @@ const Servicio: React.FC = () => {
         )}
         </div>
     );
-};
+}
 
-export default Servicio;
+export default serviciosDeAtencion;

@@ -8,6 +8,7 @@ import CrearCategoria from "./components/Admin/categoria/CrearCategoria.tsx";
 import ActualizarCategoria from "./components/Admin/categoria/ActualizarCategoria.tsx";
 import Atencion from "./components/Admin/atencion/Atencion.tsx";
 import AtencionServicio from "./components/Admin/atencion/ServiciosDeAtencion.tsx";
+// import ModificarAtSer from "./components/Admin/atencion/modificarAtSer.tsx";
 import Servicio from "./components/home/Servicio.tsx";
 
 
@@ -25,6 +26,7 @@ function App() {
         <Route path="/categoria/actualizar/:idCategoria" element={<ActualizarCategoria />}/>
         <Route path="/atencion" element={<Atencion/>}/>
         <Route path="/atencion/serviciosDeAtencion/:idAtencion" element={<AtencionServicio/>}/>
+        {/* <Route path="/atencion/modificarAtSer/:idAtSer" element={<ModificarAtSer/>}/> */}
       </Routes>
     </Router>
   );
