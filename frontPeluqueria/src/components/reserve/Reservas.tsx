@@ -86,6 +86,21 @@ useEffect(() => {
 
   return (
     <div className="col-lg-8 my-4">
+      <div className="reservas-steps mb-4">
+        <span className={step === 1 ? "current" : step > 1 ? "active" : ""}>
+          Servicios <i className="bi bi-chevron-right"></i>
+        </span>
+        <span className={step === 2 ? "current" : step > 2 ? "active" : ""}>
+          Profesional <i className="bi bi-chevron-right"></i>
+        </span>
+        <span className={step === 3 ? "current" : step > 3 ? "active" : ""}>
+          Hora <i className="bi bi-chevron-right"></i>
+        </span>
+        <span className={step === 4 ? "current" : ""}>
+          Confirmar <i className="bi bi-chevron-right"></i>
+        </span>
+      </div>
+
       {step === 1 && (
         <>
           <h2>Servicios</h2>
@@ -150,43 +165,44 @@ useEffect(() => {
     />
     <h4 className="mt-4">Horarios disponibles</h4>
 
-    <div className="d-flex flex-wrap gap-2">
-      {bloquesDia.length > 0 ? (
-        bloquesDia.map((b, i) => {
-          const ocupado = b.estado === "ocupado";
+    <ul className="list-group">
+      {bloquesDisponibles.length > 0 ? (
+        bloquesDisponibles.map((bloque, i) => {
           const seleccionado = bloquesSeleccionados.some(
-            sel => sel.inicio === b.hora_inicio
+            sel => sel.inicio === bloque.hora_inicio && sel.fin === bloque.hora_fin
           );
 
           return (
-            <button
+            <motion.li
               key={i}
-              className={`btn ${
-                ocupado
-                  ? "btn-secondary" // gris para ocupados
-                  : seleccionado
-                  ? "btn-primary"   // azul sólido si está elegido
-                  : "btn-outline-primary" // borde azul si está libre
-              }`}
-              disabled={ocupado}
-              onClick={() => {
-                if (!ocupado) {
-                  setBloquesSeleccionados([
-                    { inicio: b.hora_inicio, fin: b.hora_fin }
-                  ]);
-                }
-              }}
+              className="reservas-servicio-item d-flex justify-content-between align-items-center mb-3 p-3 border rounded"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.3, delay: i * 0.05 }}
             >
-              {b.hora_inicio} - {b.hora_fin}
-            </button>
+              <div>
+                <span className="fw-bold">{bloque.hora_inicio} - {bloque.hora_fin}</span>
+              </div>
+              <button
+                type="button"
+                className={`servicio-btn ${seleccionado ? "selected" : ""}`}
+                onClick={() => {
+                  setBloquesSeleccionados([{ inicio: bloque.hora_inicio, fin: bloque.hora_fin }]);
+                }}
+              >
+                {seleccionado ? "-" : "+"}
+              </button>
+            </motion.li>
           );
         })
       ) : (
         <p>No hay horarios para este día</p>
       )}
-    </div>
+    </ul>
   </div>
 )}
+
     </div>
   );
 }

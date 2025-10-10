@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "../styles/Reservas.css";
-import Footer from "../components/general/Footer";
-import Reservas from "../components/reserve/Reservas";
+import Footer from "../components/general/Footer.tsx";
+import Reservas from "../components/reserve/Reservas.tsx";
 import Precio from "../components/reserve/Precio.tsx";
 import type { ServicioItem } from "../components/home/Servicio.tsx";
 import type { PeluqueroItem } from "../components/home/Peluqueros.tsx";
@@ -72,8 +72,6 @@ function Reserve() {
               diaSeleccionado={diaSeleccionado}
               setDiaSeleccionado={setDiaSeleccionado}
             />
-
-
             <Precio
               peluquero={peluqueroSeleccionado}
               bloquesSeleccionados={bloquesSeleccionados}
@@ -84,18 +82,6 @@ function Reserve() {
               diaSeleccionado={diaSeleccionado}
             />
           </div>
-
-          <button
-            className="logout-button"
-            onClick={() => {
-              localStorage.removeItem("token");
-              localStorage.removeItem("type");
-              localStorage.removeItem("nombre");
-              window.location.href = "/";
-            }}
-          >
-            Cerrar sesión
-          </button>
         </section>
       </main>
       <Footer />

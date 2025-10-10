@@ -1,5 +1,6 @@
 import Foto3 from "../../assets/foto3.avif";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 export interface PeluqueroItem {
   idPersona: number;
@@ -15,43 +16,48 @@ export function Estilista() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-useEffect(() => {
-  fetch("http://localhost:3000/api/persona/peluquero/findAllPeluquero")
-    .then(res => {
-      if (!res.ok) throw new Error("Error al cargar los peluqueros");
-      return res.json();
-    })
-    .then((data) => {
-      console.log(data);
-      setPeluqueros(data.data || data);
-    })
-    .catch((err) => setError(err.message))
-    .finally(() => setLoading(false));
-}, []);
+  useEffect(() => {
+    fetch("http://localhost:3000/api/persona/peluquero/findAllPeluquero")
+      .then(res => {
+        if (!res.ok) throw new Error("Error al cargar los peluqueros");
+        return res.json();
+      })
+      .then((data) => {
+        setPeluqueros(data.data || data);
+      })
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
 
+  if (loading) return <p>Cargando peluqueros...</p>;
+  if (error) return <p>Error: {error}</p>;
 
-if (loading) return <p>Cargando peluqueros...</p>;
-if (error) return <p>Error: {error}</p>;
-
-return (
-  <section className="container text-center my-4">
-    <h2 className="mb-4">Peluqueros</h2>
-    <div className="row justify-content-center">
-      {peluqueros.map((peluquero, index) => (
-        <div key={index} className="col-6 col-md-3 mb-4">
-          <div>
-            <img
-              src={Foto3}
-              className="rounded-circle"
-              style={{ width: "120px", height: "120px", objectFit: "cover" }}
-            />
-          </div>
-          <h5 className="mt-3">{peluquero.nombre}</h5>
-        </div>
-      ))}
-    </div>
-  </section>
-);
+  return (
+    <section className="container text-center my-4">
+      <h2 className="mb-4">Peluqueros</h2>
+      <div className="row justify-content-center">
+        {peluqueros.map((peluquero, index) => (
+          <motion.div
+            key={index}
+            className="col-6 col-md-3 mb-4 d-flex justify-content-center"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <div className="d-flex flex-column align-items-center text-center">
+              <motion.img
+                src={Foto3}
+                className="rounded-circle mb-2"
+                style={{ width: "120px", height: "120px", objectFit: "cover", cursor: "pointer" }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.8 }}
+              />
+              <h5 className="mt-2">{peluquero.nombre}</h5>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  );
 }
 
 export default Estilista;

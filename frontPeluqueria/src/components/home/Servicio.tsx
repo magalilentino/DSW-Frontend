@@ -55,7 +55,7 @@ function Servicio() {
                 className="home-servicio-item d-flex justify-content-between align-items-center mb-3"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.2 }} // se repite al entrar/salir
+                viewport={{ once: false, amount: 0.2 }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
               >
                 <div>
@@ -66,7 +66,9 @@ function Servicio() {
                   </p>
                   <small>{s.precio} ARS</small>
                 </div>
-                <button className="home-btn-reservar">Reservar</button>
+                <button className="home-btn-reservar" onClick={() => navigate("/auth")}>     
+                  Reservar
+                </button>
               </motion.li>
             ))}
           </ul>
