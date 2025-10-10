@@ -14,21 +14,23 @@ interface Persona {
 }
 
 interface Servicio {
-  idServicio: number;
-  nombre: string;
+  codServicio: number;
+  nombreServicio: string;
   descripcion?: string;
+  cantTurnos?: number;
+  precio?: number;
 }
 
 interface AtencionServicio {
   idAtSer: number;
-  servicio: Servicio;
+  servicio?: Servicio; // puede ser undefined
 }
 
 interface Atencion {
   idAtencion: number;
   fecha: string;
   estado: "pendiente" | "finalizado" | "cancelado";
-  atencionServicios: AtencionServicio[];
+  atencionServicios?: AtencionServicio[]; // puede ser undefined
 }
 
 export default function MiPerfil() {
@@ -134,6 +136,14 @@ export default function MiPerfil() {
   if (loading) return <div className="perfil-container">Cargando datos...</div>;
   if (error) return <div className="perfil-container text-danger">Error: {error}</div>;
 
+  const renderServicios = (atencion: Atencion) => {
+    const servicios = atencion.atencionServicios ?? [];
+    if (servicios.length === 0) return <li>Sin servicios asociados</li>;
+    return servicios.map(as => (
+      <li key={as.idAtSer}>{as.servicio?.nombreServicio ?? "Servicio no disponible"}</li>
+    ));
+  };
+
   return (
     <div className="perfil-container">
       {/* Panel izquierdo con histórico y pendientes */}
@@ -144,18 +154,10 @@ export default function MiPerfil() {
             <p>No tienes atenciones pasadas.</p>
           ) : (
             <ul>
-              {historico.map((a) => (
+              {historico.map(a => (
                 <li key={a.idAtencion}>
                   {new Date(a.fecha).toLocaleDateString()}
-                  <ul>
-                    {a.atencionServicios?.length > 0 ? (
-                      a.atencionServicios.map((as) => (
-                        <li key={as.idAtSer}>{as.servicio?.nombre}</li>
-                      ))
-                    ) : (
-                      <li>Sin servicios asociados</li>
-                    )}
-                  </ul>
+                  <ul>{renderServicios(a)}</ul>
                 </li>
               ))}
             </ul>
@@ -166,18 +168,10 @@ export default function MiPerfil() {
             <p>No tienes atenciones pendientes.</p>
           ) : (
             <ul>
-              {pendientes.map((a) => (
+              {pendientes.map(a => (
                 <li key={a.idAtencion}>
-                  {new Date(a.fecha).toLocaleDateString()} ({a.estado})
-                  <ul>
-                    {a.atencionServicios?.length > 0 ? (
-                      a.atencionServicios.map((as) => (
-                        <li key={as.idAtSer}>{as.servicio?.nombre}</li>
-                      ))
-                    ) : (
-                      <li>Sin servicios asociados</li>
-                    )}
-                  </ul>
+                  {new Date(a.fecha).toLocaleDateString()}
+                  <ul>{renderServicios(a)}</ul>
                 </li>
               ))}
             </ul>

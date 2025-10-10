@@ -35,9 +35,7 @@ export default function Reservas({
   const [peluqueros, setPeluqueros] = useState<PeluqueroItem[]>([]);
   const [bloquesDisponibles, setBloquesDisponibles] = useState<{ hora_inicio: string; hora_fin: string }[]>([]);
   const totalDuracionMin = serviciosSeleccionados.reduce((sum, s) => sum + s.cantTurnos * 45, 0);
-  const [bloquesDia, setBloquesDia] = useState<{ hora_inicio: string; hora_fin: string; estado: "libre" | "ocupado" }[]>([]);
-
-  
+  const [, setBloquesDia] = useState<{ hora_inicio: string; hora_fin: string; estado: "libre" | "ocupado" }[]>([]);
 
 useEffect(() => {
   const fetchBloquesDia = async () => {
@@ -157,52 +155,52 @@ useEffect(() => {
           ))}
         </div>
       )}
-{step === 3 && peluqueroSeleccionado && (
-  <div>
-    <CalendarioDias
-      diaSeleccionado={diaSeleccionado}
-      onSelectDia={setDiaSeleccionado}
-    />
-    <h4 className="mt-4">Horarios disponibles</h4>
+      {step === 3 && peluqueroSeleccionado && (
+        <div>
+          <CalendarioDias
+            diaSeleccionado={diaSeleccionado}
+            onSelectDia={setDiaSeleccionado}
+          />
+          <h4 className="mt-4">Horarios disponibles</h4>
 
-    <ul className="list-group">
-      {bloquesDisponibles.length > 0 ? (
-        bloquesDisponibles.map((bloque, i) => {
-          const seleccionado = bloquesSeleccionados.some(
-            sel => sel.inicio === bloque.hora_inicio && sel.fin === bloque.hora_fin
-          );
+          <ul className="list-group">
+            {bloquesDisponibles.length > 0 ? (
+              bloquesDisponibles.map((bloque, i) => {
+                const seleccionado = bloquesSeleccionados.some(
+                  sel => sel.inicio === bloque.hora_inicio && sel.fin === bloque.hora_fin
+                );
 
-          return (
-            <motion.li
-              key={i}
-              className="reservas-servicio-item d-flex justify-content-between align-items-center mb-3 p-3 border rounded"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.3, delay: i * 0.05 }}
-            >
-              <div>
-                <span className="fw-bold">{bloque.hora_inicio} - {bloque.hora_fin}</span>
-              </div>
-              <button
-                type="button"
-                className={`servicio-btn ${seleccionado ? "selected" : ""}`}
-                onClick={() => {
-                  setBloquesSeleccionados([{ inicio: bloque.hora_inicio, fin: bloque.hora_fin }]);
-                }}
-              >
-                {seleccionado ? "-" : "+"}
-              </button>
-            </motion.li>
-          );
-        })
-      ) : (
-        <p>No hay horarios para este día</p>
+                return (
+                  <motion.li
+                    key={i}
+                    className="reservas-servicio-item d-flex justify-content-between align-items-center mb-3 p-3 border rounded"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.3, delay: i * 0.05 }}
+                  >
+                    <div>
+                      <span className="fw-bold">{bloque.hora_inicio} - {bloque.hora_fin}</span>
+                    </div>
+                    <button
+                      type="button"
+                      className={`servicio-btn ${seleccionado ? "selected" : ""}`}
+                      onClick={() => {
+                        setBloquesSeleccionados([{ inicio: bloque.hora_inicio, fin: bloque.hora_fin }]);
+                      }}
+                    >
+                      {seleccionado ? "-" : "+"}
+                    </button>
+                  </motion.li>
+                );
+              })
+            ) : (
+              <p>No hay horarios para este día</p>
+            )}
+          </ul>
+        </div>
       )}
-    </ul>
-  </div>
-)}
-
-    </div>
-  );
-}
+      {step === 4}
+          </div>
+        );
+      }

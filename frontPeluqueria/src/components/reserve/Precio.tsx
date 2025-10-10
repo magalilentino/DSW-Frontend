@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { ServicioItem } from "../home/Servicio.tsx";
 import type { PeluqueroItem } from "../home/Peluqueros.tsx";
 
@@ -9,6 +11,7 @@ interface PrecioProps {
   serviciosSeleccionados: ServicioItem[];
   setServiciosSeleccionados: React.Dispatch<React.SetStateAction<ServicioItem[]>>;
   diaSeleccionado: string;
+  setStep: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export default function Precio({
@@ -19,7 +22,11 @@ export default function Precio({
   serviciosSeleccionados,
   setServiciosSeleccionados,
   diaSeleccionado,
+  setStep,
 }: PrecioProps) {
+  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
+
   const totalPrecio = serviciosSeleccionados.reduce((sum, s) => sum + (s.precio ?? 0), 0);
   const totalDuracionMin = serviciosSeleccionados.reduce((sum, s) => sum + s.cantTurnos * 45, 0);
   const horas = Math.floor(totalDuracionMin / 60);
@@ -33,9 +40,9 @@ export default function Precio({
     );
   };
 
-  const confirmarReserva = async () => {
+const confirmarReserva = async () => {
   const clienteIdString = localStorage.getItem("idPersona");
-  const token = localStorage.getItem("token"); 
+  const token = localStorage.getItem("token");
 
   if (
     !peluquero ||
@@ -63,7 +70,7 @@ export default function Precio({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // 👈 clave
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(payload),
     });
@@ -72,15 +79,15 @@ export default function Precio({
       throw new Error(`Error en la petición: ${res.statusText}`);
     }
 
-    const data = await res.json();
-    console.log("Atención creada:", data);
-    alert(`¡Reserva confirmada con éxito! ID: ${data.atencionId}`);
+    await res.json();
+
+    setStep(4);
+    setShowModal(true);
   } catch (err) {
     console.error("Error al crear atención:", err);
     alert("Hubo un error al confirmar la reserva. Inténtalo de nuevo.");
   }
 };
-
 
   const handleContinue = () => {
     if (step === 3) {
@@ -94,6 +101,11 @@ export default function Precio({
     (step === 1 && serviciosSeleccionados.length === 0) ||
     (step === 2 && !peluquero) ||
     (step === 3 && bloquesSeleccionados.length === 0);
+
+  const closeModalAndGoHome = () => {
+    setShowModal(false);
+    navigate("/"); // Redirige al home
+  };
 
   return (
     <div className="col-lg-4">
@@ -145,6 +157,50 @@ export default function Precio({
       >
         {step === 3 ? "Confirmar Reserva" : "Continuar"}
       </button>
+
+{showModal && (
+  <>
+    {/* Fondo oscuro */}
+    <div
+      className="modal-backdrop show"
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundColor: "rgba(0,0,0,0.5)",
+        zIndex: 1040,
+      }}
+    />
+
+    <div
+      className="modal show d-block"
+      tabIndex={-1}
+      style={{ zIndex: 1050 }}
+    >
+      <div className="modal-dialog modal-dialog-centered">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">Reserva Confirmada</h5>
+          </div>
+          <div className="modal-body">
+            <p>¡Tu reserva se ha confirmado con éxito!</p>
+          </div>
+          <div className="modal-footer">
+            <button
+              type="button"
+              className="servicio-continuar-btn w-100"
+              onClick={closeModalAndGoHome}
+            >
+              Volver al inicio
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </>
+)}
     </div>
   );
 }

@@ -15,7 +15,6 @@ function Reserve() {
   const [bloquesSeleccionados, setBloquesSeleccionados] = useState<{ inicio: string; fin: string }[]>([]);
   const [diaSeleccionado, setDiaSeleccionado] = useState<string>("");
 
-  // Cargar servicios
   useEffect(() => {
     const fetchServicios = async () => {
       try {
@@ -29,8 +28,6 @@ function Reserve() {
     };
     fetchServicios();
   }, []);
-
-  const onNextStep = () => setStep(prev => prev + 1);
 
   return (
     <>
@@ -75,11 +72,12 @@ function Reserve() {
             <Precio
               peluquero={peluqueroSeleccionado}
               bloquesSeleccionados={bloquesSeleccionados}
+              onNextStep={() => setStep(prev => prev + 1)}
               step={step}
-              onNextStep={onNextStep}
               serviciosSeleccionados={serviciosSeleccionados}
               setServiciosSeleccionados={setServiciosSeleccionados}
               diaSeleccionado={diaSeleccionado}
+              setStep={setStep}
             />
           </div>
         </section>
