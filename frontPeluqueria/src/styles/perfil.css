@@ -1,0 +1,147 @@
+.perfil-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #212121;
+}
+
+.perfil-left-side {
+  flex: 1;
+  
+  background-size: cover;
+}
+
+.perfil-right-side {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+}
+
+.perfil-box {
+  width: 550px;
+  max-width: 92%;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.perfil-box h2 {
+  margin-bottom: 20px;
+  font-family: 'Poppins', 'Roboto', sans-serif;
+  font-weight: 700;
+  color: #111;
+}
+
+.perfil-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+  object-fit: cover;
+  border: 3px solid #000;
+}
+
+.perfil-info {
+  text-align: left;
+  font-family: 'Poppins', 'Roboto', sans-serif;
+  font-size: 16px;
+  color: #333;
+  line-height: 1.6;
+}
+
+.perfil-info p {
+  margin: 8px 0;
+}
+
+@media (max-width: 960px) {
+  .perfil-left-side {
+    display: none;
+  }
+  .perfil-right-side {
+    flex: 1 1 100%;
+  }
+}
+
+.perfil-form input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-family: 'Poppins', 'Roboto', sans-serif;
+  font-size: 15px;
+}
+
+.perfil-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.auth-button-cancel {
+  flex: 1;
+  padding: 12px;
+  background: #ccc;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-family: 'Poppins', 'Roboto', sans-serif;
+}
+
+.auth-button-cancel:hover {
+  background: #aaa;
+}
+
+.auth-button-cancel {
+  flex: 1;
+  padding: 12px;
+  background: #e0e0e0;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-family: 'Poppins', 'Roboto', sans-serif;
+  transition: background 0.2s ease;
+}
+
+.auth-button-cancel:hover {
+  background: #bdbdbd;
+}
+
+.perfil-left-side {
+  flex: 1;
+  background-color: #f5f5f5; /* en vez de imagen */
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.perfil-left-content {
+  max-width: 90%;
+  margin: 0 auto;
+  font-family: 'Poppins', 'Roboto', sans-serif;
+  color: #333;
+}
+
+.perfil-left-content h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.perfil-left-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+}
+
+.perfil-left-content li {
+  padding: 6px 0;
+  border-bottom: 1px solid #ddd;
+  font-size: 14px;
+}

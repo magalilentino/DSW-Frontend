@@ -19,7 +19,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthData | null>(null);
 
-  // 🔹 Restaurar sesión desde localStorage al montar
   useEffect(() => {
     const token = localStorage.getItem("token");
     const type = localStorage.getItem("type");
