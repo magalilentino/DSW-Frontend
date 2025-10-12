@@ -1,20 +1,18 @@
-/* Contenedor principal de la sección de presentación */
+/*Galeria*/
 .home-presentacion {
   width: 100%;
   margin-bottom: 40px;
 }
 
-/* Contenedor de la galería de fotos en la sección de presentación */
 .home-galeria {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 12px;
-  width: 85%;
+  /*width: 85%;*/
   max-width: 1600px;
   margin: 0 auto;
 }
 
-/* Estilo de las imágenes dentro de la galería izquierda y derecha */
 .home-left img,
 .home-right img {
   width: 100%;
@@ -23,35 +21,90 @@
   border-radius: 12px;
 }
 
-/* Contenedor derecho dentro de la galería: organiza imágenes en dos filas */
 .home-right {
   display: grid;
   gap: 12px;
   grid-template-rows: 1fr 1fr;
 }
 
-/* Media query: ocultar la galería en pantallas pequeñas */
+.home-galeria-animate {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.home-button-galeria {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: white;
+  font-size: 3rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 10px 20px;
+}
+
+.home-button-prev {
+  left: 20px;
+}
+
+.home-button-next {
+  right: 20px;
+}
+
 @media (max-width: 768px) {
   .home-galeria {
     display: none;
   }
 }
+/*Galeria*/
 
-/* Contenedor de la sección de servicios */
+/*servicio*/
+.btn-reset {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.skeleton {
+  background: #e0e0e0;
+  border-radius: 4px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+.skeleton-title { width: 60%; height: 24px; margin-bottom: 8px; }
+.skeleton-text { width: 80%; height: 16px; margin-bottom: 8px; }
+.skeleton-text-small { width: 40%; height: 12px; }
+
+@keyframes pulse {
+  0% { background-color: #e0e0e0; }
+  50% { background-color: #f0f0f0; }
+  100% { background-color: #e0e0e0; }
+}
+
 .home-servicio {
   width: 85%;
   max-width: 1600px;
   margin: 0 auto;
 }
 
-/* Párrafos dentro de la sección de servicios */
 .home-servicio p {
   color: #000000;
   font-size: 15px;
   font-family: sans-serif;
 }
 
-/* Botón individual de "Reservar" */
 .home-btn-reservar {
   padding: 6px 14px;
   border: 1px solid #dddddd;
@@ -62,12 +115,10 @@
   transition: 0.5s;
 }
 
-/* Hover del botón "Reservar" */
 .home-btn-reservar:hover {
   border: 1px solid #cccccc;
 }
 
-/* Botón "Ver todo" */
 .home-btn-todo {
   padding: 5px 15px;
   border: 2px solid #dddddd;
@@ -78,12 +129,10 @@
   transition: 0.4s;
 }
 
-/* Hover del botón "Ver todo" */
 .home-btn-todo:hover {
   background-color: #dddddd;
 }
 
-/* Botón de "Reservar general" que ocupa todo el ancho */
 .home-btn-reservar-general {
   width: 100%;
   padding: 10px;
@@ -95,12 +144,10 @@
   margin-bottom: 10px;
 }
 
-/* Hover del botón general */
 .home-btn-reservar-general:hover {
   background-color: #272727;
 }
 
-/* Badge (etiqueta pequeña) con borde y color verde */
 .home-badge-outline-success {
   color: #218a01;
   border: 2px solid #218a01;
@@ -154,3 +201,6 @@
   border-color: #cccccc;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
+
+
+

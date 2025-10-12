@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react"
 import { useNavigate } from "react-router-dom";
+import { HORARIOS, DIRECCION, GOOGLE_MAPS_LINK } from "./Constants";
 
 export interface ServicioItem {
   codServicio: number;
@@ -9,20 +10,19 @@ export interface ServicioItem {
   precio: number;
 }
 
+const formatDuration = (cantTurnos: number): string => {
+  const totalMinutes = cantTurnos * 45;
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
+  if (hours > 0) {
+    return `${hours} h ${minutes > 0 ? `${minutes} min` : ''}`;
+  }
+  return `${minutes} min`;
+};
+
 function Servicio() {
-
   const [showHorarios, setShowHorarios] = useState(false);
-
-  const horarios = [
-    "Lunes: 9:00 - 18:00",
-    "Martes: 9:00 - 18:00",
-    "Miércoles: 9:00 - 18:00",
-    "Jueves: 9:00 - 18:00",
-    "Viernes: 9:00 - 20:00",
-    "Sábado: 9:00 - 14:00",
-    "Domingo: Cerrado",
-  ];
-
   const [servicios, setServicios] = useState<ServicioItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +39,28 @@ function Servicio() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <p>Cargando servicios...</p>;
+  if (loading) {
+  return (
+    <section className="home-servicio my-4">
+      <div className="row">
+        <div className="col-lg-8">
+          <h2>Servicios</h2>
+          <ul className="list-group">
+            {[...Array(4)].map((_, i) => (
+              <li key={i} className="home-servicio-item d-flex justify-content-between align-items-center mb-3 p-3">
+                <div style={{ width: '100%' }}>
+                  <div className="skeleton skeleton-title"></div>
+                  <div className="skeleton skeleton-text"></div>
+                  <div className="skeleton skeleton-text-small"></div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
   if (error) return <p>Error: {error}</p>;
   if (servicios.length === 0) return <p>No hay servicios disponibles.</p>;
 
@@ -51,7 +72,7 @@ function Servicio() {
           <ul className="list-group">
             {servicios.slice(0, 4).map((s, i) => (
               <motion.li
-                key={i}
+                key={s.codServicio}
                 className="home-servicio-item d-flex justify-content-between align-items-center mb-3"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -61,8 +82,7 @@ function Servicio() {
                 <div>
                   <h5>{s.nombreServicio}</h5>
                   <p className="mb-1">
-                    Duración: {Math.floor((s.cantTurnos * 45) / 60)} h{" "}  
-                    {(s.cantTurnos * 45) % 60} min
+                    Duración: {formatDuration(s.cantTurnos)} 
                   </p>
                   <small>{s.precio} ARS</small>
                 </div>
@@ -101,30 +121,33 @@ function Servicio() {
               Reservar ahora
             </button>
             <div>
-              <p
-                style={{ cursor: "pointer" }}
+              <button
+                className="btn-reset text-start d-block" // Clase para resetear estilos de botón
                 onClick={() => setShowHorarios(!showHorarios)}
+                aria-expanded={showHorarios}
+                aria-controls="horarios-list"
               >
                 <i className="bi-clock me-1"></i>{" "}
                 <span className="text-success">Abierto</span>
-                <i className={`ms-2 ${showHorarios ? "bi-caret-up" : "bi-caret-down"}`}></i>
-              </p>
+                <i className={`ms-2 bi ${showHorarios ? "bi-caret-up-fill" : "bi-caret-down-fill"}`}></i>
+              </button>
 
               {showHorarios && (
                 <motion.ul
+                  id="horarios-list"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  {horarios.map((h, i) => (
-                    <li key={i}>{h}</li>
+                  {HORARIOS.map((h, i) => (
+                    <li key={i}>{h.display}</li>
                   ))}
                 </motion.ul>
               )}
             </div>
             <p>
-              <i className="bi-geo-alt"></i> Calle 123, Rosario, Santa Fe{" "}
-              <a href="#" className="link-underline link-underline-opacity-0">
+              <i className="bi-geo-alt"></i> {DIRECCION}{" "}
+              <a href={GOOGLE_MAPS_LINK} target="_blank" rel="noopener noreferrer" className="link-underline link-underline-opacity-0">
                 Cómo llegar
               </a>
             </p>
