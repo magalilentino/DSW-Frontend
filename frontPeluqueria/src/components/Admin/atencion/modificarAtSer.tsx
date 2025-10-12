@@ -51,7 +51,7 @@ const ModificarAtSer: React.FC = () => {
             
             try {
                 const url = `http://localhost:3000/api/producto/listarProductos?${query.toString()}`;
-
+                //const url = `http://localhost:3000/api/producto`;
                 const res = await fetch(url, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
@@ -127,7 +127,7 @@ const ModificarAtSer: React.FC = () => {
 
         try {
             // Usamos el endpoint que definimos previamente
-            const response = await fetch(`http://localhost:3000/api/atenciones/${idAtSer}/productos`, { 
+            const response = await fetch(`http://localhost:3000/api/prodUt/registrarProdsUt/${idAtSer}`, { 
                 method: 'PATCH', // Para modificar la lista de productos asociados
                 headers: {
                     'Content-Type': 'application/json',
@@ -196,7 +196,7 @@ const ModificarAtSer: React.FC = () => {
                                 <input
                                     type="number"
                                     min="0"
-                                    step="0.1"
+                                    step="1"
                                     placeholder="Ingresa cantidad"
                                     value={getCantidad(p.idProducto)}
                                     onChange={(e) => handleCantidadChange(p.idProducto, e.target.value)}
