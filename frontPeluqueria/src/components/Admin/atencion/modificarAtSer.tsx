@@ -39,6 +39,7 @@ const ModificarAtSer: React.FC = () => {
     const [filtroCategoria, setFiltroCategoria] = useState("");
     const [tonosDisponibles, setTonosDisponibles] = useState<Tono[]>([]);
     const [tonoSeleccionadoId, setTonoSeleccionadoId] = useState<number | null>(null);
+    const [idAtencion, setIdAtencion] = useState<string | null>(null); 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
@@ -91,12 +92,37 @@ const ModificarAtSer: React.FC = () => {
         }
     }, [token]);
 
+    const fetchAtencionId = async () => {
+        try {
+            // 🛑 AJUSTA ESTA URL a tu endpoint para obtener el detalle de AtSer
+            // Debe devolver un objeto que contenga { ..., idAtencion: number }
+            const res = await fetch(`http://localhost:3000/api/atSer/${idAtSer}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            
+            if (!res.ok) throw new Error("Fallo la carga del AtSer.");
+
+            const data = await res.json();
+            
+            // 🛑 AJUSTA 'data.idAtencion' si el campo se llama diferente en tu backend
+            if (data.idAtencion) {
+                setIdAtencion(data.idAtencion.toString()); 
+            } else {
+                console.error("No se encontró idAtencion en la respuesta del AtSer.");
+            }
+            
+        } catch (err) {
+            console.error("Error al obtener el idAtencion:", err);
+            // Si falla, el botón de "Volver" no funcionará, o usará '#'
+        }
+    };
+
     // Ejecuta todos los fetches
     useEffect(() => {
         setLoading(true);
         setError("");
         
-        Promise.all([fetchProductos(), fetchTonos()])
+        Promise.all([fetchProductos(), fetchTonos(), fetchAtencionId()])
             .catch(err => console.error("Error en Promise.all:", err))
             .finally(() => setLoading(false));
             
@@ -180,6 +206,16 @@ const ModificarAtSer: React.FC = () => {
         setTonoSeleccionadoId(idTono);
     };
 
+    const handleBack = () => {
+        if (idAtencion) {
+            // Construye la URL de destino usando el idAtencion recuperado
+            navigate(`/atencion/serviciosDeAtencion/${idAtencion}`);
+        } else {
+            alert("No se pudo determinar la Atención para regresar.");
+            // Alternativa segura: navigate(-1)
+        }
+    };
+
     // ---------------------------------------------------------------------
     // 4. SUBMIT: GUARDAR PRODUCTOS UTILIZADOS
     // ---------------------------------------------------------------------
@@ -240,6 +276,16 @@ const ModificarAtSer: React.FC = () => {
     return (
         <div className="modificar-productos-page">
             <h2>Cargar datos del servicio realizado #{idAtSer}</h2>
+
+            <button
+                className="reservas-back-button"
+                onClick={handleBack} // Llama a la función que usa navigate
+                disabled={!idAtencion} // Deshabilitar si aún no tenemos el ID
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                    <path d="M15 18l-6-6 6-6" />
+                </svg>
+            </button>
             
             {/* Filtros */}
             <div className="filtros">
