@@ -120,18 +120,20 @@ export default function MiPerfil() {
     }
   };
 
-  if (!user) {
-    return (
-      <div className="perfil-container">
-        <div className="perfil-box">
-          <h2>Debes iniciar sesión para ver tu perfil.</h2>
+if (!user) {
+  return (
+    <div className="perfil-container">
+      <div className="perfil-box">
+        <h2>Debes iniciar sesión para ver tu perfil.</h2>
+        <div className="buttons-usser">
           <button className="auth-button-cancel" onClick={() => navigate("/")}>
             ⬅ Volver al Home
           </button>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   if (loading) return <div className="perfil-container">Cargando datos...</div>;
   if (error) return <div className="perfil-container text-danger">Error: {error}</div>;
@@ -156,8 +158,8 @@ export default function MiPerfil() {
             <ul>
               {historico.map(a => (
                 <li key={a.idAtencion}>
-                  {new Date(a.fecha).toLocaleDateString()}
-                  <ul>{renderServicios(a)}</ul>
+                  <strong>Atencion para el {new Date(a.fecha).toLocaleDateString()}</strong>
+                  <ul><strong>Servicios:</strong> {renderServicios(a)}</ul>
                 </li>
               ))}
             </ul>
@@ -170,8 +172,8 @@ export default function MiPerfil() {
             <ul>
               {pendientes.map(a => (
                 <li key={a.idAtencion}>
-                  {new Date(a.fecha).toLocaleDateString()}
-                  <ul>{renderServicios(a)}</ul>
+                  <strong>Atencion para el {new Date(a.fecha).toLocaleDateString()}</strong>
+                  <ul><strong>Servicios:</strong> {renderServicios(a)}</ul>
                 </li>
               ))}
             </ul>
@@ -179,7 +181,6 @@ export default function MiPerfil() {
         </div>
       </div>
 
-      {/* Panel derecho con datos de perfil */}
       <div className="perfil-right-side">
         <div className="perfil-box">
           <h2>Mi Perfil</h2>
@@ -193,19 +194,20 @@ export default function MiPerfil() {
               <p><strong>Teléfono:</strong> {persona.telefono}</p>
               <p><strong>DNI:</strong> {persona.dni}</p>
               <p><strong>Tipo:</strong> {persona.type}</p>
-
-              <button
-                className="auth-button-usser"
-                onClick={() => setEditMode(true)}
-              >
-                Editar Perfil
-              </button>
-              <button
-                className="auth-button-cancel"
-                onClick={() => navigate("/")}
-              >
-                ⬅ Volver al Home
-              </button>
+              <div className="buttons-usser">
+                <button
+                  className="auth-button-usser"
+                  onClick={() => setEditMode(true)}
+                >
+                  Editar Perfil
+                </button>
+                <button
+                  className="auth-button-cancel"
+                  onClick={() => navigate("/")}
+                >
+                  ⬅ Volver al Home
+                </button>
+              </div>
             </div>
           )}
 
@@ -246,7 +248,6 @@ export default function MiPerfil() {
                 onChange={handleChange}
                 placeholder="DNI"
               />
-
               <div className="perfil-actions">
                 <button className="auth-button-usser" onClick={handleSave}>
                   Guardar
@@ -256,12 +257,6 @@ export default function MiPerfil() {
                   onClick={() => setEditMode(false)}
                 >
                   Cancelar
-                </button>
-                <button
-                  className="auth-button-cancel"
-                  onClick={() => navigate("/")}
-                >
-                  ⬅ Volver al Home
                 </button>
               </div>
             </div>

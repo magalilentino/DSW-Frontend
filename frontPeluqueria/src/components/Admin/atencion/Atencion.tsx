@@ -53,9 +53,10 @@ const Atencion: React.FC = () => {
         });
         setAtenciones((prev) => prev.filter((a) => a.idAtencion !== idAtencion));
         } catch {
-        alert("Error al eliminar la categoría.");
+        alert("Error al calcelar la atencion");
         }
     };
+
 
 
     return (

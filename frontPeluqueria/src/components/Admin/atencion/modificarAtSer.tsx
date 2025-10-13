@@ -50,10 +50,8 @@ const ModificarAtSer: React.FC = () => {
             if (filtroCategoria) query.append('idCategoria', filtroCategoria);
             
             try {
-                //const url = `http://localhost:3000/api/producto/listarProductos?${query.toString()}`;
-                const url = `http://localhost:3000/api/producto/}`;
-
-
+                const url = `http://localhost:3000/api/producto/listarProductos?${query.toString()}`;
+                //const url = `http://localhost:3000/api/producto`;
                 const res = await fetch(url, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
@@ -129,7 +127,7 @@ const ModificarAtSer: React.FC = () => {
 
         try {
             // Usamos el endpoint que definimos previamente
-            const response = await fetch(`http://localhost:3000/api/atenciones/${idAtSer}/productos`, { 
+            const response = await fetch(`http://localhost:3000/api/prodUt/registrarProdsUt/${idAtSer}`, { 
                 method: 'PATCH', // Para modificar la lista de productos asociados
                 headers: {
                     'Content-Type': 'application/json',
@@ -141,7 +139,7 @@ const ModificarAtSer: React.FC = () => {
             if (!response.ok) throw new Error('Error al guardar los productos utilizados.');
             
             alert('Detalles del servicio actualizados exitosamente.');
-            navigate(-1); // Volver a la lista de servicios
+            navigate(-1); // Volver a la lista de servicios    aca hay que poner registrar y guardar la atencion como finalizada 
             
         } catch (error) {
             console.error(error);
@@ -198,7 +196,7 @@ const ModificarAtSer: React.FC = () => {
                                 <input
                                     type="number"
                                     min="0"
-                                    step="0.1"
+                                    step="1"
                                     placeholder="Ingresa cantidad"
                                     value={getCantidad(p.idProducto)}
                                     onChange={(e) => handleCantidadChange(p.idProducto, e.target.value)}

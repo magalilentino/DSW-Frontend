@@ -37,7 +37,7 @@ function Galeria() {
         </div>
         <div className="home-right">
           {fotos.slice(1).map((foto, i) => (
-            <div key={i} className="foto">
+            <div key={i}>
               <img
                 src={foto.src}
                 alt={foto.alt}
@@ -50,39 +50,18 @@ function Galeria() {
         </div>
       </div>
 
-
       <AnimatePresence>
         {selected !== null && (
           <motion.div
-            className="lightbox-overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            className="home-galeria-animate"
             onClick={() => setSelected(null)}
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              width: "100vw",
-              height: "100vh",
-              background: "rgba(0,0,0,0.8)",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              zIndex: 1000,
-            }}
           >
             <button
+              className="home-button-galeria home-button-prev"
               onClick={(e) => { e.stopPropagation(); prevFoto(); }}
-              style={{
-                position: "absolute",
-                left: "20px",
-                color: "white",
-                fontSize: "2rem",
-                background: "transparent",
-                border: "none",
-                cursor: "pointer",
-              }}
             >
               ‹
             </button>
@@ -100,16 +79,8 @@ function Galeria() {
             />
 
             <button
+              className="home-button-galeria home-button-next"
               onClick={(e) => { e.stopPropagation(); nextFoto(); }}
-              style={{
-                position: "absolute",
-                right: "20px",
-                color: "white",
-                fontSize: "2rem",
-                background: "transparent",
-                border: "none",
-                cursor: "pointer",
-              }}
             >
               ›
             </button>
@@ -121,6 +92,3 @@ function Galeria() {
 }
 
 export default Galeria;
-
-
-
