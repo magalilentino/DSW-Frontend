@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 // import "../../styles/Atencion.css";
 
 interface Atencion {
@@ -14,7 +15,7 @@ const Atencion: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-
+const navigate = useNavigate();
 
     
     useEffect(() => {
@@ -46,18 +47,41 @@ const Atencion: React.FC = () => {
         window.location.href = `/atencion/serviciosDeAtencion/${idAtencion}`;
     };
 
+    // const handleCancelar = async (idAtencion: number) => {
+    //     try {
+    //         await fetch(`http://localhost:3000/api/atencion/cancelar/${idAtencion}`, {
+    //         method: "UPDATE",
+    //     });
+    //     setAtenciones((prev) => prev.filter((a) => a.idAtencion !== idAtencion));
+    //     } catch {
+    //     alert("Error al calcelar la atencion");
+    //     }
+    // };
+
+
+    
+    // Función para cancelar (actualizada para usar la ruta PATCH)
     const handleCancelar = async (idAtencion: number) => {
         try {
-            await fetch(`http://localhost:3000/api/atencion/cancelar/${idAtencion}`, {
-            method: "UPDATE",
-        });
-        setAtenciones((prev) => prev.filter((a) => a.idAtencion !== idAtencion));
-        } catch {
-        alert("Error al calcelar la atencion");
+            const token = localStorage.getItem("token");
+            const response = await fetch(`http://localhost:3000/api/atencion/cancelar/${idAtencion}`, {
+                method: "PATCH",
+                headers: { 
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json" }
+            });
+
+            if (!response.ok) throw new Error("Error al cancelar la atención.");
+
+            // Si es exitoso, remueve la atención de la lista pendiente
+            setAtenciones((prev) => prev.filter((a) => a.idAtencion !== idAtencion));
+            alert("Atención cancelada exitosamente.");
+            
+        } catch (error) {
+            console.error(error);
+            alert("Error al cancelar la atención.");
         }
     };
-
-
 
     return (
         <div className="atencion-page">

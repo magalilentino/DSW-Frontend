@@ -51,7 +51,6 @@ const ModificarAtSer: React.FC = () => {
             
             try {
                 const url = `http://localhost:3000/api/producto/listarProductos?${query.toString()}`;
-                //const url = `http://localhost:3000/api/producto`;
                 const res = await fetch(url, {
                     headers: { Authorization: `Bearer ${token}` },
                 });

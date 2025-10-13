@@ -59,6 +59,30 @@ const serviciosDeAtencion: React.FC = () => {
         window.location.href = `/atencion/modificarAtSer/${idAtSer}`;
     };
 
+        const handleFinalizarAtencion = async () => {
+        if (!idAtencion) return;
+
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`http://localhost:3000/api/atencion/finalizar/${idAtencion}`, {
+                method: "PATCH",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+
+            if (!response.ok) throw new Error("Error al finalizar la atención.");
+
+            // Si es exitoso, mostramos un mensaje y el botón para volver
+            alert("Atención y servicios registrados como finalizados exitosamente.");
+            
+            // Redirigir a la página principal de atenciones (o donde quieras)
+            window.location.href = `/atencion`;
+            
+        } catch (error) {
+            console.error("Error al finalizar atención:", error);
+            alert("Error al registrar la atención como finalizada.");
+        }
+    };
+
 
     return (
         <div className="servicio-page">
@@ -94,6 +118,11 @@ const serviciosDeAtencion: React.FC = () => {
             </tbody>
             </table>
         )}
+            <hr />
+            <button 
+                onClick={handleFinalizarAtencion}>
+                Registrar Atención como Finalizada
+            </button>
         </div>
     );
 }
