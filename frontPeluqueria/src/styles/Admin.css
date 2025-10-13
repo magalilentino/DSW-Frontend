@@ -12,6 +12,7 @@
   color: rgb(0, 0, 0);
   padding: 15px 30px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  
 }
 
 .navbar-left {
@@ -20,20 +21,64 @@
   gap: 15px;
 }
 
-
 .navbar-links {
   display: flex;
   gap: 20px;
+  position: relative;
+  overflow: visible;          /* si estaba hidden, el dropdown se corta */
 }
 
 .navbar-link {
-  color: rgb(0, 0, 0);
+  color: inherit;
   text-decoration: none;
   font-weight: 500;
+  padding: 10px 5px; 
+  display: inline-block;
+  overflow: visible
 }
 
 .navbar-link:hover {
   text-decoration: underline;
+}
+
+.navbar-item-container {
+  position: relative; 
+  display: inline-block;      /* importante para el posicionamiento absoluto del dropdown */
+}
+
+/* Contenedor del título y la flecha */
+.navbar-dropdown-trigger {
+    /* No es necesario display: flex si el link tiene display: inline-block */
+    cursor: pointer;
+}
+
+/* Estilos del menú desplegable */
+.custom-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 9999;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  border-radius: 6px;
+  pointer-events: auto; 
+}
+
+.custom-dropdown-menu .custom-dropdown-item {
+  padding: 10px 16px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.2s ease;
+}
+
+.custom-dropdown-menu .custom-dropdown-item:hover {
+  background-color: #f5f5f5;
+  transform: translateX(4px);
+  color: #007bff; /* azul suave */
 }
 
 .main-content {

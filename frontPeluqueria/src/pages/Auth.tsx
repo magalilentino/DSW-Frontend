@@ -1,8 +1,8 @@
 import "..//styles/Auth.css";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import Login from "../components/auth/Login";
-import Register from "../components/auth/Register";
+import Login from "../components/Auth/Login";
+import Register from "../components/Auth/Register";
 
 function Auth() {
   const location = useLocation();

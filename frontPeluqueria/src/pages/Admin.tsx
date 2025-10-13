@@ -5,19 +5,26 @@ import { Link } from "react-router-dom";
 
 
 const sections = [
-  { label: "Peluqueros", path: "/peluquero" },
-  { label: "Servicio", path: "/servicio" },
-  { label: "Fórmula", path: "/formula" },
-  { label: "Tono", path: "/tono" },
-  { label: "Producto", path: "/producto" },
-  { label: "Marca", path: "/marca" },
-  { label: "Categoría", path: "/categoria" },
-  { label: "Atencion", path: "/atencion" },
+  { 
+    label: "Registros",
+    subsections: [
+      { label: "Peluquero", path: "/peluquero" },
+      { label: "Marca", path: "/marca" },
+      { label: "Categoria", path: "/categoria" },
+      { label: "Servicio", path: "/servicio" },
+      { label: "Fórmula", path: "/formula" },
+      { label: "Tono", path: "/tono" },
+      { label: "Producto", path: "/producto" },
+    ]},
+  { label: "Atenciones Pendientes", path: "/atencion" },
   { label: "Perfil", path: "/perfil" },
 ];
 
+
+
 const Admin: React.FC = () => {
   const [nombre, setNombre] = useState<string>("");
+  const [hovered, setHovered] = useState<number | null>(null);
 
   useEffect(() => {
     const storedNombre = localStorage.getItem("nombre");
@@ -28,7 +35,6 @@ const Admin: React.FC = () => {
     // }
   }, []);
 
-  
 
   return (
     <div className="dashboard">
@@ -39,10 +45,42 @@ const Admin: React.FC = () => {
           </Link>
         </div>
         <nav className="navbar-links">
-          {sections.map((section) => (
-            <a key={section.path} href={section.path} className="navbar-link">
-              {section.label}
-            </a>
+          {sections.map((section, i) => (
+            <div
+              key={i}
+              className="navbar-item-container"
+              onMouseEnter={() => setHovered(i) }
+              onMouseLeave={() => setHovered(null)}
+            >
+              {/* Sección principal */}
+              {section.path ? (
+                <Link to={section.path} className="navbar-link">
+                  {section.label}
+                </Link>
+              ) : (
+                <span className="navbar-link navbar-dropdown-trigger">
+                  {section.label} ▾
+                </span>
+              )}
+
+              {/* Submenú desplegable */}
+              {section.subsections && hovered === i && (
+                <div className="custom-dropdown-menu"
+                  onMouseEnter={() => setHovered(i)}     // evita cierre cuando entras al menú
+                  onMouseLeave={() => setHovered(null)} // cierra al salir del menú
+                >
+                  {section.subsections.map((sub, j) => (
+                    <Link
+                      key={j}
+                      to={sub.path}
+                      className="custom-dropdown-item"
+                    >
+                      {sub.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           ))}
         </nav>
       </header>
