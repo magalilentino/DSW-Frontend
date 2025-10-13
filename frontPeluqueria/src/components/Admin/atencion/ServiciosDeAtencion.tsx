@@ -18,6 +18,7 @@ interface AtSer {
 
 const serviciosDeAtencion: React.FC = () => {
     const [atSers, setAtSer] = useState<AtSer[]>([]);
+    const [descripcion, setDescripcion] = useState<string>("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
@@ -59,14 +60,15 @@ const serviciosDeAtencion: React.FC = () => {
         window.location.href = `/atencion/modificarAtSer/${idAtSer}`;
     };
 
-        const handleFinalizarAtencion = async () => {
+    const handleFinalizarAtencion = async () => {
         if (!idAtencion) return;
 
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(`http://localhost:3000/api/atencion/finalizar/${idAtencion}`, {
                 method: "PATCH",
-                headers: { "Authorization": `Bearer ${token}` }
+                headers: { "Authorization": `Bearer ${token}` },
+                body: JSON.stringify({ descripcion }),
             });
 
             if (!response.ok) throw new Error("Error al finalizar la atención.");
@@ -89,6 +91,14 @@ const serviciosDeAtencion: React.FC = () => {
         <div className="servicio-header">
             <h2>Listado de servicios</h2>
         </div>
+
+        <button
+            className="reservas-back-button"
+            onClick={() => {window.location.href = "/atencion";}}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6" />
+            </svg>
+        </button>
 
         {loading ? (
             <p>Cargando...</p>
@@ -119,6 +129,16 @@ const serviciosDeAtencion: React.FC = () => {
             </table>
         )}
             <hr />
+            <div>
+                <label htmlFor="descripcion">Especificaciones adicionales:</label>
+                <textarea
+                    id="descripcion"
+                    value={descripcion}
+                    onChange={(e) => setDescripcion(e.target.value)}
+                    rows={4}
+                    style={{ width: "100%", marginTop: "8px" }}
+                />
+            </div>
             <button 
                 onClick={handleFinalizarAtencion}>
                 Registrar Atención como Finalizada
