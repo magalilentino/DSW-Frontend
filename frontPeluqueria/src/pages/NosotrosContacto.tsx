@@ -68,9 +68,9 @@ function SobreNosotrosContacto() {
 
         <div className="mapa">
           <iframe
-            src= {GOOGLE_MAPS_LINK}
+            src= "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d209.25000977813247!2d-60.63567861265788!3d-32.951005276306596!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95b7ab0f82430971%3A0x587c1930ec5b97ab!2sPeluqueria%20Nestor%20Pizzio!5e0!3m2!1ses-419!2sar!4v1760389876511!5m2!1ses-419!2sar" 
+            height="400"
             width="100%"
-            height="250"
             style={{ border: 0 }}
             allowFullScreen
             loading="lazy"
