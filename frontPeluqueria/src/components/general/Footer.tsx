@@ -14,8 +14,7 @@ function Footer() {
               <h5>Enlaces</h5>
               <ul className="list-unstyled">
                 <li><a href="/" className="text-dark text-decoration-none">Inicio</a></li>
-                <li><a href="/sobrenosotros" className="text-dark text-decoration-none">Sobre Nosotros</a></li>
-                <li><a href="/contacto" className="text-dark text-decoration-none">Contacto</a></li>
+                <li><a href="/info" className="text-dark text-decoration-none">Sobre Nosotros & Contacto</a></li>
                 <li><a href="/login" className="text-dark text-decoration-none">Iniciar Sesión</a></li>
               </ul>
             </div>

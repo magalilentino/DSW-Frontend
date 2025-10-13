@@ -11,6 +11,10 @@ import AtencionServicio from "./components/Admin/atencion/ServiciosDeAtencion.ts
 import ModificarAtSer from "./components/Admin/atencion/modificarAtSer.tsx";
 import Servicio from "./components/home/Servicio.tsx";
 import MiPerfil from "./pages/Perfil.tsx";
+import NosotrosContacto from "./pages/NosotrosContacto";
+
+
+
 
 
 function App() {
@@ -29,6 +33,7 @@ function App() {
         <Route path="/atencion/serviciosDeAtencion/:idAtencion" element={<AtencionServicio/>}/>
         <Route path="/atencion/modificarAtSer/:idAtSer" element={<ModificarAtSer/>}/>
         <Route path="/perfil" element={<MiPerfil/>} />
+        <Route path="/info" element={<NosotrosContacto />} />
       </Routes>
     </Router>
   );
