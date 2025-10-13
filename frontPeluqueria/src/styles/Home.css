@@ -83,14 +83,31 @@
   border-radius: 4px;
   animation: pulse 1.5s infinite ease-in-out;
 }
-.skeleton-title { width: 60%; height: 24px; margin-bottom: 8px; }
-.skeleton-text { width: 80%; height: 16px; margin-bottom: 8px; }
-.skeleton-text-small { width: 40%; height: 12px; }
+.skeleton-title {
+  width: 60%;
+  height: 24px;
+  margin-bottom: 8px;
+}
+.skeleton-text {
+  width: 80%;
+  height: 16px;
+  margin-bottom: 8px;
+}
+.skeleton-text-small {
+  width: 40%;
+  height: 12px;
+}
 
 @keyframes pulse {
-  0% { background-color: #e0e0e0; }
-  50% { background-color: #f0f0f0; }
-  100% { background-color: #e0e0e0; }
+  0% {
+    background-color: #e0e0e0;
+  }
+  50% {
+    background-color: #f0f0f0;
+  }
+  100% {
+    background-color: #e0e0e0;
+  }
 }
 
 .home-servicio {
@@ -103,6 +120,18 @@
   color: #000000;
   font-size: 15px;
   font-family: sans-serif;
+}
+
+.home-servicio-item {
+  border: 1px solid #dddddd;
+  border-radius: 12px;
+  padding: 12px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.home-servicio-item:hover {
+  border-color: #cccccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .home-btn-reservar {
@@ -157,15 +186,9 @@
   border-radius: 0.25rem;
   display: inline-block;
 }
+/*servicio*/
 
-/* Imagen circular (ej. avatar o logo) */
-.home-circulo {
-  width: 150px;
-  height: 150px;
-  object-fit: cover;
-}
-
-/* Controles del carrusel (prev y next) */
+/*carrousel*/
 .home-carousel-control-prev-icon,
 .home-carousel-control-next-icon {
   background-image: none;
@@ -174,33 +197,17 @@
   display: inline-block;
 }
 
-/* Icono previo del carrusel */
+
 .home-carousel-control-prev-icon::after {
-  content: '❮';
+  content: "❮";
   color: black;
   font-size: 2rem;
 }
 
-/* Icono siguiente del carrusel */
+
 .home-carousel-control-next-icon::after {
-  content: '❯';
+  content: "❯";
   color: black;
   font-size: 2rem;
 }
-
-/* Item individual de un servicio */
-.home-servicio-item {
-  border: 1px solid #dddddd;
-  border-radius: 12px;
-  padding: 12px;
-  transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-/* Hover sobre el item de servicio */
-.home-servicio-item:hover {
-  border-color: #cccccc;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-
-
+/*carrousel*/

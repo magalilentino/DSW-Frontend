@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence} from "motion/react"
+import { motion, AnimatePresence } from "motion/react";
 
 import Foto1 from "../../assets/foto1.avif";
 import Foto2 from "../../assets/foto2.avif";
@@ -61,7 +61,10 @@ function Galeria() {
           >
             <button
               className="home-button-galeria home-button-prev"
-              onClick={(e) => { e.stopPropagation(); prevFoto(); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                prevFoto();
+              }}
             >
               ‹
             </button>
@@ -74,13 +77,20 @@ function Galeria() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
               transition={{ duration: 0.3 }}
-              style={{ maxHeight: "90%", maxWidth: "90%", borderRadius: "10px" }}
+              style={{
+                maxHeight: "90%",
+                maxWidth: "90%",
+                borderRadius: "10px",
+              }}
               onClick={(e) => e.stopPropagation()}
             />
 
             <button
               className="home-button-galeria home-button-next"
-              onClick={(e) => { e.stopPropagation(); nextFoto(); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                nextFoto();
+              }}
             >
               ›
             </button>

@@ -9,4 +9,8 @@ export const HORARIOS = [
 ];
 
 export const DIRECCION = "Calle 123, Rosario, Santa Fe";
+export const TELEFONO = "+54 341 1234567";
+export const EMAIL = "info@peluqueria.com";
+export const DESCRIPCION = "Ofrecemos cortes, peinados y tratamientos de alta calidad para que siempre luzcas genial.";
+
 export const GOOGLE_MAPS_LINK = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(DIRECCION)}`;
