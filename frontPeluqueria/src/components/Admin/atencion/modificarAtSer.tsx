@@ -21,6 +21,12 @@ interface ProductoSeleccionado {
     cantidad: number; 
 }
 
+// Interfaz para la entidad Tono
+interface Tono {
+    idTono: number;
+    nombre: string;
+}
+
 
 const ModificarAtSer: React.FC = () => {
     const { idAtSer } = useParams<{ idAtSer: string }>(); 
@@ -31,6 +37,8 @@ const ModificarAtSer: React.FC = () => {
     const [productosSeleccionados, setProductosSeleccionados] = useState<ProductoSeleccionado[]>([]);
     const [filtroMarca, setFiltroMarca] = useState("");
     const [filtroCategoria, setFiltroCategoria] = useState("");
+    const [tonosDisponibles, setTonosDisponibles] = useState<Tono[]>([]);
+    const [tonoSeleccionadoId, setTonoSeleccionadoId] = useState<number | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
@@ -39,37 +47,92 @@ const ModificarAtSer: React.FC = () => {
     // ---------------------------------------------------------------------
     // 2. FETCH de PRODUCTOS DISPONIBLES (con filtros)
     // ---------------------------------------------------------------------
-    useEffect(() => {
-        const fetchProductos = async () => {
-            setLoading(true);
-            setError("");
+    
+    // Función para cargar los productos disponibles (ya existente)
+    const fetchProductos = useCallback(async () => {
+        // ... (Lógica de fetchProductos existente)
+        const query = new URLSearchParams();
+        if (filtroMarca) query.append('idMarca', filtroMarca);
+        if (filtroCategoria) query.append('idCategoria', filtroCategoria);
+        
+        try {
+            const url = `http://localhost:3000/api/producto/listarProductos?${query.toString()}`;
+            const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
             
-            // Construye la URL con los filtros de query params
-            const query = new URLSearchParams();
-            if (filtroMarca) query.append('idMarca', filtroMarca);
-            if (filtroCategoria) query.append('idCategoria', filtroCategoria);
+            if (!res.ok) throw new Error("Fallo la carga de productos disponibles.");
+            const data = await res.json();
+            setProductosDisponibles(data);
             
-            try {
-                const url = `http://localhost:3000/api/producto/listarProductos?${query.toString()}`;
-                const res = await fetch(url, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                
-                if (!res.ok) throw new Error("Fallo la carga de productos disponibles.");
-
-                const data = await res.json();
-                setProductosDisponibles(data);
-                
-            } catch (err) {
-                console.error(err);
-                setError("Error al cargar productos disponibles.");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchProductos();
+        } catch (err) {
+            console.error(err);
+            setError("Error al cargar productos disponibles.");
+        } 
+        // finally {
+        //     // No cambiamos loading aquí, lo dejamos al final de todo
+        // }
     }, [filtroMarca, filtroCategoria, token]); 
+    
+    // FETCH para Tonos
+    const fetchTonos = useCallback(async () => {
+        try {
+            const res = await fetch('http://localhost:3000/api/tono', { 
+                headers: { Authorization: `Bearer ${token}` } 
+            });
+            
+            if (!res.ok) throw new Error("Fallo la carga de tonos disponibles.");
+            const data = await res.json();
+            
+            // Asumiendo que la respuesta es { data: Tono[] } o directamente Tono[]
+            setTonosDisponibles(data.data || data); 
+
+        } catch (err) {
+            console.error(err);
+            setError(prev => prev + " Error al cargar tonos."); // Concatenar error
+        }
+    }, [token]);
+
+    // Ejecuta todos los fetches
+    useEffect(() => {
+        setLoading(true);
+        setError("");
+        
+        Promise.all([fetchProductos(), fetchTonos()])
+            .catch(err => console.error("Error en Promise.all:", err))
+            .finally(() => setLoading(false));
+            
+    }, [fetchProductos, fetchTonos]); // Dependencias que disparan los fetches
+
+    // useEffect(() => {
+    //     const fetchProductos = async () => {
+    //         setLoading(true);
+    //         setError("");
+            
+    //         // Construye la URL con los filtros de query params
+    //         const query = new URLSearchParams();
+    //         if (filtroMarca) query.append('idMarca', filtroMarca);
+    //         if (filtroCategoria) query.append('idCategoria', filtroCategoria);
+            
+    //         try {
+    //             const url = `http://localhost:3000/api/producto/listarProductos?${query.toString()}`;
+    //             const res = await fetch(url, {
+    //                 headers: { Authorization: `Bearer ${token}` },
+    //             });
+                
+    //             if (!res.ok) throw new Error("Fallo la carga de productos disponibles.");
+
+    //             const data = await res.json();
+    //             setProductosDisponibles(data);
+                
+    //         } catch (err) {
+    //             console.error(err);
+    //             setError("Error al cargar productos disponibles.");
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
+
+    //     fetchProductos();
+    // }, [filtroMarca, filtroCategoria, token]); 
 
     
     // ---------------------------------------------------------------------
@@ -110,6 +173,13 @@ const ModificarAtSer: React.FC = () => {
         });
     };
 
+    const handleTonoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value;
+        // Si el valor es una cadena vacía (""), se establece a null (Ninguno)
+        const idTono = value === "" ? null : parseInt(value, 10); 
+        setTonoSeleccionadoId(idTono);
+    };
+
     // ---------------------------------------------------------------------
     // 4. SUBMIT: GUARDAR PRODUCTOS UTILIZADOS
     // ---------------------------------------------------------------------
@@ -124,6 +194,14 @@ const ModificarAtSer: React.FC = () => {
             return;
         }
 
+        // 🛑 Data a enviar (incluyendo el tono si está seleccionado)
+        // Nota: Si el backend espera el tono en el body del PATCH, agrégalo aquí.
+        // Si el tono se guarda en una tabla diferente, necesitarás otro fetch.
+        const bodyToSend = { 
+            productos: productosAEnviar,
+            idTono: tonoSeleccionadoId // Se envía null si no hay tono seleccionado
+        };
+
         try {
             // Usamos el endpoint que definimos previamente
             const response = await fetch(`http://localhost:3000/api/prodUt/registrarProdsUt/${idAtSer}`, { 
@@ -132,17 +210,17 @@ const ModificarAtSer: React.FC = () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify({ productos: productosAEnviar }),
+                body: JSON.stringify(bodyToSend),
             });
 
-            if (!response.ok) throw new Error('Error al guardar los productos utilizados.');
+            if (!response.ok) throw new Error('Error al guardar los productos utilizados y/o el tono.');
             
             alert('Detalles del servicio actualizados exitosamente.');
-            navigate(-1); // Volver a la lista de servicios    aca hay que poner registrar y guardar la atencion como finalizada 
+            navigate(-1); // Volver a la lista de servicios    
             
         } catch (error) {
             console.error(error);
-            alert('Error al procesar el guardado de productos.');
+            alert('Error al procesar el guardado');
         }
     };
 
@@ -161,7 +239,7 @@ const ModificarAtSer: React.FC = () => {
 
     return (
         <div className="modificar-productos-page">
-            <h2>Modificar Productos para Servicio #{idAtSer}</h2>
+            <h2>Cargar datos del servicio realizado #{idAtSer}</h2>
             
             {/* Filtros */}
             <div className="filtros">
@@ -206,8 +284,30 @@ const ModificarAtSer: React.FC = () => {
                     ))}
                 </tbody>
             </table>
+            
+            {/* Selector de Tonos */}
+            <div >
+                <label htmlFor="select-tono" >
+                    Seleccionar Tono (Opcional):
+                </label>
+                <select
+                    id="select-tono"
+                    value={tonoSeleccionadoId === null ? "" : tonoSeleccionadoId.toString()}
+                    onChange={handleTonoChange}>
+                        
+                    {/* Opción para seleccionar NINGUNO */}
+                    <option value="">Ninguno</option>
+                    
+                    {/* Mapeo de la lista de tonos */}
+                    {tonosDisponibles.map((tono) => (
+                        <option key={tono.idTono} value={tono.idTono}>
+                            {tono.nombre}
+                        </option>
+                    ))}
+                </select>
+            </div>
 
-            <button onClick={handleSubmit} className="btn-guardar">
+            <button onClick={handleSubmit}>
                 Guardar Productos Utilizados
             </button>
         </div>
