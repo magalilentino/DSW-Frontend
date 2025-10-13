@@ -8,6 +8,7 @@ export interface PeluqueroItem {
   apellido?: string;
   email?: string;
   telefono?: string;
+  //fotoUrl?: string; para ponerle la foto que va de cada peluquero
   type?: "peluquero" | "cliente";
 }
 
@@ -18,7 +19,7 @@ export function Estilista() {
 
   useEffect(() => {
     fetch("http://localhost:3000/api/persona/peluquero/findAllPeluquero")
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw new Error("Error al cargar los peluqueros");
         return res.json();
       })
@@ -36,9 +37,9 @@ export function Estilista() {
     <section className="container text-center my-4">
       <h2 className="mb-4">Peluqueros</h2>
       <div className="row justify-content-center">
-        {peluqueros.map((peluquero, index) => (
+        {peluqueros.map((peluquero) => (
           <motion.div
-            key={index}
+            key={peluquero.idPersona}
             className="col-6 col-md-3 mb-4 d-flex justify-content-center"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.9 }}
@@ -47,7 +48,12 @@ export function Estilista() {
               <motion.img
                 src={Foto3}
                 className="rounded-circle mb-2"
-                style={{ width: "120px", height: "120px", objectFit: "cover", cursor: "pointer" }}
+                style={{
+                  width: "120px",
+                  height: "120px",
+                  objectFit: "cover",
+                  cursor: "pointer",
+                }}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.8 }}
               />
