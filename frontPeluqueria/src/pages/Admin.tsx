@@ -8,7 +8,7 @@ const sections = [
   { 
     label: "Registros",
     subsections: [
-      { label: "Peluquero", path: "/peluquero" },
+      { label: "Peluquero", path: "/peluquero/CrearPeluquero" },
       { label: "Marca", path: "/marca" },
       { label: "Categoria", path: "/categoria" },
       { label: "Servicio", path: "/servicio" },

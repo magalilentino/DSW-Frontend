@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../../styles/Registros.css";
 
-const CrearCategoria: React.FC = () => {
-  const [nombreCategoria, setNombreCategoria] = useState("");
+const CrearMarca: React.FC = () => {
+  const [nombre, setNombre] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,20 +16,20 @@ const CrearCategoria: React.FC = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:3000/api/categoria", {
+      const res = await fetch("http://localhost:3000/api/marca", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nombreCategoria }),
+        body: JSON.stringify({ nombre }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Error al crear la categoría");
+        throw new Error(data.message || "Error al crear la marca");
       }
 
-      setSuccess("Categoría creada correctamente");
-      setTimeout(() => navigate("/categoria"), 1500);
+      setSuccess("Marca creada correctamente");
+      setTimeout(() => navigate("/marca"), 1500);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -39,21 +39,21 @@ const CrearCategoria: React.FC = () => {
 
   return (
     <div className="crear-container">
-      <button
-          className="reservas-back-button"
-          onClick={() => {window.location.href = "/categoria";}}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-              <path d="M15 18l-6-6 6-6" />
-          </svg>
-      </button>
-      <h2>Crear nueva categoría</h2>
+        <button
+            className="reservas-back-button"
+            onClick={() => {window.location.href = "/marca";}}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6" />
+            </svg>
+        </button>
+      <h2>Crear nueva marca</h2>
       <form onSubmit={handleSubmit} className="crear-form">
-        <label htmlFor="nombreCategoria">Nombre de la categoría:</label>
+        <label htmlFor="nombre">Nombre de la marca:</label>
         <input
           type="text"
-          id="nombreCategoria"
-          value={nombreCategoria}
-          onChange={(e) => setNombreCategoria(e.target.value)}
+          id="nombre"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
           required
         />
 
@@ -68,4 +68,4 @@ const CrearCategoria: React.FC = () => {
   );
 };
 
-export default CrearCategoria;
+export default CrearMarca;

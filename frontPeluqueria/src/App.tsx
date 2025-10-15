@@ -12,6 +12,11 @@ import ModificarAtSer from "./components/Admin/atencion/modificarAtSer.tsx";
 import Servicio from "./components/home/Servicio.tsx";
 import MiPerfil from "./pages/Perfil.tsx";
 import NosotrosContacto from "./pages/NosotrosContacto";
+import Marca from "./components/Admin/marca/Marca.tsx";
+import CrearMarca from "./components/Admin/marca/CrearMarca.tsx";
+import ActualizarMarca from "./components/Admin/marca/ActualizarMarca.tsx";
+import Producto from "./components/Admin/producto/Producto.tsx";
+import CrearPeluquero from "./components/Admin/peluquero/CrearPeluquero.tsx";
 
 
 
@@ -34,6 +39,11 @@ function App() {
         <Route path="/atencion/modificarAtSer/:idAtSer" element={<ModificarAtSer/>}/>
         <Route path="/perfil" element={<MiPerfil/>} />
         <Route path="/info" element={<NosotrosContacto />} />
+        <Route path="/marca" element= {<Marca/>}/>
+        <Route path="/marca/crear" element= {<CrearMarca/>}/>
+        <Route path="/marca/actualizar/:idMarca" element= {<ActualizarMarca/>}/>
+        <Route path="/producto" element= {<Producto/>}/>
+        <Route path="/peluquero/CrearPeluquero" element= {<CrearPeluquero/>}/>
       </Routes>
     </Router>
   );

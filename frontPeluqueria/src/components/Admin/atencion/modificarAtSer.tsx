@@ -27,6 +27,15 @@ interface Tono {
     nombre: string;
 }
 
+interface Marca {
+    idMarca: number;
+    nombre: string;
+}
+
+interface Categoria {
+    idCategoria: number;
+    nombreCategoria: string;
+}
 
 const ModificarAtSer: React.FC = () => {
     const { idAtSer } = useParams<{ idAtSer: string }>(); 
@@ -39,6 +48,8 @@ const ModificarAtSer: React.FC = () => {
     const [filtroCategoria, setFiltroCategoria] = useState("");
     const [tonosDisponibles, setTonosDisponibles] = useState<Tono[]>([]);
     const [tonoSeleccionadoId, setTonoSeleccionadoId] = useState<number | null>(null);
+    const [marcas, setMarcas] = useState<Marca[]>([]);
+    const [categorias, setCategorias] = useState<Categoria[]>([]);
     const [idAtencion, setIdAtencion] = useState<string | null>(null); 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -48,6 +59,57 @@ const ModificarAtSer: React.FC = () => {
     // ---------------------------------------------------------------------
     // 2. FETCH de PRODUCTOS DISPONIBLES (con filtros)
     // ---------------------------------------------------------------------
+
+        // 🛑 NUEVO FETCH para Marcas
+    const fetchMarcas = useCallback(async () => {
+        try {
+            const res = await fetch('http://localhost:3000/api/marca', { 
+                headers: { Authorization: `Bearer ${token}` } 
+            });
+            if (!res.ok) throw new Error("Fallo la carga de marcas.");
+            const responseData = await res.json();
+        // 🛑 CAMBIO CLAVE: Acceder a la propiedad 'data' que contiene el array.
+        // Se añade una verificación de seguridad (|| []) por si 'data' no existe.
+            const marcasArray = responseData.data || []; 
+            
+            if (Array.isArray(marcasArray)) {
+                setMarcas(marcasArray); 
+            } else {
+                // Esto captura si 'data' existe pero NO es un array
+                console.error("La propiedad 'data' de la API de marcas no es un array.");
+                setMarcas([]);
+            }
+
+        } catch (err) {
+            console.error(err);
+        }
+    }, [token]);
+    
+    // 🛑 NUEVO FETCH para Categorías
+    const fetchCategorias = useCallback(async () => {
+        try {
+            const res = await fetch('http://localhost:3000/api/categoria', { 
+                headers: { Authorization: `Bearer ${token}` } 
+            });
+            if (!res.ok) throw new Error("Fallo la carga de categorías.");
+             const responseData = await res.json();
+        // 🛑 CAMBIO CLAVE: Acceder a la propiedad 'data' que contiene el array.
+        // Se añade una verificación de seguridad (|| []) por si 'data' no existe.
+            const categoriaArray = responseData.data || []; 
+            
+            if (Array.isArray(categoriaArray)) {
+                setCategorias(categoriaArray); 
+            } else {
+                // Esto captura si 'data' existe pero NO es un array
+                console.error("La propiedad 'data' de la API de categorias no es un array.");
+                setCategorias([]);
+            }
+
+        } catch (err) {
+            console.error(err);
+        }
+    }, [token]);
+
     
     // Función para cargar los productos disponibles (ya existente)
     const fetchProductos = useCallback(async () => {
@@ -122,11 +184,11 @@ const ModificarAtSer: React.FC = () => {
         setLoading(true);
         setError("");
         
-        Promise.all([fetchProductos(), fetchTonos(), fetchAtencionId()])
+        Promise.all([fetchProductos(), fetchTonos(), fetchAtencionId(), fetchMarcas(), fetchCategorias()])
             .catch(err => console.error("Error en Promise.all:", err))
             .finally(() => setLoading(false));
             
-    }, [fetchProductos, fetchTonos]); // Dependencias que disparan los fetches
+    }, [fetchProductos, fetchTonos, fetchMarcas, fetchCategorias]); // Dependencias que disparan los fetches
 
     // useEffect(() => {
     //     const fetchProductos = async () => {
@@ -287,8 +349,40 @@ const ModificarAtSer: React.FC = () => {
                 </svg>
             </button>
             
-            {/* Filtros */}
+             {/* 🛑 FILTROS CON DESPLEGABLES */}
             <div className="filtros">
+                {/* Desplegable de MARCA */}
+                <select
+                    value={filtroMarca} 
+                    onChange={(e) => setFiltroMarca(e.target.value)}
+                    className="p-2 border rounded"
+                >
+                    <option value="">Todas las Marcas</option>
+                    {marcas && marcas.map((m) => (
+                        <option key={m.idMarca} value={m.idMarca.toString()}>
+                            {m.nombre}
+                        </option>
+                    ))}
+                </select>
+
+                {/* Desplegable de CATEGORÍA */}
+                <select
+                    value={filtroCategoria} 
+                    onChange={(e) => setFiltroCategoria(e.target.value)}
+                    className="p-2 border rounded"
+                >
+                    <option value="">Todas las Categorías</option>
+                    {categorias.map((c) => (
+                        <option key={c.idCategoria} value={c.idCategoria.toString()}>
+                            {c.nombreCategoria}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
+
+            {/* Filtros */}
+            {/* <div className="filtros">
                 <input 
                     type="text" 
                     placeholder="Filtrar por Marca ID" 
@@ -301,7 +395,7 @@ const ModificarAtSer: React.FC = () => {
                     value={filtroCategoria} 
                     onChange={(e) => setFiltroCategoria(e.target.value)}
                 />
-            </div>
+            </div> */}
             
             {/* Listado de Productos */}
             <table className="productos-disponibles-table">

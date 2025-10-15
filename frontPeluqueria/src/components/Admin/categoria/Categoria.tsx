@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../../../styles/Categoria.css";
+import "../../../styles/Registros.css";
 
 interface Categoria {
   idCategoria: number;
@@ -48,8 +48,15 @@ const Categoria: React.FC = () => {
   };
 
   return (
-    <div className="categoria-page">
-      <div className="categoria-header">
+    <div className="registro-page">
+      <div className="registro-header">
+        <button
+          className="reservas-back-button"
+          onClick={() => {window.location.href = "/admin";}}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+              <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
         <h2>Listado de Categorías</h2>
         <button className="crear-button" onClick={handleCrear}>
           Crear Categoría
@@ -61,7 +68,7 @@ const Categoria: React.FC = () => {
       ) : error ? (
         <p className="error">{error}</p>
       ) : (
-        <table className="categoria-table">
+        <table className="registro-table">
           <thead>
             <tr>
               <th>ID</th>
