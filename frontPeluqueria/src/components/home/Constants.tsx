@@ -8,7 +8,7 @@ export const HORARIOS = [
   { display: "Domingo: Cerrado", day: 0, open: -1, close: -1 },
 ];
 
-export const DIRECCION = "Calle 123, Rosario, Santa Fe";
+export const DIRECCION = "San Juan 825, Rosario, Santa Fe";
 export const TELEFONO = "+54 341 1234567";
 export const EMAIL = "info@peluqueria.com";
 export const DESCRIPCION = "Ofrecemos cortes, peinados y tratamientos de alta calidad para que siempre luzcas genial.";

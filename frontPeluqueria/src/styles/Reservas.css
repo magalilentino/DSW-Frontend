@@ -113,3 +113,13 @@
 .logout-button:hover {
   background-color: #c82333;
 }
+
+.filtro-precio input {
+  max-width: 150px;
+}
+.filtro-precio button {
+  min-width: 100px;
+}
+
+
+

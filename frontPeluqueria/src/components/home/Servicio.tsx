@@ -98,7 +98,10 @@ function Servicio() {
               </motion.li>
             ))}
           </ul>
-          <button className="home-btn-todo">Ver todo</button>
+         <button className="home-btn-todo" onClick={() => navigate("/reserve")}>
+          Ver todo
+          </button>
+
         </div>
 
         <div className="col-lg-4">
