@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 function SobreNosotrosContacto() {
   const navigate = useNavigate();
-
+ 
   return (
     <div className="info-page">
       <button className="volver-btn" onClick={() => navigate(-1)}>
