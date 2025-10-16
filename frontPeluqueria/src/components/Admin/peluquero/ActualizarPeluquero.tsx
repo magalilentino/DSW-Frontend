@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../../../styles/Registros.css";
 
+//tengo que ver como ponerlo junto con el de cliente 
 const ActualizarPeluquero: React.FC = () => {
   const { idPersona } = useParams();
   const navigate = useNavigate();
