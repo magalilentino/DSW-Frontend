@@ -17,10 +17,20 @@ import CrearMarca from "./components/Admin/marca/CrearMarca.tsx";
 import ActualizarMarca from "./components/Admin/marca/ActualizarMarca.tsx";
 import Producto from "./components/Admin/producto/Producto.tsx";
 import CrearPeluquero from "./components/Admin/peluquero/CrearPeluquero.tsx";
+<<<<<<< HEAD
 import SobreNosotrosContacto from "./pages/NosotrosContacto.tsx"
 import Servicios from "./components/Admin/servicio/Servicios.tsx";
 import CrearServicio from "./components/Admin/servicio/CrearServicio.tsx";
 import ModificarServicio from "./components/Admin/servicio/ModificarServivicios.tsx";
+=======
+import Formula from "./components/Admin/formula/Formula.tsx";
+import CrearFormula from "./components/Admin/formula/CrearFormula.tsx";
+import ActualizarFormula from "./components/Admin/formula/ActualizarFormula.tsx";
+
+
+
+
+>>>>>>> 4f2e6d31494f6e09fa980501700d99a0d01ec093
 
 function App() {
   return (
@@ -44,10 +54,16 @@ function App() {
         <Route path="/marca/actualizar/:idMarca" element= {<ActualizarMarca/>}/>
         <Route path="/producto" element= {<Producto/>}/>
         <Route path="/peluquero/CrearPeluquero" element= {<CrearPeluquero/>}/>
+<<<<<<< HEAD
         <Route path="/NosotrosContacto" element= {<SobreNosotrosContacto/>}/>
         <Route path="/servicios" element= {<Servicios/>}/>
         <Route path="/servicio/crear" element= {<CrearServicio/>}/>
         <Route path="/servicio/actualizar/:idMarca" element= {<ModificarServicio/>}/>
+=======
+        <Route path="/formula" element={<Formula />} />
+        <Route path="/formula/crear" element={<CrearFormula />} />
+        <Route path="/formula/actualizar/:idFormula" element={<ActualizarFormula />} />
+>>>>>>> 4f2e6d31494f6e09fa980501700d99a0d01ec093
       </Routes>
     </Router>
   );

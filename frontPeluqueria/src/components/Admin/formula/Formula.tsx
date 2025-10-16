@@ -1,0 +1,130 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import "../../../styles/Admin.css";
+
+interface Producto {
+  idProducto: number;
+  descripcion: string;
+}
+
+interface Tono {
+  idTono: number;
+  nombre: string;
+}
+
+interface Formula {
+  idFormula: number;
+  cantidad: number;
+  productos: Producto[];
+  tono: Tono;
+}
+
+export default function FormulaPage() {
+  const [formulas, setFormulas] = useState<Formula[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+
+  const fetchFormulas = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/api/formula");
+      if (!res.ok) throw new Error("Error al cargar fórmulas");
+      const data = await res.json();
+      setFormulas(data.data || []);
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (idFormula: number) => {
+    if (
+      window.confirm(
+        `¿Estás seguro que quieres borrar la fórmula ${idFormula}? Esta acción es irreversible.`
+      )
+    ) {
+      try {
+        const res = await fetch(`http://localhost:3000/api/formula/${idFormula}`, {
+          method: "DELETE",
+        });
+        if (!res.ok) throw new Error("Error al borrar la fórmula");
+        setFormulas((prev) => prev.filter((f) => f.idFormula !== idFormula));
+      } catch (err) {
+        setError((err as Error).message);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchFormulas();
+  }, []);
+
+  if (loading) return <p>Cargando fórmulas...</p>;
+  if (error) return <p>Error: {error}</p>;
+
+  return (
+    <div className="admin-servicio my-4 container-fluid">
+      <div className="row">
+        <div>
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <h2>Fórmulas</h2>
+            <button className="btn btn-primary" onClick={() => navigate("/formula/crear")}>
+              Agregar Fórmula
+            </button>
+          </div>
+
+          {formulas.length === 0 ? (
+            <p>No hay fórmulas disponibles.</p>
+          ) : (
+            <ul className="list-unstyled">
+              {formulas.map((f, i) => (
+                <motion.li
+                  key={f.idFormula}
+                  className="admin-servicio-item d-flex justify-content-between align-items-center mb-3 p-3 shadow-sm bg-white rounded"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: false, amount: 0.2 }}
+                  transition={{ duration: 0.5, delay: i * 0.1 }}
+                >
+                  <div className="service-info me-3">
+                    <h5>Fórmula #{f.idFormula}</h5>
+                    <p className="mb-1">Cantidad: {f.cantidad}</p>
+                    <p className="mb-1">Tono: {f.tono?.nombre}</p>
+                    <p className="mb-1">
+                      Productos: {f.productos.map((p) => p.descripcion).join(", ")}
+                    </p>
+                  </div>
+                  <div className="service-actions d-flex flex-column gap-2 flex-shrink-0">
+                    <button
+                      className="btn btn-sm btn-outline-secondary admin-btn-action"
+                      onClick={() => navigate(`/formula/actualizar/${f.idFormula}`)}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="btn btn-sm btn-outline-dark admin-btn-action"
+                      onClick={() => handleDelete(f.idFormula)}
+                    >
+                      Borrar
+                    </button>
+                  </div>
+                </motion.li>
+              ))}
+            </ul>
+          )}
+
+         
+          <div className="d-flex justify-content-end mt-4">
+            <button className="btn btn-secondary" onClick={() => navigate("/admin")}>
+              Volver
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
