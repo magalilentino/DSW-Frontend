@@ -64,13 +64,13 @@ export default function MiPerfil() {
 
         // Histórico y pendientes
         const [resHist, resPend] = await Promise.all([
-          fetch(`http://localhost:3000/api/atencion/historico/${user.idPersona}`, {
-            headers: { Authorization: `Bearer ${user.token}` },
-          }),
-          fetch(`http://localhost:3000/api/atencion/pendientes/${user.idPersona}`, {
-            headers: { Authorization: `Bearer ${user.token}` },
-          }),
-        ]);
+        fetch(`http://localhost:3000/api/atencion/historico/${user.idPersona}`, {
+          headers: { Authorization: `Bearer ${user.token}` },
+        }),
+        fetch(`http://localhost:3000/api/atencion/pendientes/${user.idPersona}`, {
+          headers: { Authorization: `Bearer ${user.token}` },
+        }),
+      ]);
 
         const dataHist = await resHist.json();
         const dataPend = await resPend.json();
@@ -80,11 +80,13 @@ export default function MiPerfil() {
 
         setHistorico(dataHist);
         setPendientes(dataPend);
+        
       } catch (err: any) {
         setError(err.message);
       } finally {
         setLoading(false);
       }
+    
     };
 
     fetchData();
@@ -148,38 +150,40 @@ if (!user) {
 
   return (
     <div className="perfil-container">
+      
       {/* Panel izquierdo con histórico y pendientes */}
-      <div className="perfil-left-side">
+        <div className="perfil-left-side">
         <div className="perfil-left-content">
-          <h3>Histórico</h3>
-          {historico.length === 0 ? (
-            <p>No tienes atenciones pasadas.</p>
-          ) : (
-            <ul>
-              {historico.map(a => (
-                <li key={a.idAtencion}>
-                  <strong>Atencion para el {new Date(a.fecha).toLocaleDateString()}</strong>
-                  <ul><strong>Servicios:</strong> {renderServicios(a)}</ul>
-                </li>
-              ))}
-            </ul>
-          )}
+            <h3>Histórico</h3>
+            {historico.length === 0 ? (
+              <p>No tienes atenciones pasadas.</p>
+            ) : (
+              <ul>
+                {historico.map(a => (
+                  <li key={a.idAtencion}>
+                    <strong>Atencion para el {new Date(a.fecha).toLocaleDateString()}</strong>
+                    <ul><strong>Servicios:</strong> {renderServicios(a)}</ul>
+                  </li>
+                ))}
+              </ul>
+            )}
 
-          <h3>Pendientes</h3>
-          {pendientes.length === 0 ? (
-            <p>No tienes atenciones pendientes.</p>
-          ) : (
-            <ul>
-              {pendientes.map(a => (
-                <li key={a.idAtencion}>
-                  <strong>Atencion para el {new Date(a.fecha).toLocaleDateString()}</strong>
-                  <ul><strong>Servicios:</strong> {renderServicios(a)}</ul>
-                </li>
-              ))}
-            </ul>
-          )}
+            <h3>Pendientes</h3>
+            {pendientes.length === 0 ? (
+              <p>No tienes atenciones pendientes.</p>
+            ) : (
+              <ul>
+                {pendientes.map(a => (
+                  <li key={a.idAtencion}>
+                    <strong>Atencion para el {new Date(a.fecha).toLocaleDateString()}</strong>
+                    <ul><strong>Servicios:</strong> {renderServicios(a)}</ul>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
-      </div>
+      
 
       <div className="perfil-right-side">
         <div className="perfil-box">
