@@ -1,150 +1,144 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-// import "../../styles/Atencion.css";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import "../../../styles/Admin.css";
 
 interface AtSer {
-    idAtSer: number;
-    servicio: {
-        codServicio: number;
-        nombreServicio: string;
-    }
+  idAtSer: number;
+  servicio: {
+    codServicio: number;
+    nombreServicio: string;
+  };
 }
 
+export default function ServiciosDeAtencion() {
+  const { idAtencion } = useParams();
+  const navigate = useNavigate();
+  const [atSers, setAtSer] = useState<AtSer[]>([]);
+  const [descripcion, setDescripcion] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-// interface AtencionParams {
-//     idAtencion: string; // React Router siempre devuelve el valor como string
-// }
-
-
-const serviciosDeAtencion: React.FC = () => {
-    const [atSers, setAtSer] = useState<AtSer[]>([]);
-    const [descripcion, setDescripcion] = useState<string>("");
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
-
-    const { idAtencion } = useParams();  // Hook para obtener parámetros de ruta
-
-    useEffect(() => {
+  useEffect(() => {
     if (!idAtencion) {
-        setError("Error: ID de Atención no encontrado.");
-        setLoading(false);
-        return;
+      setError("Error: ID de Atención no encontrado.");
+      setLoading(false);
+      return;
     }
 
-        fetch(`http://localhost:3000/api/atSer/${idAtencion}/serviciosPorAtencion`, {
-            method: "GET",
-            headers: {
-            },
-        })
-        .then((res) => {
-            if (!res.ok) {
-                throw new Error(`Error ${res.status}: No autorizado o recurso no encontrado.`);
-            }
-            return res.json();
-        })
-        .then((data) => {
-            console.log("Respuesta de servicios:", data);
-            setAtSer(data.data || []); 
-            setLoading(false);
-        })
-        .catch((err) => {
-            console.error("Error al cargar servicios:", err);
-            setError("No se pudo cargar la lista de servicios. Revise la consola.");
-            setLoading(false);
-        });
-    // Agregar idAtencion como dependencia
-    }, [idAtencion]); 
+    fetch(`http://localhost:3000/api/atSer/${idAtencion}/serviciosPorAtencion`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`Error ${res.status}: No autorizado o recurso no encontrado.`);
+        return res.json();
+      })
+      .then((data) => {
+        setAtSer(data.data || []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error al cargar servicios:", err);
+        setError("No se pudo cargar la lista de servicios.");
+        setLoading(false);
+      });
+  }, [idAtencion]);
 
+  const handleModificar = (idAtSer: number) => {
+    navigate(`/atencion/modificarAtSer/${idAtSer}`);
+  };
 
-    const handleModificar = (idAtSer: number) => {
-        window.location.href = `/atencion/modificarAtSer/${idAtSer}`;
-    };
+  const handleFinalizarAtencion = async () => {
+    if (!idAtencion) return;
 
-    const handleFinalizarAtencion = async () => {
-        if (!idAtencion) return;
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`http://localhost:3000/api/atencion/finalizar/${idAtencion}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ descripcion }),
+      });
 
-        try {
-            const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:3000/api/atencion/finalizar/${idAtencion}`, {
-                method: "PATCH",
-                headers: { "Authorization": `Bearer ${token}` },
-                body: JSON.stringify({ descripcion }),
-            });
+      if (!response.ok) throw new Error("Error al finalizar la atención.");
 
-            if (!response.ok) throw new Error("Error al finalizar la atención.");
+      alert("Atención y servicios registrados como finalizados exitosamente.");
+      navigate("/atencion");
+    } catch (error) {
+      console.error("Error al finalizar atención:", error);
+      alert("Error al registrar la atención como finalizada.");
+    }
+  };
 
-            // Si es exitoso, mostramos un mensaje y el botón para volver
-            alert("Atención y servicios registrados como finalizados exitosamente.");
-            
-            // Redirigir a la página principal de atenciones (o donde quieras)
-            window.location.href = `/atencion`;
-            
-        } catch (error) {
-            console.error("Error al finalizar atención:", error);
-            alert("Error al registrar la atención como finalizada.");
-        }
-    };
-
-
-    return (
-        <div className="servicio-page">
-        <div className="servicio-header">
-            <h2>Listado de servicios</h2>
+  return (
+    <div className="admin-servicio my-4 container-fluid">
+      <motion.div
+        className="card p-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <h2>Servicios de la Atención</h2>
+          <button className="btn btn-secondary" onClick={() => navigate("/atencion")}>
+            Volver
+          </button>
         </div>
 
-        <button
-            className="reservas-back-button"
-            onClick={() => {window.location.href = "/atencion";}}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                <path d="M15 18l-6-6 6-6" />
-            </svg>
-        </button>
+        {loading && <p>Cargando servicios...</p>}
+        {error && <p className="text-danger">Error: {error}</p>}
 
-        {loading ? (
-            <p>Cargando...</p>
-        ) : error ? (
-            <p className="error">{error}</p>
-        ) : (
-            <table className="servicios-table">
-            <thead>
-                <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                </tr>
-            </thead>
-            <tbody>
-                {atSers.map((as) => (
-                <tr key={as.idAtSer}>
-                    <td>{as.servicio.codServicio}</td>
-                    <td>{as.servicio.nombreServicio}</td>
-                    <td>
-                    <button className="action-button update" onClick={() => handleModificar(as.idAtSer)}>
-                        modificar
-                    </button>
-        
-                    </td>
-                </tr>
+        {!loading && !error && (
+          <>
+            {atSers.length === 0 ? (
+              <p>No hay servicios registrados para esta atención.</p>
+            ) : (
+              <ul className="list-unstyled">
+                {atSers.map((as, i) => (
+                  <motion.li
+                    key={as.idAtSer}
+                    className="admin-servicio-item d-flex justify-content-between align-items-center mb-3 p-3 shadow-sm bg-white rounded"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: false, amount: 0.2 }}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                  >
+                    <div className="service-info me-3">
+                      <h5>Servicio #{as.servicio.codServicio}</h5>
+                      <p className="mb-1">{as.servicio.nombreServicio}</p>
+                    </div>
+                    <div className="service-actions">
+                      <button
+                        className="btn btn-sm btn-outline-primary admin-btn-action"
+                        onClick={() => handleModificar(as.idAtSer)}
+                      >
+                        Modificar
+                      </button>
+                    </div>
+                  </motion.li>
                 ))}
-            </tbody>
-            </table>
-        )}
-            <hr />
-            <div>
-                <label htmlFor="descripcion">Especificaciones adicionales:</label>
-                <textarea
-                    id="descripcion"
-                    value={descripcion}
-                    onChange={(e) => setDescripcion(e.target.value)}
-                    rows={4}
-                    style={{ width: "100%", marginTop: "8px" }}
-                />
-            </div>
-            <button 
-                onClick={handleFinalizarAtencion}>
-                Registrar Atención como Finalizada
-            </button>
-        </div>
-    );
-}
+              </ul>
+            )}
 
-export default serviciosDeAtencion;
+            <div className="mt-4">
+              <label htmlFor="descripcion" className="form-label">Especificaciones adicionales</label>
+              <textarea
+                id="descripcion"
+                className="form-control"
+                rows={4}
+                value={descripcion}
+                onChange={(e) => setDescripcion(e.target.value)}
+              />
+            </div>
+
+            <div className="d-flex justify-content-end mt-3">
+              <button className="btn btn-success" onClick={handleFinalizarAtencion}>
+                Registrar Atención como Finalizada
+              </button>
+            </div>
+          </>
+        )}
+      </motion.div>
+    </div>
+  );
+}
