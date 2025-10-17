@@ -4,51 +4,47 @@ import "../../../styles/Registros.css";
 interface Producto {
   idProducto: number;
   descripcion: string;
-  categioria:{
+  categoria:{
     nombreCategoria: string;
   };
   marcas:{
     nombre: string;
-  };
+  }[];
 }
-
-// interface Marca {
-//     idMarca: number;
-//     nombre: string;
-// }
-
-// interface Categoria {
-//     idProducto: number;
-//     nombreCategoria: string;
-// }
 
 const Producto: React.FC = () => {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   
-    useEffect(() => {
-    fetch("http://localhost:3000/api/producto")
-        .then((res) => res.json())
-        .then((data) => {
-            console.log("Respuesta de productos:", data);
-            setProductos(data.data); 
-            setLoading(false);
-    })
-        .catch(() => {
-            setError("No se pudo cargar la lista de productos.");
-            setLoading(false);
-    });
-    }, []);
+  const fetchProductos = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/api/producto");
+      if (!res.ok) throw new Error("Error al cargar productos");
+      const data = await res.json();
+      setProductos(data.data || []);
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setLoading(false);
+    }
+    };
 
   const handleEliminar = async (idProducto: number) => {
-    try {
-      await fetch(`http://localhost:3000/api/producto/${idProducto}`, {
-        method: "DELETE",
-      });
-      setProductos((prev) => prev.filter((p) => p.idProducto !== idProducto));
-    } catch {
-      alert("Error al eliminar el producto.");
+    if (
+      window.confirm(
+        `¿Estás seguro que quieres borrar el Producto ${idProducto}? Esta acción es irreversible.`
+      )
+    ) {
+      try {
+        const res = await fetch(`http://localhost:3000/api/producto/${idProducto}`, {
+          method: "DELETE",
+        });
+        if (!res.ok) throw new Error("Error al borrar la fórmula");
+        setProductos((prev) => prev.filter((p) => p.idProducto !== idProducto));   
+      } catch {
+        setError("Error al eliminar el producto.");
+      }
     }
   };
 
@@ -59,6 +55,10 @@ const Producto: React.FC = () => {
   const handleCrear = () => {
     window.location.href = "/producto/crear";
   };
+
+  useEffect(() => {
+    fetchProductos();
+  }, []);
 
   return (
     <div className="registro-page">
@@ -96,8 +96,8 @@ const Producto: React.FC = () => {
               <tr key={p.idProducto}>
                 <td>{p.idProducto}</td>
                 <td>{p.descripcion}</td>
-                <td>{p.marcas.nombre}</td>
-                <td>{p.categioria.nombreCategoria}</td>
+                <td>{p.marcas?.[0]?.nombre || 'Sin Marca'}</td>
+                <td>{p.categoria.nombreCategoria}</td>
                 <td>
                   <button className="action-button update" onClick={() => handleActualizar(p.idProducto)}>
                     Actualizar

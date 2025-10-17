@@ -16,7 +16,9 @@ import Marca from "./components/Admin/marca/Marca.tsx";
 import CrearMarca from "./components/Admin/marca/CrearMarca.tsx";
 import ActualizarMarca from "./components/Admin/marca/ActualizarMarca.tsx";
 import Producto from "./components/Admin/producto/Producto.tsx";
+import CrearProducto from "./components/Admin/producto/CrearProducto.tsx";
 import CrearPeluquero from "./components/Admin/peluquero/CrearPeluquero.tsx";
+import ActualizarProducto from "./components/Admin/producto/ActualizarProducto.tsx";
 
 
 
@@ -43,6 +45,8 @@ function App() {
         <Route path="/marca/crear" element= {<CrearMarca/>}/>
         <Route path="/marca/actualizar/:idMarca" element= {<ActualizarMarca/>}/>
         <Route path="/producto" element= {<Producto/>}/>
+        <Route path="/producto/crear" element= {<CrearProducto/>}/>
+        <Route path="producto/actualizar/:idProducto" element= {<ActualizarProducto/>}/>
         <Route path="/peluquero/CrearPeluquero" element= {<CrearPeluquero/>}/>
       </Routes>
     </Router>
