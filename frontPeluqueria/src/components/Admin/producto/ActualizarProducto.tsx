@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import "../../../styles/Registros.css";
+import { motion } from "framer-motion";
+import "../../../styles/Admin.css";
 
 interface Marca {
-    idMarca: number;
-    nombre: string;
+  idMarca: number;
+  nombre: string;
 }
 
 interface Categoria {
-    idCategoria: number;
-    nombreCategoria: string;
+  idCategoria: number;
+  nombreCategoria: string;
 }
 
-
-const ActualizarProducto: React.FC = () => {
+export default function ActualizarProducto() {
   const { idProducto } = useParams();
   const navigate = useNavigate();
   const [descripcion, setDescripcion] = useState("");
@@ -38,12 +38,12 @@ const ActualizarProducto: React.FC = () => {
       .then((res) => res.json())
       .then((data) => {
         setDescripcion(data.data.descripcion);
-        setCategoriaId(data.data.categoria?.idCategoria || 1); //xq 1? 
+        setCategoriaId(data.data.categoria?.idCategoria || null);
         setMarcasIds(data.data.marcas.map((m: Marca) => m.idMarca));
         setLoading(false);
       })
       .catch(() => {
-        setError("No se pudo cargar la categoría.");
+        setError("No se pudo cargar el producto.");
         setLoading(false);
       });
   }, [idProducto]);
@@ -60,14 +60,11 @@ const ActualizarProducto: React.FC = () => {
       const res = await fetch(`http://localhost:3000/api/producto/${idProducto}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ payload }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Error al actualizar la categoría");
-      }
+      if (!res.ok) throw new Error(data.message || "Error al actualizar el producto");
 
       setSuccess("Producto actualizado correctamente");
       setTimeout(() => navigate("/producto"), 1500);
@@ -79,76 +76,87 @@ const ActualizarProducto: React.FC = () => {
   };
 
   return (
-    <div className="actualizar-container">
-      <button
-        className="reservas-back-button"
-        onClick={() => {window.location.href = "/producto";}}>
-        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-            <path d="M15 18l-6-6 6-6" />
-        </svg>
-      </button>
-      <h2>Actualizar Producto</h2>
-      {loading ? (
-        <p>Cargando datos...</p>
-      ) : (
-        <form onSubmit={handleSubmit} className="actualizar-form">
-          <label>Descripción:</label>
-          <input
-            type="text"
-            id="descripcion"
-            value={descripcion}
-            onChange={(e) => setDescripcion(e.target.value)}
-            required
-          />
-
-          {/* Desplegable de CATEGORÍA */}
-        <label>Categoría:</label>
-        <select
-            value={categoriaId} 
-            onChange={(e) => setCategoriaId(Number(e.target.value))}
-        >
-            <option value="">Todas las Categorías</option>
-            {categorias.map((c) => (
-                <option key={c.idCategoria} value={c.idCategoria}>
-                    {c.nombreCategoria}
-                </option>
-            ))}
-        </select>
-
-        {/* CheckBox de MARCA */}
-        <label>Marcas:</label>
-        <div className="d-flex flex-wrap gap-2">
-            {marcas.map((m) => (
-              <div key={m.idMarca} className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  value={m.idMarca}
-                  checked={marcasIds.includes(m.idMarca)}
-                  onChange={(e) => {
-                    const id = Number(e.target.value);
-                    setMarcasIds((prev) =>
-                      prev.includes(id)
-                        ? prev.filter((pid) => pid !== id)
-                        : [...prev, id]
-                    );
-                  }}
-                />
-                <label className="form-check-label">{m.nombre}</label>
-              </div>
-            ))}
-          </div>
-
-          {error && <p className="error">{error}</p>}
-          {success && <p className="success">{success}</p>}
-
-          <button type="submit" disabled={loading}>
-            {loading ? "Actualizando..." : "Actualizar"}
+    <div className="admin-servicio my-4 container-fluid">
+      <motion.div
+        className="card p-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <h2>Actualizar Producto</h2>
+          <button className="btn btn-secondary" onClick={() => navigate("/producto")}>
+            Volver
           </button>
-        </form>
-      )}
+        </div>
+
+        {loading ? (
+          <p>Cargando datos...</p>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label htmlFor="descripcion" className="form-label">Descripción</label>
+              <input
+                type="text"
+                id="descripcion"
+                className="form-control"
+                value={descripcion}
+                onChange={(e) => setDescripcion(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Categoría</label>
+              <select
+                className="form-select"
+                value={categoriaId}
+                onChange={(e) => setCategoriaId(Number(e.target.value))}
+                required
+              >
+                <option value="">Seleccionar categoría</option>
+                {categorias.map((c) => (
+                  <option key={c.idCategoria} value={c.idCategoria}>
+                    {c.nombreCategoria}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Marcas</label>
+              <div className="d-flex flex-wrap gap-2">
+                {marcas.map((m) => (
+                  <div key={m.idMarca} className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      value={m.idMarca}
+                      checked={marcasIds.includes(m.idMarca)}
+                      onChange={(e) => {
+                        const id = Number(e.target.value);
+                        setMarcasIds((prev) =>
+                          prev.includes(id)
+                            ? prev.filter((pid) => pid !== id)
+                            : [...prev, id]
+                        );
+                      }}
+                    />
+                    <label className="form-check-label">{m.nombre}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {error && <p className="text-danger">Error: {error}</p>}
+            {success && <p className="text-success">{success}</p>}
+
+            <button type="submit" className="btn btn-primary" disabled={loading}>
+              {loading ? "Actualizando..." : "Actualizar Producto"}
+            </button>
+          </form>
+        )}
+      </motion.div>
     </div>
   );
-};
-
-export default ActualizarProducto;
+}
