@@ -17,7 +17,7 @@ const sections = [
       { label: "Producto", path: "/producto" },
     ]},
   { label: "Atenciones Pendientes", path: "/atencion" },
-  { label: "Perfil", path: "/perfil" },
+  { label: "Perfil", path: "/peluquero/perfilPeluquero" },
 ];
 
 

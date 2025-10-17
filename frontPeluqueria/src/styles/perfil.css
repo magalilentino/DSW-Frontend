@@ -28,6 +28,15 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
+.perfil-box-peluquero {
+  width: 550px;
+  max-width: 92%;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+  background: #fff;
+}
+
 .perfil-box h2 {
   margin-bottom: 20px;
   font-family: 'Poppins', 'Roboto', sans-serif;
@@ -138,3 +147,4 @@
   border-bottom: 1px solid #ddd;
   font-size: 14px;
 }
+
