@@ -21,6 +21,17 @@ import CrearPeluquero from "./components/Admin/peluquero/CrearPeluquero.tsx";
 import ActualizarProducto from "./components/Admin/producto/ActualizarProducto.tsx";
 
 
+import SobreNosotrosContacto from "./pages/NosotrosContacto.tsx"
+import Servicios from "./components/Admin/servicio/Servicios.tsx";
+import CrearServicio from "./components/Admin/servicio/CrearServicio.tsx";
+import ModificarServicio from "./components/Admin/servicio/ModificarServivicios.tsx";
+import Formula from "./components/Admin/formula/Formula.tsx";
+import CrearFormula from "./components/Admin/formula/CrearFormula.tsx";
+import ActualizarFormula from "./components/Admin/formula/ActualizarFormula.tsx";
+import Tono from "./components/Admin/tono/Tono.tsx";
+import CrearTono from "./components/Admin/tono/CrearTono.tsx";
+import ActualizarTono from "./components/Admin/tono/ActualizarTono.tsx";
+import PerfilPeluquero from "./components/Admin/peluquero/perfilPeluquero.tsx";
 
 
 
@@ -46,8 +57,19 @@ function App() {
         <Route path="/marca/actualizar/:idMarca" element= {<ActualizarMarca/>}/>
         <Route path="/producto" element= {<Producto/>}/>
         <Route path="/producto/crear" element= {<CrearProducto/>}/>
-        <Route path="producto/actualizar/:idProducto" element= {<ActualizarProducto/>}/>
+        <Route path="/producto/actualizar/:idProducto" element= {<ActualizarProducto/>}/>
         <Route path="/peluquero/CrearPeluquero" element= {<CrearPeluquero/>}/>
+        <Route path="/NosotrosContacto" element= {<SobreNosotrosContacto/>}/>
+        <Route path="/servicios" element= {<Servicios/>}/>
+        <Route path="/servicio/crear" element= {<CrearServicio/>}/>
+        <Route path="/servicio/actualizar/:idMarca" element= {<ModificarServicio/>}/>
+        <Route path="/formula" element={<Formula />} />
+        <Route path="/formula/crear" element={<CrearFormula />} />
+        <Route path="/formula/actualizar/:idFormula" element={<ActualizarFormula />} />
+        <Route path="/tono" element={<Tono />} />
+        <Route path="/tono/crear" element={<CrearTono />} />
+        <Route path="/tono/actualizar/:idTono" element={<ActualizarTono />} />
+        <Route path="/peluquero/perfilPeluquero" element={<PerfilPeluquero />} />
       </Routes>
     </Router>
   );

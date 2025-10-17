@@ -1,7 +1,7 @@
-import { useAuth } from "../components/general/AuthContext";
+import { useAuth } from "../../../components/general/AuthContext";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/perfil.css";
+import "../../../styles/perfil.css";
 
 interface Persona {
   idPersona: number;
@@ -13,37 +13,14 @@ interface Persona {
   type: "cliente" | "peluquero";
 }
 
-interface Servicio {
-  codServicio: number;
-  nombreServicio: string;
-  descripcion?: string;
-  cantTurnos?: number;
-  precio?: number;
-}
 
-interface AtencionServicio {
-  idAtSer: number;
-  servicio?: Servicio; // puede ser undefined
-}
-
-interface Atencion {
-  idAtencion: number;
-  fecha: string;
-  estado: "pendiente" | "finalizado" | "cancelado";
-  atencionServicios?: AtencionServicio[]; // puede ser undefined
-}
-
-export default function MiPerfil() {
+export default function PerfilPeluquero() {
   const { user } = useAuth();
   const navigate = useNavigate();
-
   const [persona, setPersona] = useState<Persona | null>(null);
-  const [historico, setHistorico] = useState<Atencion[]>([]);
-  const [pendientes, setPendientes] = useState<Atencion[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState<Partial<Persona>>({});
 
@@ -61,25 +38,6 @@ export default function MiPerfil() {
         if (!resPerfil.ok) throw new Error(dataPerfil.message);
         setPersona(dataPerfil);
         setFormData(dataPerfil);
-
-        // Histórico y pendientes
-        const [resHist, resPend] = await Promise.all([
-        fetch(`http://localhost:3000/api/atencion/historico/${user.idPersona}`, {
-          headers: { Authorization: `Bearer ${user.token}` },
-        }),
-        fetch(`http://localhost:3000/api/atencion/pendientes/${user.idPersona}`, {
-          headers: { Authorization: `Bearer ${user.token}` },
-        }),
-      ]);
-
-        const dataHist = await resHist.json();
-        const dataPend = await resPend.json();
-
-        if (!resHist.ok) throw new Error(dataHist.message);
-        if (!resPend.ok) throw new Error(dataPend.message);
-
-        setHistorico(dataHist);
-        setPendientes(dataPend);
         
       } catch (err: any) {
         setError(err.message);
@@ -100,7 +58,7 @@ export default function MiPerfil() {
     if (!user || !persona) return;
     try {
       const res = await fetch(
-        `http://localhost:3000/api/persona/${persona.idPersona}`,
+        `http://localhost:3000/api/persona/peluquero/${persona.idPersona}`,
         {
           method: "PUT",
           headers: {
@@ -140,53 +98,9 @@ if (!user) {
   if (loading) return <div className="perfil-container">Cargando datos...</div>;
   if (error) return <div className="perfil-container text-danger">Error: {error}</div>;
 
-  const renderServicios = (atencion: Atencion) => {
-    const servicios = atencion.atencionServicios ?? [];
-    if (servicios.length === 0) return <li>Sin servicios asociados</li>;
-    return servicios.map(as => (
-      <li key={as.idAtSer}>{as.servicio?.nombreServicio ?? "Servicio no disponible"}</li>
-    ));
-  };
 
   return (
-    <div className="perfil-container">
-      
-      {/* Panel izquierdo con histórico y pendientes */}
-        <div className="perfil-left-side">
-        <div className="perfil-left-content">
-            <h3>Histórico</h3>
-            {historico.length === 0 ? (
-              <p>No tienes atenciones pasadas.</p>
-            ) : (
-              <ul>
-                {historico.map(a => (
-                  <li key={a.idAtencion}>
-                    <strong>Atencion para el {new Date(a.fecha).toLocaleDateString()}</strong>
-                    <ul><strong>Servicios:</strong> {renderServicios(a)}</ul>
-                  </li>
-                ))}
-              </ul>
-            )}
-
-            <h3>Pendientes</h3>
-            {pendientes.length === 0 ? (
-              <p>No tienes atenciones pendientes.</p>
-            ) : (
-              <ul>
-                {pendientes.map(a => (
-                  <li key={a.idAtencion}>
-                    <strong>Atencion para el {new Date(a.fecha).toLocaleDateString()}</strong>
-                    <ul><strong>Servicios:</strong> {renderServicios(a)}</ul>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
-      
-
-      <div className="perfil-right-side">
-        <div className="perfil-box">
+        <div className="perfil-box-peluquero">
           <h2>Mi Perfil</h2>
           {success && <div className="alert alert-success">{success}</div>}
 
@@ -203,7 +117,7 @@ if (!user) {
                   className="auth-button-usser"
                   onClick={() => setEditMode(true)}
                 >
-                  Editar Perfil
+                  Volver a editar
                 </button>
                 <button
                   className="auth-button-cancel"
@@ -266,7 +180,5 @@ if (!user) {
             </div>
           )}
         </div>
-      </div>
-    </div>
   );
 }

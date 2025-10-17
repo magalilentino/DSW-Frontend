@@ -15,6 +15,7 @@ const CrearPeluquero: React.FC = () => {
   const [clave, setClave] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -35,8 +36,8 @@ const CrearPeluquero: React.FC = () => {
         throw new Error(data.message || "Error en el registro");
       }
 
-      alert("Registro exitoso");
-      navigate("/reserve");
+      setSuccess("Registro exitoso");
+      navigate("/perfil");
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -49,7 +50,16 @@ const CrearPeluquero: React.FC = () => {
   };
 
   return (
-    <><h2>Registrar un nuevo peluquero</h2><form onSubmit={handleSubmit}>
+    <div className="contenedor-pagina">
+    <div className="crear-container">
+      <button
+          className="reservas-back-button"
+          onClick={() => {window.location.href = "/categoria";}}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+              <path d="M15 18l-6-6 6-6" />
+          </svg>
+      </button>
+    <><h2>Registrar un nuevo peluquero</h2><form onSubmit={handleSubmit} className="crear-form">
       <input
         type="text"
         placeholder="DNI"
@@ -88,16 +98,19 @@ const CrearPeluquero: React.FC = () => {
         required
         className="mt-2" />
 
-      {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
+      {error && <p className="error">{error}</p>}
+      {success && <p className="success">{success}</p>}
 
       <button
         type="submit"
         className="auth-button-usser"
         disabled={loading}
       >
-        {loading ? "Registrando..." : "Registrarse"}
+        {loading ? "Registrando..." : "Registrar"}
       </button>
     </form></>
+    </div>
+    </div>
   );
 };
 
