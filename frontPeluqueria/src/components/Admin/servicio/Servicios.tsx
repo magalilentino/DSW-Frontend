@@ -55,6 +55,7 @@ function Servicios() {
           }
         );
         if (!res.ok) {
+          throw new Error(res.statusText);
           throw new Error("Error al borrar el servicio");
         }
         setServicios((prev) =>
