@@ -100,7 +100,7 @@ export default function MiPerfil() {
     if (!user || !persona) return;
     try {
       const res = await fetch(
-        `http://localhost:3000/api/persona/${persona.idPersona}`,
+        `http://localhost:3000/api/persona/cliente/${persona.idPersona}`,
         {
           method: "PUT",
           headers: {
