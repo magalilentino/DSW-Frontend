@@ -96,31 +96,35 @@ export default function MiPerfil() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSave = async () => {
-    if (!user || !persona) return;
-    try {
-      const res = await fetch(
-        `http://localhost:3000/api/persona/cliente/${persona.idPersona}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.token}`,
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+ const handleSave = async () => {
+  if (!user || !persona) return;
+  try {
+    const res = await fetch(
+      `http://localhost:3000/api/persona/cliente/${persona.idPersona}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify(formData),
+      }
+    );
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
+    const response = await res.json();
+    if (!res.ok) throw new Error(response.message);
 
-      setPersona(data);
-      setEditMode(false);
-      setSuccess("Perfil actualizado correctamente ✅");
-    } catch (err: any) {
-      setError(err.message);
-    }
-  };
+    setPersona(response.data);       
+    setFormData(response.data);       
+    setEditMode(false);
+    setSuccess("Perfil actualizado correctamente ✅");
+
+    setTimeout(() => setSuccess(""), 3000); 
+  } catch (err: any) {
+    setError(err.message);
+  }
+};
+
 
 if (!user) {
   return (

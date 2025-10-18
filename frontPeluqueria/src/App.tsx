@@ -62,7 +62,7 @@ function App() {
         <Route path="/NosotrosContacto" element= {<SobreNosotrosContacto/>}/>
         <Route path="/servicios" element= {<Servicios/>}/>
         <Route path="/servicio/crear" element= {<CrearServicio/>}/>
-        <Route path="/servicio/actualizar/:idMarca" element= {<ModificarServicio/>}/>
+        <Route path="/servicio/actualizar/:codServicio" element= {<ModificarServicio/>}/>
         <Route path="/formula" element={<Formula />} />
         <Route path="/formula/crear" element={<CrearFormula />} />
         <Route path="/formula/actualizar/:idFormula" element={<ActualizarFormula />} />

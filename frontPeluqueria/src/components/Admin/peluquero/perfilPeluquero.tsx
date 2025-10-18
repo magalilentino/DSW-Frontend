@@ -91,7 +91,7 @@ if (!user) {
       <div className="perfil-box">
         <h2>Debes iniciar sesión para ver tu perfil.</h2>
         <div className="buttons-usser">
-          <button className="auth-button-cancel" onClick={() => navigate("/")}>
+          <button className="auth-button-cancel" onClick={() => navigate("/admin")}>
             ⬅ Volver al Home
           </button>
         </div>

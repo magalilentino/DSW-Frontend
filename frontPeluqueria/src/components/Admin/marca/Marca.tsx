@@ -1,102 +1,107 @@
-import React, { useEffect, useState } from "react";
-import "../../../styles/Registros.css";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import "../../../styles/Admin.css";
 
 interface Marca {
   idMarca: number;
   nombre: string;
 }
 
-const Marca: React.FC = () => {
+export default function MarcaPage() {
   const [marcas, setMarcas] = useState<Marca[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-
-
-  
-    useEffect(() => {
-    fetch("http://localhost:3000/api/marca")
-        .then((res) => res.json())
-        .then((data) => {
-            console.log("Respuesta de marcas:", data);
-            setMarcas(data.data); 
-            setLoading(false);
-    })
-        .catch(() => {
-            setError("No se pudo cargar la lista de marcas");
-            setLoading(false);
-    });
-    }, []);
-
-  const handleEliminar = async (idMarca: number) => {
+  const fetchMarcas = async () => {
     try {
-      await fetch(`http://localhost:3000/api/marca/${idMarca}`, {
-        method: "DELETE",
-      });
-      setMarcas((prev) => prev.filter((m) => m.idMarca !== idMarca));
-    } catch {
-      alert("Error al eliminar la marca.");
+      const res = await fetch("http://localhost:3000/api/marca");
+      if (!res.ok) throw new Error("Error al cargar marcas");
+      const data = await res.json();
+      setMarcas(data.data || []);
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleActualizar = (idMarca: number) => {
-    window.location.href = `/marca/actualizar/${idMarca}`;
+  const handleDelete = async (idMarca: number) => {
+    if (window.confirm(`¿Estás seguro que quieres borrar la marca ${idMarca}?`)) {
+      try {
+        const res = await fetch(`http://localhost:3000/api/marca/${idMarca}`, {
+          method: "DELETE",
+        });
+        if (!res.ok) throw new Error("Error al borrar la marca");
+        setMarcas((prev) => prev.filter((m) => m.idMarca !== idMarca));
+      } catch (err) {
+        setError((err as Error).message);
+      }
+    }
   };
 
-  const handleCrear = () => {
-    window.location.href = "/marca/crear";
-  };
+  useEffect(() => {
+    fetchMarcas();
+  }, []);
+
+  if (loading) return <p>Cargando marcas...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="registro-page">
-      <div className="registro-header">
-        <button
-            className="reservas-back-button"
-            onClick={() => {window.location.href = "/admin";}}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                <path d="M15 18l-6-6 6-6" />
-            </svg>
-        </button>
-        <h2>Listado de Marcas</h2>
+    <div className="admin-servicio my-4 container-fluid">
+      <div className="row">
+        <div>
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <h2>Marcas</h2>
+            <button className="btn btn-primary" onClick={() => navigate("/marca/crear")}>
+              Agregar Marca
+            </button>
+          </div>
 
-        <button className="crear-button" onClick={handleCrear}>
-          Crear Marca
-        </button>
+          {marcas.length === 0 ? (
+            <p>No hay marcas disponibles.</p>
+          ) : (
+            <ul className="list-unstyled">
+              {marcas.map((m, i) => (
+                <motion.li
+                  key={m.idMarca}
+                  className="admin-servicio-item d-flex justify-content-between align-items-center mb-3 p-3 shadow-sm bg-white rounded"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: false, amount: 0.2 }}
+                  transition={{ duration: 0.5, delay: i * 0.1 }}
+                >
+                  <div className="service-info me-3">
+                    <h5>Marca #{m.idMarca}</h5>
+                    <p className="mb-1">Nombre: {m.nombre}</p>
+                  </div>
+                  <div className="service-actions d-flex flex-column gap-2 flex-shrink-0">
+                    <button
+                      className="btn btn-sm btn-outline-secondary admin-btn-action"
+                      onClick={() => navigate(`/marca/actualizar/${m.idMarca}`)}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="btn btn-sm btn-outline-dark admin-btn-action"
+                      onClick={() => handleDelete(m.idMarca)}
+                    >
+                      Borrar
+                    </button>
+                  </div>
+                </motion.li>
+              ))}
+            </ul>
+          )}
+
+          <div className="d-flex justify-content-end mt-4">
+            <button className="btn btn-secondary" onClick={() => navigate("/admin")}>
+              Volver
+            </button>
+          </div>
+        </div>
       </div>
-
-      {loading ? (
-        <p>Cargando...</p>
-      ) : error ? (
-        <p className="error">{error}</p>
-      ) : (
-        <table className="registro-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {marcas.map((m) => (
-              <tr key={m.idMarca}>
-                <td>{m.idMarca}</td>
-                <td>{m.nombre}</td>
-                <td>
-                  <button className="action-button update" onClick={() => handleActualizar(m.idMarca)}>
-                    Actualizar
-                  </button>
-                  <button className="action-button delete" onClick={() => handleEliminar(m.idMarca)}>
-                    Eliminar
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
     </div>
   );
-};
-
-export default Marca;
+}

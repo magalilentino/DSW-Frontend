@@ -4,9 +4,9 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 // importamos la entidad ProdUt (Producto Utilizado) para tipado si es necesario
 
-// ---------------------------------------------------------------------
+
 // 1. INTERFACES
-// ---------------------------------------------------------------------
+
 
 // Interfaz del producto tal como viene de /api/productos
 interface Producto {
@@ -56,11 +56,11 @@ const ModificarAtSer: React.FC = () => {
 
     const token = localStorage.getItem("token");
 
-    // ---------------------------------------------------------------------
+    
     // 2. FETCH de PRODUCTOS DISPONIBLES (con filtros)
-    // ---------------------------------------------------------------------
+    
 
-        // 🛑 NUEVO FETCH para Marcas
+        //  NUEVO FETCH para Marcas
     const fetchMarcas = useCallback(async () => {
         try {
             const res = await fetch('http://localhost:3000/api/marca', { 
@@ -68,7 +68,7 @@ const ModificarAtSer: React.FC = () => {
             });
             if (!res.ok) throw new Error("Fallo la carga de marcas.");
             const responseData = await res.json();
-        // 🛑 CAMBIO CLAVE: Acceder a la propiedad 'data' que contiene el array.
+        // CAMBIO CLAVE: Acceder a la propiedad 'data' que contiene el array.
         // Se añade una verificación de seguridad (|| []) por si 'data' no existe.
             const marcasArray = responseData.data || []; 
             
@@ -85,7 +85,7 @@ const ModificarAtSer: React.FC = () => {
         }
     }, [token]);
     
-    // 🛑 NUEVO FETCH para Categorías
+    //  NUEVO FETCH para Categorías
     const fetchCategorias = useCallback(async () => {
         try {
             const res = await fetch('http://localhost:3000/api/categoria', { 
@@ -93,7 +93,7 @@ const ModificarAtSer: React.FC = () => {
             });
             if (!res.ok) throw new Error("Fallo la carga de categorías.");
              const responseData = await res.json();
-        // 🛑 CAMBIO CLAVE: Acceder a la propiedad 'data' que contiene el array.
+        //  CAMBIO CLAVE: Acceder a la propiedad 'data' que contiene el array.
         // Se añade una verificación de seguridad (|| []) por si 'data' no existe.
             const categoriaArray = responseData.data || []; 
             
@@ -156,7 +156,7 @@ const ModificarAtSer: React.FC = () => {
 
     const fetchAtencionId = async () => {
         try {
-            // 🛑 AJUSTA ESTA URL a tu endpoint para obtener el detalle de AtSer
+            //  AJUSTA ESTA URL a tu endpoint para obtener el detalle de AtSer
             // Debe devolver un objeto que contenga { ..., idAtencion: number }
             const res = await fetch(`http://localhost:3000/api/atSer/${idAtSer}`, {
                 headers: { Authorization: `Bearer ${token}` },
@@ -190,42 +190,11 @@ const ModificarAtSer: React.FC = () => {
             
     }, [fetchProductos, fetchTonos, fetchMarcas, fetchCategorias]); // Dependencias que disparan los fetches
 
-    // useEffect(() => {
-    //     const fetchProductos = async () => {
-    //         setLoading(true);
-    //         setError("");
-            
-    //         // Construye la URL con los filtros de query params
-    //         const query = new URLSearchParams();
-    //         if (filtroMarca) query.append('idMarca', filtroMarca);
-    //         if (filtroCategoria) query.append('idCategoria', filtroCategoria);
-            
-    //         try {
-    //             const url = `http://localhost:3000/api/producto/listarProductos?${query.toString()}`;
-    //             const res = await fetch(url, {
-    //                 headers: { Authorization: `Bearer ${token}` },
-    //             });
-                
-    //             if (!res.ok) throw new Error("Fallo la carga de productos disponibles.");
-
-    //             const data = await res.json();
-    //             setProductosDisponibles(data);
-                
-    //         } catch (err) {
-    //             console.error(err);
-    //             setError("Error al cargar productos disponibles.");
-    //         } finally {
-    //             setLoading(false);
-    //         }
-    //     };
-
-    //     fetchProductos();
-    // }, [filtroMarca, filtroCategoria, token]); 
-
+   
     
-    // ---------------------------------------------------------------------
+    
     // 3. MANEJO DE SELECCIÓN Y CANTIDAD
-    // ---------------------------------------------------------------------
+
     
     // Helper para saber si un producto ya está seleccionado
     const isSelected = (idProducto: number) => productosSeleccionados.some(p => p.idProducto === idProducto);
@@ -278,9 +247,9 @@ const ModificarAtSer: React.FC = () => {
         }
     };
 
-    // ---------------------------------------------------------------------
+    
     // 4. SUBMIT: GUARDAR PRODUCTOS UTILIZADOS
-    // ---------------------------------------------------------------------
+    
     const handleSubmit = async () => {
         const productosAEnviar = productosSeleccionados.map(p => ({
             idProducto: p.idProducto,
@@ -292,7 +261,7 @@ const ModificarAtSer: React.FC = () => {
             return;
         }
 
-        // 🛑 Data a enviar (incluyendo el tono si está seleccionado)
+        // Data a enviar (incluyendo el tono si está seleccionado)
         // Nota: Si el backend espera el tono en el body del PATCH, agrégalo aquí.
         // Si el tono se guarda en una tabla diferente, necesitarás otro fetch.
         const bodyToSend = { 
@@ -322,9 +291,9 @@ const ModificarAtSer: React.FC = () => {
         }
     };
 
-    // ---------------------------------------------------------------------
+    
     // 5. RENDERIZADO
-    // ---------------------------------------------------------------------
+    
 
     // Helper para obtener la cantidad actual de un producto
     const getCantidad = (idProducto: number) => {
@@ -349,7 +318,7 @@ const ModificarAtSer: React.FC = () => {
                 </svg>
             </button>
             
-             {/* 🛑 FILTROS CON DESPLEGABLES */}
+             {/*  FILTROS CON DESPLEGABLES */}
             <div className="filtros">
                 {/* Desplegable de MARCA */}
                 <select
@@ -381,21 +350,7 @@ const ModificarAtSer: React.FC = () => {
             </div>
 
 
-            {/* Filtros */}
-            {/* <div className="filtros">
-                <input 
-                    type="text" 
-                    placeholder="Filtrar por Marca ID" 
-                    value={filtroMarca} 
-                    onChange={(e) => setFiltroMarca(e.target.value)}
-                />
-                <input 
-                    type="text" 
-                    placeholder="Filtrar por Categoría ID" 
-                    value={filtroCategoria} 
-                    onChange={(e) => setFiltroCategoria(e.target.value)}
-                />
-            </div> */}
+        
             
             {/* Listado de Productos */}
             <table className="productos-disponibles-table">
