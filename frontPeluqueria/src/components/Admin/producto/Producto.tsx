@@ -43,7 +43,13 @@ export default function ProductoPage() {
         const res = await fetch(`http://localhost:3000/api/producto/${idProducto}`, {
           method: "DELETE",
         });
-        if (!res.ok) throw new Error("Error al borrar el producto");
+
+        const data = await res.json();
+
+        //if (!res.ok) throw new Error("Error al borrar el producto");
+        //if (!res.ok) throw new Error(data.message || "Error al borrar el producto");
+        if (!res.ok) setError(data.message || "Error al borrar el producto");
+
         setProductos((prev) => prev.filter((p) => p.idProducto !== idProducto));
       } catch (err) {
         setError((err as Error).message);
@@ -68,7 +74,7 @@ export default function ProductoPage() {
               Agregar Producto
             </button>
           </div>
-
+          {error && <p className="text-danger">Error: {error}</p>}
           {productos.length === 0 ? (
             <p>No hay productos disponibles.</p>
           ) : (
@@ -106,6 +112,8 @@ export default function ProductoPage() {
               ))}
             </ul>
           )}
+
+          
 
           <div className="d-flex justify-content-end mt-4">
             <button className="btn btn-secondary" onClick={() => navigate("/admin")}>

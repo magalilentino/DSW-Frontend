@@ -6,6 +6,11 @@ import "../../../styles/Admin.css";
 interface Categoria {
   idCategoria: number;
   nombreCategoria: string;
+  productos: Producto[];
+}
+
+interface Producto{
+  idProducto: number;
 }
 
 export default function CategoriaPage() {
@@ -27,13 +32,25 @@ export default function CategoriaPage() {
     }
   };
 
-  const handleDelete = async (idCategoria: number) => {
+  const handleDelete = async (idCategoria: number, productos: Producto[]) => {
     if (window.confirm(`¿Estás seguro que quieres borrar la categoría ${idCategoria}?`)) {
       try {
-        const res = await fetch(`http://localhost:3000/api/categoria/${idCategoria}`, {
+        for (const p of productos) {
+          const resProd = await fetch(`http://localhost:3000/api/producto/${p.idProducto}`, {
+            method: "DELETE",
+          });
+
+          if (!resProd.ok) {
+            const data = await resProd.json();
+            throw new Error(`Error al borrar el producto ${p.idProducto}: ${data.message}`);
+          }
+        }
+
+        const resCat = await fetch(`http://localhost:3000/api/categoria/${idCategoria}`, {
           method: "DELETE",
         });
-        if (!res.ok) throw new Error("Error al borrar la categoría");
+
+        if (!resCat.ok) throw new Error("Error al borrar la categoría");
         setCategorias((prev) => prev.filter((c) => c.idCategoria !== idCategoria));
       } catch (err) {
         setError((err as Error).message);
@@ -85,7 +102,7 @@ export default function CategoriaPage() {
                     </button>
                     <button
                       className="btn btn-sm btn-outline-dark admin-btn-action"
-                      onClick={() => handleDelete(c.idCategoria)}
+                      onClick={() => handleDelete(c.idCategoria, c.productos)}
                     >
                       Borrar
                     </button>

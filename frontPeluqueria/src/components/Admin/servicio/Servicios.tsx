@@ -29,7 +29,7 @@ export default function ServiciosPage() {
 
   const fetchServicios = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/servicio/findAll");
+      const res = await fetch("http://localhost:3000/api/servicio/findAllAyD");
       if (!res.ok) throw new Error("Error al cargar servicios");
       const data = await res.json();
       setServicios(data.data || []);
