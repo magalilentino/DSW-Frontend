@@ -157,7 +157,10 @@ export default function ActualizarProducto() {
                   type="checkbox"
                   id="activo"
                   checked={activo}
-                  onChange={(e) => setActivo(e.target.checked)}
+                  onChange={(e) => {
+                    const nuevoEstado = e.target.checked; // esta propiedad siempre devuelve un valor booleano
+                    setActivo(nuevoEstado); 
+                }}
                 />
                 <label className="form-check-label" htmlFor="activo">
                   Activo

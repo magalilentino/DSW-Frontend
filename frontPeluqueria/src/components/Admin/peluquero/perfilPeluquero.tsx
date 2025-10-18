@@ -117,11 +117,11 @@ if (!user) {
                   className="auth-button-usser"
                   onClick={() => setEditMode(true)}
                 >
-                  Volver a editar
+                  editar
                 </button>
                 <button
                   className="auth-button-cancel"
-                  onClick={() => navigate("/")}
+                  onClick={() => navigate("/admin")}
                 >
                   ⬅ Volver al Home
                 </button>

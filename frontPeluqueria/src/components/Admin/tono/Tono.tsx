@@ -6,6 +6,11 @@ import "../../../styles/Admin.css";
 interface Tono {
   idTono: number;
   nombre: string;
+  formulas:Formula[];
+}
+
+interface Formula{
+  idFormula: number;
 }
 
 export default function TonoPage() {
@@ -27,9 +32,21 @@ export default function TonoPage() {
     }
   };
 
-  const handleDelete = async (idTono: number) => {
+  const handleDelete = async (idTono: number, formulas: Formula[]) => {
     if (window.confirm(`¿Seguro que querés borrar el tono ${idTono}?`)) {
       try {
+
+        if(formulas){
+          for (const f of formulas) {
+            const resForm = await fetch(`http://localhost:3000/api/formula/${f.idFormula}`, {
+              method: "DELETE",
+            });
+
+            if (!resForm.ok) {
+              const data = await resForm.json();
+              throw new Error(`Error al borrar la formula ${f.idFormula}: ${data.message}`);
+          }}
+        }
         const res = await fetch(`http://localhost:3000/api/tono/${idTono}`, {
           method: "DELETE",
         });
@@ -85,7 +102,7 @@ export default function TonoPage() {
                     </button>
                     <button
                       className="btn btn-sm btn-outline-dark admin-btn-action"
-                      onClick={() => handleDelete(t.idTono)}
+                      onClick={() => handleDelete(t.idTono, t.formulas)}
                     >
                       Borrar
                     </button>
