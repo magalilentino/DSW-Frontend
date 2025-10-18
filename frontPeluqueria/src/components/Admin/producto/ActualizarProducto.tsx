@@ -17,6 +17,7 @@ export default function ActualizarProducto() {
   const { idProducto } = useParams();
   const navigate = useNavigate();
   const [descripcion, setDescripcion] = useState("");
+  const [activo, setActivo] = useState<boolean>();
   const [marcasIds, setMarcasIds] = useState<number[]>([]);
   const [categoriaId, setCategoriaId] = useState<number>();
   const [marcas, setMarcas] = useState<Marca[]>([]);
@@ -145,6 +146,22 @@ export default function ActualizarProducto() {
                     <label className="form-check-label">{m.nombre}</label>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="activo" className="form-label">Estado</label>
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id="activo"
+                  checked={activo}
+                  onChange={(e) => setActivo(e.target.checked)}
+                />
+                <label className="form-check-label" htmlFor="activo">
+                  Activo
+                </label>
               </div>
             </div>
 

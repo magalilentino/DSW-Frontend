@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import "../../../styles/Admin.css";
+import "../../../styles/Registros.css";
 
 interface Producto {
   idProducto: number;
   descripcion: string;
+  activo: boolean;
   categoria: {
     nombreCategoria: string;
   };
@@ -50,7 +50,12 @@ export default function ProductoPage() {
         //if (!res.ok) throw new Error(data.message || "Error al borrar el producto");
         if (!res.ok) setError(data.message || "Error al borrar el producto");
 
-        setProductos((prev) => prev.filter((p) => p.idProducto !== idProducto));
+        setProductos((prev) =>
+          prev.map((p) =>
+            p.idProducto === idProducto ? { ...p, activo: false } : p
+          )
+        );
+
       } catch (err) {
         setError((err as Error).message);
       }
@@ -61,67 +66,95 @@ export default function ProductoPage() {
     fetchProductos();
   }, []);
 
+  const productosExpandido = productos.flatMap((p) =>
+    p.marcas.map((marca) => ({
+      idProducto: p.idProducto,
+      descripcion: p.descripcion,
+      nombreCategoria: p.categoria.nombreCategoria,
+      nombreMarca: marca.nombre,
+      activo: p.activo ? "Activado" : "Desactivado",
+    }))
+  );
+
   if (loading) return <p>Cargando productos...</p>;
   if (error) return <p className="text-danger">Error: {error}</p>;
 
   return (
-    <div className="admin-servicio my-4 container-fluid">
-      <div className="row">
-        <div>
-          <div className="d-flex justify-content-between align-items-center mb-3">
-            <h2>Productos</h2>
-            <button className="btn btn-primary" onClick={() => navigate("/producto/crear")}>
-              Agregar Producto
-            </button>
-          </div>
-          {error && <p className="text-danger">Error: {error}</p>}
-          {productos.length === 0 ? (
-            <p>No hay productos disponibles.</p>
-          ) : (
-            <ul className="list-unstyled">
-              {productos.map((p, i) => (
-                <motion.li
-                  key={p.idProducto}
-                  className="admin-servicio-item d-flex justify-content-between align-items-center mb-3 p-3 shadow-sm bg-white rounded"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: false, amount: 0.2 }}
-                  transition={{ duration: 0.5, delay: i * 0.1 }}
-                >
-                  <div className="service-info me-3">
-                    <h5>Producto #{p.idProducto}</h5>
-                    <p className="mb-1">Descripción: {p.descripcion}</p>
-                    <p className="mb-1">Categoría: {p.categoria?.nombreCategoria || "Sin categoría"}</p>
-                    <p className="mb-1">Marca: {p.marcas?.[0]?.nombre || "Sin marca"}</p>
-                  </div>
-                  <div className="service-actions d-flex flex-column gap-2 flex-shrink-0">
-                    <button
-                      className="btn btn-sm btn-outline-secondary admin-btn-action"
-                      onClick={() => navigate(`/producto/actualizar/${p.idProducto}`)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="btn btn-sm btn-outline-dark admin-btn-action"
-                      onClick={() => handleDelete(p.idProducto)}
-                    >
-                      Borrar
-                    </button>
-                  </div>
-                </motion.li>
-              ))}
-            </ul>
-          )}
-
-          
-
-          <div className="d-flex justify-content-end mt-4">
-            <button className="btn btn-secondary" onClick={() => navigate("/admin")}>
-              Volver
-            </button>
-          </div>
-        </div>
+    <div className="registro-page">
+      <div className="registro-header">
+        <button
+          className="reservas-back-button"
+          onClick={() => {window.location.href = "/admin";}}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+              <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+        <h2>Listado de Productos</h2>
+        <button className="crear-button" onClick={() => navigate("/producto/crear/")}>
+          Crear Producto
+        </button>
       </div>
+
+      {loading ? (
+        <p>Cargando...</p>
+      ) : error ? (
+        <p className="error">{error}</p>
+      ) : (
+        <table className="registro-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Descripcion</th>
+              <th>Marca</th>
+              <th>Caregoria</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {productosExpandido.map((p, index) => (
+            <tr key={`${p.idProducto}-${index}`}>
+              <td>{p.idProducto}</td>
+              <td>{p.descripcion}</td>
+              <td>{p.nombreMarca}</td>
+              <td>{p.nombreCategoria}</td>
+              <td>{p.activo}</td>
+              <td>
+                <button
+                  className="action-button update"
+                  onClick={() => navigate(`/producto/actualizar/${p.idProducto}`)}
+                >
+                  Actualizar
+                </button>
+                <button
+                  className="action-button delete"
+                  onClick={() => handleDelete(p.idProducto)}
+                >
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          ))}
+
+            {/* {productos.map((p) => (
+              <tr key={p.idProducto}>
+                <td>{p.idProducto}</td>
+                <td>{p.descripcion}</td>
+                {/* <td>{p.marcas.nombre}</td> 
+                <td>{p.categoria.nombreCategoria}</td>
+                <td>
+                  <button className="action-button update" onClick={() => navigate(`/marca/actualizar/${p.idProducto}`)}>
+                    Actualizar
+                  </button>
+                  <button className="action-button delete" onClick={() => handleDelete(p.idProducto)}>
+                    Eliminar
+                  </button>
+                </td>
+              </tr>
+            ))} */}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }
