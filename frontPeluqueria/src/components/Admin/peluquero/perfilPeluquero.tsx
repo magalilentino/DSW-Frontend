@@ -122,11 +122,7 @@ if (!user) {
                   className="auth-button-usser"
                   onClick={() => setEditMode(true)}
                 >
-<<<<<<< HEAD
                   Editar perfil
-=======
-                  editar
->>>>>>> 4a2fd12890f62ef07621884d52cd40d7d9b94822
                 </button>
                 <button
                   className="auth-button-cancel"
