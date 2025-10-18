@@ -27,7 +27,7 @@ function Login({ onToggleMode }: LoginProps) {
     const type = localStorage.getItem("type");
 
     if (token && type) {
-      if (type === "cliente") navigate("/reserve");
+      if (type === "cliente") navigate("/");
       else if (type === "peluquero") navigate("/admin");
     }
   }, [navigate]);
@@ -58,7 +58,7 @@ function Login({ onToggleMode }: LoginProps) {
       });
 
       if (data.type === "cliente") {
-        navigate("/reserve");
+        navigate("/");
       } else if (data.type === "peluquero") {
         navigate("/admin");
       }

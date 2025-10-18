@@ -33,7 +33,7 @@ export default function CategoriaPage() {
   };
 
   const handleDelete = async (idCategoria: number, productos: Producto[]) => {
-    if (window.confirm(`¿Estás seguro que quieres borrar la categoría ${idCategoria}?`)) {
+    if (window.confirm(`¿Estás seguro que quieres borrar la categoría ${idCategoria}? también se borrarán los productos contenidos`)) {
       try {
         if(productos){
           for (const p of productos) {
