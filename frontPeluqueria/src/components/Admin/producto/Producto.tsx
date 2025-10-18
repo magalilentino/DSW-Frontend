@@ -9,9 +9,9 @@ interface Producto {
   categoria: {
     nombreCategoria: string;
   };
-  marcas: {
-    nombre: string;
-  }[];
+  // marcas: {
+  //   nombre: string;
+  // }[];
 }
 
 export default function ProductoPage() {
@@ -66,15 +66,15 @@ export default function ProductoPage() {
     fetchProductos();
   }, []);
 
-  const productosExpandido = productos.flatMap((p) =>
-    p.marcas.map((marca) => ({
-      idProducto: p.idProducto,
-      descripcion: p.descripcion,
-      nombreCategoria: p.categoria.nombreCategoria,
-      nombreMarca: marca.nombre,
-      activo: p.activo ? "Activado" : "Desactivado",
-    }))
-  );
+  // const productosExpandido = productos.flatMap((p) =>
+  //   p.marcas.map((marca) => ({
+  //     idProducto: p.idProducto,
+  //     descripcion: p.descripcion,
+  //     nombreCategoria: p.categoria.nombreCategoria,
+  //     nombreMarca: marca.nombre,
+  //     activo: p.activo ? "Activado" : "Desactivado",
+  //   }))
+  // );
 
   if (loading) return <p>Cargando productos...</p>;
   if (error) return <p className="text-danger">Error: {error}</p>;
@@ -105,20 +105,20 @@ export default function ProductoPage() {
             <tr>
               <th>ID</th>
               <th>Descripcion</th>
-              <th>Marca</th>
+              {/* <th>Marca</th> */}
               <th>Caregoria</th>
               <th>Estado</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {productosExpandido.map((p, index) => (
+            {productos.map((p, index) => (
             <tr key={`${p.idProducto}-${index}`}>
               <td>{p.idProducto}</td>
               <td>{p.descripcion}</td>
-              <td>{p.nombreMarca}</td>
-              <td>{p.nombreCategoria}</td>
-              <td>{p.activo}</td>
+              {/* <td>{p.nombreMarca}</td> */}
+              <td>{p.categoria.nombreCategoria}</td>
+              <td>{p.activo ? "Activado" : "Desactivado"}</td>
               <td>
                 <button
                   className="action-button update"

@@ -41,7 +41,7 @@ export default function CrearProducto() {
     setLoading(true);
 
     try {
-      const payload = { descripcion, marcas: marcasIds, categoria: categoriaId };
+      const payload = { descripcion, categoria: categoriaId };
       const res = await fetch("http://localhost:3000/api/producto", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -52,6 +52,18 @@ export default function CrearProducto() {
 
       if (!res.ok) {
         throw new Error(data.message || "Error al crear el producto");
+      }
+      const idProducto = data.data.idProducto;
+      const res2 = await fetch(`http://localhost:3000/api/prodMar/${idProducto}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({marcasIds}),
+      });
+
+      const data2 = await res2.json();
+
+      if (!res2.ok) {
+        throw new Error(data2.message || "Error al crear el producto");
       }
 
       setSuccess("Producto creado correctamente");
