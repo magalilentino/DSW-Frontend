@@ -154,7 +154,6 @@ if (!user) {
 
   return (
     <div className="perfil-container">
-      
       {/* Panel izquierdo con histórico y pendientes */}
         <div className="perfil-left-side">
         <div className="perfil-left-content">

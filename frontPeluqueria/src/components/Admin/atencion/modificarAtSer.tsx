@@ -7,17 +7,17 @@ import { useParams, useNavigate } from "react-router-dom";
 
 // 1. INTERFACES
 
-
 // Interfaz del producto tal como viene de /api/productos
-interface Producto {
-    idProducto: number;
-    descripcion: string;
+interface ProdMar {
+    idPM: number;
+    producto: {
+        descripcion: string};
+    marca: {
+        nombre: string};
 }
-
 // Interfaz para el estado de los productos seleccionados (Incluye la cantidad)
 interface ProductoSeleccionado {
-    idProducto: number;
-    descripcion: string;
+    idPM: number;
     cantidad: number; 
 }
 
@@ -42,7 +42,7 @@ const ModificarAtSer: React.FC = () => {
     const navigate = useNavigate();
 
     // Estados
-    const [productosDisponibles, setProductosDisponibles] = useState<Producto[]>([]);
+    const [productosDisponibles, setProductosDisponibles] = useState<ProdMar[]>([]);
     const [productosSeleccionados, setProductosSeleccionados] = useState<ProductoSeleccionado[]>([]);
     const [filtroMarca, setFiltroMarca] = useState("");
     const [filtroCategoria, setFiltroCategoria] = useState("");
@@ -58,8 +58,6 @@ const ModificarAtSer: React.FC = () => {
 
     
     // 2. FETCH de PRODUCTOS DISPONIBLES (con filtros)
-    
-
         //  NUEVO FETCH para Marcas
     const fetchMarcas = useCallback(async () => {
         try {
@@ -119,7 +117,7 @@ const ModificarAtSer: React.FC = () => {
         if (filtroCategoria) query.append('idCategoria', filtroCategoria);
         
         try {
-            const url = `http://localhost:3000/api/producto/listarProductos?${query.toString()}`;
+            const url = `http://localhost:3000/api/prodMar/listarProductos?${query.toString()}`;
             const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
             
             if (!res.ok) throw new Error("Fallo la carga de productos disponibles.");
@@ -157,22 +155,17 @@ const ModificarAtSer: React.FC = () => {
     const fetchAtencionId = async () => {
         try {
             //  AJUSTA ESTA URL a tu endpoint para obtener el detalle de AtSer
-            // Debe devolver un objeto que contenga { ..., idAtencion: number }
             const res = await fetch(`http://localhost:3000/api/atSer/${idAtSer}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            
             if (!res.ok) throw new Error("Fallo la carga del AtSer.");
-
             const data = await res.json();
-            
             // 🛑 AJUSTA 'data.idAtencion' si el campo se llama diferente en tu backend
             if (data.idAtencion) {
                 setIdAtencion(data.idAtencion.toString()); 
             } else {
                 console.error("No se encontró idAtencion en la respuesta del AtSer.");
             }
-            
         } catch (err) {
             console.error("Error al obtener el idAtencion:", err);
             // Si falla, el botón de "Volver" no funcionará, o usará '#'
@@ -189,25 +182,20 @@ const ModificarAtSer: React.FC = () => {
             .finally(() => setLoading(false));
             
     }, [fetchProductos, fetchTonos, fetchMarcas, fetchCategorias]); // Dependencias que disparan los fetches
-
-   
-    
     
     // 3. MANEJO DE SELECCIÓN Y CANTIDAD
-
-    
     // Helper para saber si un producto ya está seleccionado
-    const isSelected = (idProducto: number) => productosSeleccionados.some(p => p.idProducto === idProducto);
+    const isSelected = (idPM: number) => productosSeleccionados.some(p => p.idPM === idPM);
     
     // Función para manejar la cantidad, añadiendo o quitando de la lista de seleccionados
     const handleCantidadChange = (idProducto: number, cantidadStr: string) => {
         const cantidad = parseFloat(cantidadStr.replace(',', '.')); // Soporte para coma/punto
-        const productoInfo = productosDisponibles.find(p => p.idProducto === idProducto);
+        const productoInfo = productosDisponibles.find(p => p.idPM === idProducto);
 
         if (!productoInfo) return;
 
         setProductosSeleccionados(prev => {
-            const index = prev.findIndex(p => p.idProducto === idProducto);
+            const index = prev.findIndex(p => p.idPM === idProducto);
 
             if (cantidad > 0 && !isNaN(cantidad)) {
                 if (index > -1) {
@@ -218,14 +206,13 @@ const ModificarAtSer: React.FC = () => {
                 } else {
                     // Añadir nuevo producto
                     return [...prev, {
-                        idProducto: idProducto,
-                        descripcion: productoInfo.descripcion,
+                        idPM: idProducto,
                         cantidad: cantidad,
                     }];
                 }
             } else {
                 // Si la cantidad es 0 o inválida, eliminar de la lista
-                return prev.filter(p => p.idProducto !== idProducto);
+                return prev.filter(p => p.idPM !== idProducto);
             }
         });
     };
@@ -252,7 +239,7 @@ const ModificarAtSer: React.FC = () => {
     
     const handleSubmit = async () => {
         const productosAEnviar = productosSeleccionados.map(p => ({
-            idProducto: p.idProducto,
+            idPM: p.idPM,
             cantidad: p.cantidad
         }));
         
@@ -265,7 +252,7 @@ const ModificarAtSer: React.FC = () => {
         // Nota: Si el backend espera el tono en el body del PATCH, agrégalo aquí.
         // Si el tono se guarda en una tabla diferente, necesitarás otro fetch.
         const bodyToSend = { 
-            productos: productosAEnviar,
+            prodMars: productosAEnviar,
             idTono: tonoSeleccionadoId // Se envía null si no hay tono seleccionado
         };
 
@@ -296,8 +283,8 @@ const ModificarAtSer: React.FC = () => {
     
 
     // Helper para obtener la cantidad actual de un producto
-    const getCantidad = (idProducto: number) => {
-        const item = productosSeleccionados.find(p => p.idProducto === idProducto);
+    const getCantidad = (idPM: number) => {
+        const item = productosSeleccionados.find(p => p.idPM === idPM);
         return item ? item.cantidad.toString() : '';
     };
 
@@ -306,7 +293,7 @@ const ModificarAtSer: React.FC = () => {
 
     return (
         <div className="modificar-productos-page">
-            <h2>Cargar datos del servicio realizado #{idAtSer}</h2>
+            <h2>Cargar datos del servicio realizado {idAtSer}</h2>
 
             <button
                 className="reservas-back-button"
@@ -341,7 +328,7 @@ const ModificarAtSer: React.FC = () => {
                     className="p-2 border rounded"
                 >
                     <option value="">Todas las Categorías</option>
-                    {categorias.map((c) => (
+                    {categorias && categorias.map((c) => (
                         <option key={c.idCategoria} value={c.idCategoria.toString()}>
                             {c.nombreCategoria}
                         </option>
@@ -349,30 +336,30 @@ const ModificarAtSer: React.FC = () => {
                 </select>
             </div>
 
-
-        
             
             {/* Listado de Productos */}
             <table className="productos-disponibles-table">
                 <thead>
                     <tr>
                         <th>Producto</th>
-                        <th>Cantidad Utilizada</th>
+                        <th>Marca</th>
+                        <th>Cantidad Utilizada(en gr)</th>
                     </tr>
                 </thead>
                 <tbody>
                     {productosDisponibles.map((p) => (
-                        <tr key={p.idProducto}>
-                            <td>{p.descripcion}</td>
+                        <tr key={p.idPM}>
+                            <td>{p.producto.descripcion}</td>
+                            <td>{p.marca.nombre}</td>
                             <td>
                                 <input
                                     type="number"
                                     min="0"
                                     step="1"
                                     placeholder="Ingresa cantidad"
-                                    value={getCantidad(p.idProducto)}
-                                    onChange={(e) => handleCantidadChange(p.idProducto, e.target.value)}
-                                    className={isSelected(p.idProducto) ? 'selected-input' : ''}
+                                    value={getCantidad(p.idPM)}
+                                    onChange={(e) => handleCantidadChange(p.idPM, e.target.value)}
+                                    className={isSelected(p.idPM) ? 'selected-input' : ''}
                                 />
                             </td>
                         </tr>
