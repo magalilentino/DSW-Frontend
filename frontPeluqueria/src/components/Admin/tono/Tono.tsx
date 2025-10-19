@@ -33,7 +33,7 @@ export default function TonoPage() {
   };
 
   const handleDelete = async (idTono: number, formulas: Formula[]) => {
-    if (window.confirm(`¿Seguro que querés borrar el tono ${idTono}?`)) {
+    if (window.confirm(`¿Seguro que querés borrar el tono ${idTono}?, también se borrarán sus formulas asociadas`)) {
       try {
 
         if(formulas){

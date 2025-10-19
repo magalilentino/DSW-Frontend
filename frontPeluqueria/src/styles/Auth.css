@@ -14,7 +14,7 @@
 
     .auth-left-side {
       flex: 1;
-      background: url('../assets/FotoLogin.jpg') no-repeat center center;
+      background: url('../assets/logoFoto.png') no-repeat center center;
       background-size: cover;
     }
 

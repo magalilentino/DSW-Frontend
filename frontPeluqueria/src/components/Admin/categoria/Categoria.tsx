@@ -68,7 +68,7 @@ export default function CategoriaPage() {
   if (error) return <p>Error: {error}</p>;
 
   return (
-     <div className="registro-page">
+    <div className="registro-page">
       <div className="registro-header">
         <button
           className="reservas-back-button"

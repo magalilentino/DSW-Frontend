@@ -89,7 +89,7 @@ export default function CrearTono() {
           </div>
 
           <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? "Creando..." : "Crear Marca"}
+            {loading ? "Creando..." : "Crear Tono"}
           </button>
         </form>
       </motion.div>
