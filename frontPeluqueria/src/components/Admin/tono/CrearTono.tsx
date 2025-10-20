@@ -11,11 +11,15 @@ interface ProdMar {
     nombre: string};
 }
 
+interface FormulaItem {
+    idPM: number; 
+    cantidad: number;
+}
+
 
 export default function CrearTono() {
   const [nombre, setNombre] = useState("");
-  const [cantidad, setCantidad] = useState<number>();
-  const [productoIds, setProductoIds] = useState<number[]>([]);
+  const [formulaItems, setFormulaItems] = useState<FormulaItem[]>([]);
   const [productosMar, setProductosMar] = useState<ProdMar[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState("");
@@ -27,25 +31,59 @@ export default function CrearTono() {
         .then((res) => res.json())
         .then((data) => setProductosMar(data.data || []));
     }, []);
+
+  const isSelected = (idPM: number) => formulaItems.some(p => p.idPM === idPM);
+    
+    // Función para manejar la cantidad, añadiendo o quitando de la lista de seleccionados
+  const handleCantidadChange = (idPM: number, cantidadStr: string) => {
+        const cantidad = parseFloat(cantidadStr.replace(',', '.')); // Soporte para coma/punto
+        const productoInfo = productosMar.find(p => p.idPM === idPM);
+
+        if (!productoInfo) return;
+
+        setFormulaItems(prev => {
+            const index = prev.findIndex(p => p.idPM === idPM);
+
+            if (cantidad > 0 && !isNaN(cantidad)) {
+                if (index > -1) {
+                    // Actualizar cantidad si ya existe
+                    const newArray = [...prev];
+                    newArray[index] = { ...newArray[index], cantidad };
+                    return newArray;
+                } else {
+                    // Añadir nuevo producto
+                    return [...prev, {
+                        idPM: idPM,
+                        cantidad: cantidad,
+                    }];
+                }
+            } else {
+                // Si la cantidad es 0 o inválida, eliminar de la lista
+                return prev.filter(p => p.idPM !== idPM);
+            }
+        });
+    };
+
+    // Helper para obtener la cantidad actual de un producto
+    const getCantidad = (idPM: number) => {
+        const item = formulaItems.find(p => p.idPM === idPM);
+        return item ? item.cantidad.toString() : '';
+    };
+
   
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const payload = { nombre, formulas: formulaItems };
       const resTono = await fetch("http://localhost:3000/api/tono", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nombre }),
+        body: JSON.stringify(payload),
       });
+
       if (!resTono.ok) throw new Error("Error al crear el tono");
-
-      const resFor = await fetch("http://localhost:3000/api/formula", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nombre }),
-      });
-      if (!resFor.ok) throw new Error("Error al crear la fórmula");
-
+  
       setSuccess("Tono creado correctamente");
       setTimeout(() => navigate("/tono"), 1500);
     } catch (err) {
@@ -88,34 +126,41 @@ export default function CrearTono() {
             />
           </div>
 
+           {/* Listado de Productos */}
+            <table className="productos-disponibles-table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Marca</th>
+                        <th>Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {productosMar.map((p) => (
+                        <tr key={p.idPM}>
+                            <td>{p.producto.descripcion}</td>
+                            <td>{p.marca.nombre}</td>
+                            <td>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    step="1"
+                                    placeholder="Ingresa cantidad"
+                                    value={getCantidad(p.idPM)}
+                                    onChange={(e) => handleCantidadChange(p.idPM, e.target.value)}
+                                    className={isSelected(p.idPM) ? 'selected-input' : ''}
+                                />
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+
           <button type="submit" className="btn btn-primary" disabled={loading}>
             {loading ? "Creando..." : "Crear Tono"}
           </button>
         </form>
       </motion.div>
     </div>
-    // <div className="container my-4">
-    //   <h2>Crear Tono</h2>
-    //   <form onSubmit={handleSubmit} className="mt-3">
-    //     <div className="mb-3">
-    //       <label htmlFor="nombre" className="form-label">Nombre del tono</label>
-    //       <input
-    //         type="text"
-    //         id="nombre"
-    //         className="form-control"
-    //         value={nombre}
-    //         onChange={(e) => setNombre(e.target.value)}
-    //         required
-    //       />
-    //     </div>
-    //     {error && <p className="text-danger">{error}</p>}
-    //     <div className="d-flex justify-content-between">
-    //       <button type="submit" className="btn btn-success">Crear</button>
-    //       <button type="button" className="btn btn-secondary" onClick={() => navigate("/tono")}>
-    //         Cancelar
-    //       </button>
-    //     </div>
-    //   </form>
-    // </div>
   );
 }

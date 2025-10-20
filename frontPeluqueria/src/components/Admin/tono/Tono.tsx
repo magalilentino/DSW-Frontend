@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import "../../../styles/Admin.css";
+import "../../../styles/Registros.css";
 
 interface Tono {
   idTono: number;
   nombre: string;
   formulas:Formula[];
+  activo: boolean;
 }
 
 interface Formula{
@@ -32,21 +32,21 @@ export default function TonoPage() {
     }
   };
 
-  const handleDelete = async (idTono: number, formulas: Formula[]) => {
+  const handleDelete = async (idTono: number) => {
     if (window.confirm(`¿Seguro que querés borrar el tono ${idTono}?, también se borrarán sus formulas asociadas`)) {
       try {
 
-        if(formulas){
-          for (const f of formulas) {
-            const resForm = await fetch(`http://localhost:3000/api/formula/${f.idFormula}`, {
-              method: "DELETE",
-            });
+        // if(formulas){
+        //   for (const f of formulas) {
+        //     const resForm = await fetch(`http://localhost:3000/api/formula/${f.idFormula}`, {
+        //       method: "DELETE",
+        //     });
 
-            if (!resForm.ok) {
-              const data = await resForm.json();
-              throw new Error(`Error al borrar la formula ${f.idFormula}: ${data.message}`);
-          }}
-        }
+        //     if (!resForm.ok) {
+        //       const data = await resForm.json();
+        //       throw new Error(`Error al borrar la formula ${f.idFormula}: ${data.message}`);
+        //   }}
+        // }
         const res = await fetch(`http://localhost:3000/api/tono/${idTono}`, {
           method: "DELETE",
         });
@@ -66,59 +66,60 @@ export default function TonoPage() {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="admin-servicio my-4 container-fluid">
-      <div className="row">
-        <div>
-          <div className="d-flex justify-content-between align-items-center mb-3">
-            <h2>Tonos</h2>
-            <button className="btn btn-primary" onClick={() => navigate("/tono/crear")}>
-              Agregar Tono
-            </button>
-          </div>
-
-          {tonos.length === 0 ? (
-            <p>No hay tonos disponibles.</p>
-          ) : (
-            <ul className="list-unstyled">
-              {tonos.map((t, i) => (
-                <motion.li
-                  key={t.idTono}
-                  className="admin-servicio-item d-flex justify-content-between align-items-center mb-3 p-3 shadow-sm bg-white rounded"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: false, amount: 0.2 }}
-                  transition={{ duration: 0.5, delay: i * 0.1 }}
-                >
-                  <div className="service-info me-3">
-                    <h5>Tono #{t.idTono}</h5>
-                    <p className="mb-1">Nombre: {t.nombre}</p>
-                  </div>
-                  <div className="service-actions d-flex flex-column gap-2 flex-shrink-0">
-                    <button
-                      className="btn btn-sm btn-outline-secondary admin-btn-action"
-                      onClick={() => navigate(`/tono/actualizar/${t.idTono}`)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="btn btn-sm btn-outline-dark admin-btn-action"
-                      onClick={() => handleDelete(t.idTono, t.formulas)}
-                    >
-                      Borrar
-                    </button>
-                  </div>
-                </motion.li>
-              ))}
-            </ul>
-          )}
-
-          <div className="d-flex justify-content-end mt-4">
-            <button className="btn btn-secondary" onClick={() => navigate("/admin")}>
-              Volver
-            </button>
-          </div>
-        </div>
-      </div>
+  <div className="registro-page">
+    <div className="registro-header">
+      <button
+        className="reservas-back-button"
+        onClick={() => navigate("/admin")}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+      </button>
+      <h2>Listado de Tonos</h2>
+      <button className="crear-button" onClick={() => navigate("/tono/crear")}>
+        Crear Tono
+      </button>
     </div>
-  );
+
+    {tonos.length === 0 ? (
+      <p className="text-muted">No hay tonos disponibles.</p>
+    ) : (
+      <table className="registro-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tonos.map((t, i) => (
+            <tr key={t.idTono}>
+              <td>{t.idTono}</td>
+              <td>{t.nombre}</td>
+              <td>{t.activo ? "Activado" : "Desactivado"}</td>
+              <td>
+                <button
+                  className="action-button view"
+                  onClick={() => navigate(`/tono/formulas/${t.idTono}`)}
+                >
+                  Ver fórmulas
+                </button>
+
+                <button
+                  className="action-button delete"
+                  onClick={() => handleDelete(t.idTono)}
+                >
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
+  </div>
+);
 }

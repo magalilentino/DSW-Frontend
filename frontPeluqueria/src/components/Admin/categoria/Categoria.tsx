@@ -17,6 +17,7 @@ export default function CategoriaPage() {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const fetchCategorias = async () => {
@@ -52,7 +53,14 @@ export default function CategoriaPage() {
           method: "DELETE",
         });
 
-        if (!resCat.ok) throw new Error("Error al borrar la categoría");
+        if (!resCat.ok) {
+              const errorData = await resCat.json();
+              throw new Error(errorData.message || 'Error al eliminar la categoria.');
+          }
+
+        const data = await resCat.json(); // Para obtener el mensaje de éxito del backend
+        setSuccessMessage(data.message); // Usa el mensaje de éxito del backend
+
         setCategorias((prev) => prev.filter((c) => c.idCategoria !== idCategoria));
       } catch (err) {
         setError((err as Error).message);
@@ -65,10 +73,14 @@ export default function CategoriaPage() {
   }, []);
 
   if (loading) return <p>Cargando categorías...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (error) return <p className="text-danger">Error: {error}</p>;
 
   return (
     <div className="registro-page">
+    {successMessage && (
+      <div className="alert alert-success">
+          {successMessage}
+      </div>)} 
       <div className="registro-header">
         <button
           className="reservas-back-button"
