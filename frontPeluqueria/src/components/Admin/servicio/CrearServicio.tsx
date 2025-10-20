@@ -4,9 +4,9 @@ import { motion } from "framer-motion";
 import "../../../styles/Admin.css";
 
 export interface NuevoServicio {
-  nombre_servicio: string;
+  nombreServicio: string;
   descripcion: string;
-  cant_turnos: number;
+  cantTurnos: number;
   precio: number;
 }
 
@@ -23,24 +23,67 @@ const formatDuration = (cantTurnos: number): string => {
 export default function CrearServicio() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<NuevoServicio>({
-    nombre_servicio: "",
+    nombreServicio: "",
     descripcion: "",
-    cant_turnos: 1,
+    cantTurnos: 1,
     precio: 0,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  // const handleChange = (
+  //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  // ) => {
+  //   const { name, value } = e.target;
+  //   setFormData({
+  //     ...formData,
+  //     [name]: name === "cantTurnos" || name === "precio" ? parseInt(value) || 0 : value,
+  //   });
+  // };
+
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: name === "cant_turnos" || name === "precio" ? parseInt(value) || 0 : value,
-    });
-  };
+  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+) => {
+  const { name, value } = e.target;
+
+  if (name === "cantTurnos") {
+    const parsed = parseInt(value);
+    setFormData({ ...formData, cantTurnos: isNaN(parsed) ? 0 : parsed });
+    return;
+  }
+
+  if (name === "precio") {
+    const raw = value.replace(",", "."); // permite coma como decimal
+    const cleaned = raw.replace(/^0+(?!\.)/, ""); // elimina ceros a la izquierda salvo decimales
+    const num = parseFloat(cleaned);
+    setFormData({ ...formData, precio: isNaN(num) ? 0 : num });
+    return;
+  }
+
+  // Para nombreServicio y descripcion
+  setFormData({ ...formData, [name]: value });
+};
+
+//   const handleChange = (
+//   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+// ) => {
+//   const { name, value } = e.target;
+
+//   let parsedValue = value;
+
+//   if (name === "precio") {
+//     // Elimina ceros a la izquierda, excepto si el valor es "0"
+//     parsedValue = value.replace(/^0+(?!$)/, "");
+//   }
+
+//   setFormData({
+//     ...formData,
+//     [name]: name === "cantTurnos" || name === "precio"
+//       ? parseInt(parsedValue) || 0
+//       : value,
+//   });
+// };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,7 +91,7 @@ export default function CrearServicio() {
     setError(null);
     setSuccess(null);
 
-    if (formData.nombre_servicio.trim() === "" || formData.precio <= 0) {
+    if (formData.nombreServicio.trim() === "" || formData.precio <= 0) {
       setError("El nombre del servicio y el precio son obligatorios y válidos.");
       setLoading(false);
       return;
@@ -64,7 +107,7 @@ export default function CrearServicio() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Error al crear el servicio.");
 
-      setSuccess(`Servicio "${formData.nombre_servicio}" creado con éxito!`);
+      setSuccess(`Servicio "${formData.nombreServicio}" creado con éxito!`);
       setTimeout(() => navigate("/servicios"), 1500);
     } catch (err) {
       setError((err as Error).message);
@@ -93,13 +136,13 @@ export default function CrearServicio() {
 
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label htmlFor="nombre_servicio" className="form-label">Nombre del Servicio</label>
+            <label htmlFor="nombreServicio" className="form-label">Nombre del Servicio</label>
             <input
               type="text"
               className="form-control"
-              id="nombre_servicio"
-              name="nombre_servicio"
-              value={formData.nombre_servicio}
+              id="nombreServicio"
+              name="nombreServicio"
+              value={formData.nombreServicio}
               onChange={handleChange}
               required
             />
@@ -118,34 +161,48 @@ export default function CrearServicio() {
           </div>
 
           <div className="mb-3">
-            <label htmlFor="cant_turnos" className="form-label">Duración (en turnos de 45 min)</label>
+            <label htmlFor="cantTurnos" className="form-label">Duración (en turnos de 45 min)</label>
             <input
               type="number"
               className="form-control"
-              id="cant_turnos"
-              name="cant_turnos"
+              id="cantTurnos"
+              name="cantTurnos"
               min="1"
-              value={formData.cant_turnos}
+              value={formData.cantTurnos}
               onChange={handleChange}
               required
             />
             <small className="form-text text-muted">
-              Duración total: {formatDuration(formData.cant_turnos)}
+              Duración total: {formatDuration(formData.cantTurnos)}
             </small>
           </div>
 
           <div className="mb-3">
             <label htmlFor="precio" className="form-label">Precio (ARS)</label>
             <input
-              type="number"
-              className="form-control"
-              id="precio"
-              name="precio"
-              min="0"
-              step="1"
-              value={formData.precio}
-              onChange={handleChange}
-              required
+                type="text"
+                inputMode="decimal"
+                className="form-control"
+                id="precio"
+                name="precio"
+                value={formData.precio.toString()}
+                onChange={(e) => {
+                  const raw = e.target.value.replace(",", "."); // convierte coma a punto - no anda
+                  const cleaned = raw.replace(/^0+(?!\.)/, ""); // elimina ceros a la izquierda salvo decimales
+                  const num = parseFloat(cleaned);
+                  setFormData({ ...formData, precio: isNaN(num) ? 0 : num });
+                }}
+                required
+
+              // type="number"
+              // className="form-control"
+              // id="precio"
+              // name="precio"
+              // min="0"
+              // step="1"
+              // value={formData.precio}
+              // onChange={handleChange}
+              // required
             />
           </div>
 
