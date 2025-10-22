@@ -50,6 +50,8 @@ export default function PerfilPeluquero() {
     fetchData();
   }, [user]);
 
+
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -69,16 +71,19 @@ export default function PerfilPeluquero() {
         }
       );
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
+    const response = await res.json();
+    if (!res.ok) throw new Error(response.message);
 
-      setPersona(data);
-      setEditMode(false);
-      setSuccess("Perfil actualizado correctamente ✅");
-    } catch (err: any) {
-      setError(err.message);
-    }
-  };
+    setPersona(response.data);         // ✅ actualiza correctamente
+    setFormData(response.data);        // ✅ sincroniza el formulario
+    setEditMode(false);
+    setSuccess("Perfil actualizado correctamente");
+
+    setTimeout(() => setSuccess(""), 3000); // ✅ limpia el mensaje después de 3 segundos
+  } catch (err: any) {
+    setError(err.message);
+  }
+};
 
 if (!user) {
   return (
@@ -117,7 +122,7 @@ if (!user) {
                   className="auth-button-usser"
                   onClick={() => setEditMode(true)}
                 >
-                  editar
+                  Editar perfil
                 </button>
                 <button
                   className="auth-button-cancel"

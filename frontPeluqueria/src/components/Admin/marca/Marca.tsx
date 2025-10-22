@@ -12,6 +12,8 @@ export default function MarcaPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
 
   const fetchMarcas = async () => {
     try {
@@ -32,7 +34,14 @@ export default function MarcaPage() {
         const res = await fetch(`http://localhost:3000/api/marca/${idMarca}`, {
           method: "DELETE",
         });
-        if (!res.ok) throw new Error("Error al borrar la marca");
+        if (!res.ok) {
+              const errorData = await res.json();
+              throw new Error(errorData.message || 'Error al eliminar la marca');
+          }
+
+          const data = await res.json(); // Para obtener el mensaje de éxito del backend
+          setSuccessMessage(data.message); // Usa el mensaje de éxito del backend
+        
         setMarcas((prev) => prev.filter((m) => m.idMarca !== idMarca));
       } catch (err) {
         setError((err as Error).message);
@@ -49,6 +58,11 @@ export default function MarcaPage() {
 
   return (
      <div className="registro-page">
+     
+        {successMessage && (
+      <div className="alert alert-success">
+          {successMessage}
+      </div>)} 
       <div className="registro-header">
         <button
             className="reservas-back-button"

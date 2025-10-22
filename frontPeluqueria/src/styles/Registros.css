@@ -70,6 +70,15 @@
   background-color: #c9302c;
 }
 
+.action-button.view {
+  background-color: #6c757d; /* gris medio */
+  color: white;
+}
+
+.action-button.view:hover {
+  background-color: #5a6268; /* gris más oscuro */
+}
+
 /* actualizar */
 /* 
 

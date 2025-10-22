@@ -1,4 +1,4 @@
-import "..//styles/Auth.css";
+import "../styles/Auth.css";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import Login from "../components/Auth/Login";

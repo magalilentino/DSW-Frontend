@@ -58,7 +58,7 @@ function Login({ onToggleMode }: LoginProps) {
       });
 
       if (data.type === "cliente") {
-        navigate("/reserve");
+        navigate("/");
       } else if (data.type === "peluquero") {
         navigate("/admin");
       }

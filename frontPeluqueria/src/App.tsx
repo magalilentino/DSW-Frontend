@@ -30,7 +30,7 @@ import CrearFormula from "./components/Admin/formula/CrearFormula.tsx";
 import ActualizarFormula from "./components/Admin/formula/ActualizarFormula.tsx";
 import Tono from "./components/Admin/tono/Tono.tsx";
 import CrearTono from "./components/Admin/tono/CrearTono.tsx";
-import ActualizarTono from "./components/Admin/tono/ActualizarTono.tsx";
+import VerFormula from "./components/Admin/tono/VerFormula.tsx";
 import PerfilPeluquero from "./components/Admin/peluquero/perfilPeluquero.tsx";
 
 
@@ -68,7 +68,7 @@ function App() {
         <Route path="/formula/actualizar/:idFormula" element={<ActualizarFormula />} />
         <Route path="/tono" element={<Tono />} />
         <Route path="/tono/crear" element={<CrearTono />} />
-        <Route path="/tono/actualizar/:idTono" element={<ActualizarTono />} />
+        <Route path="/tono/formulas/:idTono" element={<VerFormula />} />
         <Route path="/peluquero/perfilPeluquero" element={<PerfilPeluquero />} />
       </Routes>
     </Router>

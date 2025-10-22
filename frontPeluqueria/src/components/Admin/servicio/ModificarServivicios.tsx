@@ -4,11 +4,12 @@ import { motion } from "framer-motion";
 
 // Definición de la estructura de los datos del servicio
 export interface ServicioData {
-  cod_servicio: number;
-  nombre_servicio: string;
+  codServicio: number;
+  nombreServicio: string;
   descripcion: string;
-  cant_turnos: number; // Duración en unidades de turno (45 min)
+  cantTurnos: number; // Duración en unidades de turno (45 min)
   precio: number;
+  activo: boolean;
 }
 
 // Función auxiliar para formatear la duración
@@ -79,11 +80,16 @@ function ModificarServicio() {
     
     let newValue: string | number = value;
 
-    // Para 'cant_turnos' y 'precio', nos aseguramos de que sean números
-    if (name === "cant_turnos" || name === "precio") {
-      // Usamos parseFloat/parseInt para permitir que el campo se vacíe temporalmente
-      // y se maneje la entrada de números.
-      newValue = parseInt(value) || 0; 
+    // Para 'cantTurnos' y 'precio', nos aseguramos de que sean números
+    // if (name === "cantTurnos" || name === "precio") {
+    //   // Usamos parseFloat/parseInt para permitir que el campo se vacíe temporalmente
+    //   // y se maneje la entrada de números.
+    //   newValue = parseInt(value) || 0; 
+    // }
+
+    if (name === "cantTurnos" || name === "precio") {
+      const parsed = parseFloat(value);
+      newValue = isNaN(parsed) ? 0 : parsed;
     }
     
     setFormData({
@@ -99,19 +105,19 @@ function ModificarServicio() {
     setError(null);
     setSuccess(null);
 
-    if (!formData || formData.nombre_servicio.trim() === "" || formData.precio <= 0) {
+    if (!formData || formData.nombreServicio.trim() === "" || formData.precio <= 0) {
         setError("El nombre del servicio y el precio son obligatorios y válidos.");
         setSaving(false);
         return;
     }
 
     try {
-      const res = await fetch(`http://localhost:3000/api/servicio/update/${codServicio}`, {
+      const res = await fetch(`http://localhost:3000/api/servicio/${codServicio}`, {
         method: "PUT", // Usamos PUT para la actualización
         headers: {
           "Content-Type": "application/json",
         },
-        // Enviamos los datos del formulario, excluyendo el cod_servicio si no debe ir en el body
+        // Enviamos los datos del formulario, excluyendo elS si no debe ir en el body
         body: JSON.stringify(formData), 
       });
 
@@ -121,11 +127,11 @@ function ModificarServicio() {
         throw new Error(data.message || "Error al actualizar el servicio.");
       }
 
-      setSuccess(`Servicio "${formData.nombre_servicio}" actualizado con éxito!`);
+      setSuccess(`Servicio "${formData.nombreServicio}" actualizado con éxito!`);
       
       // Opcional: Redirigir al listado después de un breve momento
       setTimeout(() => {
-        navigate("/admin/servicios"); 
+        navigate("/servicios"); 
       }, 1500);
 
     } catch (err) {
@@ -162,7 +168,7 @@ function ModificarServicio() {
     >
       <div className="row justify-content-center">
         <div className="col-md-8">
-          <h2 className="mb-4">Modificar Servicio: {formData.nombre_servicio}</h2>
+          <h2 className="mb-4">Modificar Servicio {codServicio}:</h2>
 
           {/* Mensajes de estado */}
           {error && <div className="alert alert-danger">{error}</div>}
@@ -170,31 +176,31 @@ function ModificarServicio() {
 
           <form onSubmit={handleSubmit}>
             {/* Campo ID (Solo lectura) */}
-            <div className="mb-3">
-              <label htmlFor="cod_servicio" className="form-label">
+            {/* <div className="mb-3">
+              <label htmlFor=S" className="form-label">
                 Código de Servicio (ID)
               </label>
               <input
                 type="text"
                 className="form-control"
-                id="cod_servicio"
-                value={formData.cod_servicio}
+                id=S"
+                value={formDataS}
                 readOnly
                 disabled
               />
-            </div>
+            </div> */}
             
             {/* Nombre del Servicio */}
             <div className="mb-3">
-              <label htmlFor="nombre_servicio" className="form-label">
+              <label htmlFor="nombreServicio" className="form-label">
                 Nombre del Servicio
               </label>
               <input
                 type="text"
                 className="form-control"
-                id="nombre_servicio"
-                name="nombre_servicio"
-                value={formData.nombre_servicio}
+                id="nombreServicio"
+                name="nombreServicio"
+                value={formData.nombreServicio}
                 onChange={handleChange}
                 required
               />
@@ -217,21 +223,21 @@ function ModificarServicio() {
 
             {/* Cantidad de Turnos / Duración */}
             <div className="mb-3">
-              <label htmlFor="cant_turnos" className="form-label">
+              <label htmlFor="cantTurnos" className="form-label">
                 Duración (en turnos de 45 min)
               </label>
               <input
                 type="number"
                 className="form-control"
-                id="cant_turnos"
-                name="cant_turnos"
+                id="cantTurnos"
+                name="cantTurnos"
                 min="1"
-                value={formData.cant_turnos}
+                value={formData.cantTurnos}
                 onChange={handleChange}
                 required
               />
               <small className="form-text text-muted">
-                Duración total: **{formatDuration(formData.cant_turnos)}**
+                Duración total: **{formatDuration(formData.cantTurnos)}**
               </small>
             </div>
 
@@ -241,16 +247,39 @@ function ModificarServicio() {
                 Precio (ARS)
               </label>
               <input
-                type="number"
+                 type="text"
+                inputMode="decimal"
                 className="form-control"
                 id="precio"
                 name="precio"
-                min="0"
-                step="1"
-                value={formData.precio}
-                onChange={handleChange}
+                value={formData.precio.toString()}
+                onChange={(e) => {
+                  const raw = e.target.value.replace(",", "."); // convierte coma a punto - no anda
+                  const cleaned = raw.replace(/^0+(?!\.)/, ""); // elimina ceros a la izquierda salvo decimales
+                  const num = parseFloat(cleaned);
+                  setFormData({ ...formData, precio: isNaN(num) ? 0 : num });
+                }}
                 required
               />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="activo" className="form-label">Estado</label>
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id="activo"
+                  checked={formData.activo}
+                  onChange={(e) => {
+                    setFormData({ ...formData, activo: e.target.checked });
+                  }}
+
+                />
+                <label className="form-check-label" htmlFor="activo">
+                  Activo
+                </label>
+              </div>
             </div>
 
             {/* Botones de Acción */}

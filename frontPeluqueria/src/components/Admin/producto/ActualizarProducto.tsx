@@ -3,6 +3,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import "../../../styles/Admin.css";
 
+interface ProdMar {
+  idPM: number;
+  marca:{
+    idMarca: number;
+    nombre: string};
+}
+
 interface Marca {
   idMarca: number;
   nombre: string;
@@ -18,7 +25,7 @@ export default function ActualizarProducto() {
   const navigate = useNavigate();
   const [descripcion, setDescripcion] = useState("");
   const [activo, setActivo] = useState<boolean>();
-  const [marcasIds, setMarcasIds] = useState<number[]>([]);
+  const [prodMarcIds, setProdMarcIds] = useState<number[]>([]);
   const [categoriaId, setCategoriaId] = useState<number>();
   const [marcas, setMarcas] = useState<Marca[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
@@ -40,13 +47,21 @@ export default function ActualizarProducto() {
       .then((data) => {
         setDescripcion(data.data.descripcion);
         setCategoriaId(data.data.categoria?.idCategoria || null);
-        setMarcasIds(data.data.marcas.map((m: Marca) => m.idMarca));
+        setActivo(data.data.activo);
+        setLoading(false);
+      })
+
+    fetch(`http://localhost:3000/api/prodMar/marcasPorProd/${idProducto}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setProdMarcIds(data.data.map((pm: ProdMar) => pm.marca.idMarca));
         setLoading(false);
       })
       .catch(() => {
         setError("No se pudo cargar el producto.");
         setLoading(false);
       });
+
   }, [idProducto]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,7 +70,7 @@ export default function ActualizarProducto() {
     setSuccess("");
     setLoading(true);
 
-    const payload = { descripcion, marcas: marcasIds, categoria: categoriaId };
+    const payload = { descripcion, categoria: categoriaId };
 
     try {
       const res = await fetch(`http://localhost:3000/api/producto/${idProducto}`, {
@@ -66,6 +81,15 @@ export default function ActualizarProducto() {
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Error al actualizar el producto");
+
+      const res2 = await fetch(`http://localhost:3000/api/prodMar/sincronizarProdMar/${idProducto}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({prodMarcIds}),
+      });
+
+      const data2 = await res2.json();
+      if (!res2.ok) throw new Error(data2.message || "Error al actualizar el producto");
 
       setSuccess("Producto actualizado correctamente");
       setTimeout(() => navigate("/producto"), 1500);
@@ -133,10 +157,10 @@ export default function ActualizarProducto() {
                       className="form-check-input"
                       type="checkbox"
                       value={m.idMarca}
-                      checked={marcasIds.includes(m.idMarca)}
+                      checked={prodMarcIds.includes(m.idMarca)}
                       onChange={(e) => {
                         const id = Number(e.target.value);
-                        setMarcasIds((prev) =>
+                        setProdMarcIds((prev) =>
                           prev.includes(id)
                             ? prev.filter((pid) => pid !== id)
                             : [...prev, id]

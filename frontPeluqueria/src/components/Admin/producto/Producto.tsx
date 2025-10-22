@@ -9,9 +9,6 @@ interface Producto {
   categoria: {
     nombreCategoria: string;
   };
-  marcas: {
-    nombre: string;
-  }[];
 }
 
 export default function ProductoPage() {
@@ -19,6 +16,7 @@ export default function ProductoPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const fetchProductos = async () => {
     try {
@@ -26,38 +24,37 @@ export default function ProductoPage() {
       if (!res.ok) throw new Error("Error al cargar productos");
       const data = await res.json();
       setProductos(data.data || []);
-    } catch (err) {
+    }catch (err) {
       setError((err as Error).message);
-    } finally {
+    }finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (idProducto: number) => {
-    if (
-      window.confirm(
-        `¿Estás seguro que quieres borrar el producto ${idProducto}? Esta acción es irreversible.`
-      )
-    ) {
+    if (window.confirm(`¿Estás seguro que quieres borrar el producto ${idProducto}?`)){
       try {
-        const res = await fetch(`http://localhost:3000/api/producto/${idProducto}`, {
-          method: "DELETE",
-        });
+          const res = await fetch(`http://localhost:3000/api/producto/${idProducto}`, {
+              method: 'DELETE', 
+          });
 
-        const data = await res.json();
+          if (!res.ok) {
+              const errorData = await res.json();
+              throw new Error(errorData.message || 'Error al eliminar el producto.');
+          }
 
-        //if (!res.ok) throw new Error("Error al borrar el producto");
-        //if (!res.ok) throw new Error(data.message || "Error al borrar el producto");
-        if (!res.ok) setError(data.message || "Error al borrar el producto");
-
-        setProductos((prev) =>
-          prev.map((p) =>
-            p.idProducto === idProducto ? { ...p, activo: false } : p
-          )
-        );
-
-      } catch (err) {
-        setError((err as Error).message);
+          const data = await res.json(); // Para obtener el mensaje de éxito del backend
+          setSuccessMessage(data.message); // Usa el mensaje de éxito del backend
+        
+          setProductos(prevProductos => 
+              prevProductos.map(p => 
+                  p.idProducto === idProducto 
+                      ? { ...p, activo: false } 
+                      : p
+              )
+          );
+      } catch (error: any) {
+          alert(error.message);
       }
     }
   };
@@ -66,21 +63,28 @@ export default function ProductoPage() {
     fetchProductos();
   }, []);
 
-  const productosExpandido = productos.flatMap((p) =>
-    p.marcas.map((marca) => ({
-      idProducto: p.idProducto,
-      descripcion: p.descripcion,
-      nombreCategoria: p.categoria.nombreCategoria,
-      nombreMarca: marca.nombre,
-      activo: p.activo ? "Activado" : "Desactivado",
-    }))
-  );
+  // const productosExpandido = productos.flatMap((p) =>
+  //   p.marcas.map((marca) => ({
+  //     idProducto: p.idProducto,
+  //     descripcion: p.descripcion,
+  //     nombreCategoria: p.categoria.nombreCategoria,
+  //     nombreMarca: marca.nombre,
+  //     activo: p.activo ? "Activado" : "Desactivado",
+  //   }))
+  // );
 
   if (loading) return <p>Cargando productos...</p>;
   if (error) return <p className="text-danger">Error: {error}</p>;
-
+//habria que ponerle un estilo al mensaje de fracaso también 
   return (
+    
     <div className="registro-page">
+
+        {successMessage && (
+      <div className="alert alert-success">
+          {successMessage}
+      </div>)} 
+
       <div className="registro-header">
         <button
           className="reservas-back-button"
@@ -105,20 +109,20 @@ export default function ProductoPage() {
             <tr>
               <th>ID</th>
               <th>Descripcion</th>
-              <th>Marca</th>
+              {/* <th>Marca</th> */}
               <th>Caregoria</th>
               <th>Estado</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {productosExpandido.map((p, index) => (
+            {productos.map((p, index) => (
             <tr key={`${p.idProducto}-${index}`}>
               <td>{p.idProducto}</td>
               <td>{p.descripcion}</td>
-              <td>{p.nombreMarca}</td>
-              <td>{p.nombreCategoria}</td>
-              <td>{p.activo}</td>
+              {/* <td>{p.nombreMarca}</td> */}
+              <td>{p.categoria.nombreCategoria}</td>
+              <td>{p.activo ? "Activado" : "Desactivado"}</td>
               <td>
                 <button
                   className="action-button update"
@@ -135,23 +139,6 @@ export default function ProductoPage() {
               </td>
             </tr>
           ))}
-
-            {/* {productos.map((p) => (
-              <tr key={p.idProducto}>
-                <td>{p.idProducto}</td>
-                <td>{p.descripcion}</td>
-                {/* <td>{p.marcas.nombre}</td> 
-                <td>{p.categoria.nombreCategoria}</td>
-                <td>
-                  <button className="action-button update" onClick={() => navigate(`/marca/actualizar/${p.idProducto}`)}>
-                    Actualizar
-                  </button>
-                  <button className="action-button delete" onClick={() => handleDelete(p.idProducto)}>
-                    Eliminar
-                  </button>
-                </td>
-              </tr>
-            ))} */}
           </tbody>
         </table>
       )}
