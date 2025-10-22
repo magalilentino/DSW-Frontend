@@ -1,7 +1,9 @@
 
 // export default modificarAtSer;
+import { motion } from "framer-motion";
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import "../../../styles/Admin.css";
 // importamos la entidad ProdUt (Producto Utilizado) para tipado si es necesario
 
 
@@ -292,108 +294,118 @@ const ModificarAtSer: React.FC = () => {
     if (error) return <p className="error">{error}</p>;
 
     return (
-        <div className="modificar-productos-page">
-            <h2>Cargar datos del servicio realizado {idAtSer}</h2>
+  <div className="admin-servicio my-4 container-fluid">
+    <motion.div
+      className="card p-4"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h2>Servicio Realizado {idAtSer}</h2>
+        <button
+          className="btn btn-secondary"
+          onClick={handleBack}
+          disabled={!idAtencion}
+        >
+          Volver
+        </button>
+      </div>
 
-            <button
-                className="reservas-back-button"
-                onClick={handleBack} // Llama a la función que usa navigate
-                disabled={!idAtencion} // Deshabilitar si aún no tenemos el ID
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                    <path d="M15 18l-6-6 6-6" />
-                </svg>
-            </button>
-            
-             {/*  FILTROS CON DESPLEGABLES */}
-            <div className="filtros">
-                {/* Desplegable de MARCA */}
-                <select
-                    value={filtroMarca} 
-                    onChange={(e) => setFiltroMarca(e.target.value)}
-                    className="p-2 border rounded"
-                >
-                    <option value="">Todas las Marcas</option>
-                    {marcas && marcas.map((m) => (
-                        <option key={m.idMarca} value={m.idMarca.toString()}>
-                            {m.nombre}
-                        </option>
-                    ))}
-                </select>
-
-                {/* Desplegable de CATEGORÍA */}
-                <select
-                    value={filtroCategoria} 
-                    onChange={(e) => setFiltroCategoria(e.target.value)}
-                    className="p-2 border rounded"
-                >
-                    <option value="">Todas las Categorías</option>
-                    {categorias && categorias.map((c) => (
-                        <option key={c.idCategoria} value={c.idCategoria.toString()}>
-                            {c.nombreCategoria}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            
-            {/* Listado de Productos */}
-            <table className="productos-disponibles-table">
-                <thead>
-                    <tr>
-                        <th>Producto</th>
-                        <th>Marca</th>
-                        <th>Cantidad Utilizada(en gr)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {productosDisponibles.map((p) => (
-                        <tr key={p.idPM}>
-                            <td>{p.producto.descripcion}</td>
-                            <td>{p.marca.nombre}</td>
-                            <td>
-                                <input
-                                    type="number"
-                                    min="0"
-                                    step="1"
-                                    placeholder="Ingresa cantidad"
-                                    value={getCantidad(p.idPM)}
-                                    onChange={(e) => handleCantidadChange(p.idPM, e.target.value)}
-                                    className={isSelected(p.idPM) ? 'selected-input' : ''}
-                                />
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-            
-            {/* Selector de Tonos */}
-            <div >
-                <label htmlFor="select-tono" >
-                    Seleccionar Tono (Opcional):
-                </label>
-                <select
-                    id="select-tono"
-                    value={tonoSeleccionadoId === null ? "" : tonoSeleccionadoId.toString()}
-                    onChange={handleTonoChange}>
-                        
-                    {/* Opción para seleccionar NINGUNO */}
-                    <option value="">Ninguno</option>
-                    
-                    {/* Mapeo de la lista de tonos */}
-                    {tonosDisponibles.map((tono) => (
-                        <option key={tono.idTono} value={tono.idTono}>
-                            {tono.nombre}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            <button onClick={handleSubmit}>
-                Guardar Productos Utilizados
-            </button>
+      {/* Filtros */}
+      <div className="row mb-4">
+        <div className="col-md-6 mb-2">
+          <label className="form-label">Filtrar por Marca</label>
+          <select
+            value={filtroMarca}
+            onChange={(e) => setFiltroMarca(e.target.value)}
+            className="form-select"
+          >
+            <option value="">Todas las Marcas</option>
+            {marcas.map((m) => (
+              <option key={m.idMarca} value={m.idMarca.toString()}>
+                {m.nombre}
+              </option>
+            ))}
+          </select>
         </div>
-    );
+
+        <div className="col-md-6 mb-2">
+          <label className="form-label">Filtrar por Categoría</label>
+          <select
+            value={filtroCategoria}
+            onChange={(e) => setFiltroCategoria(e.target.value)}
+            className="form-select"
+          >
+            <option value="">Todas las Categorías</option>
+            {categorias.map((c) => (
+              <option key={c.idCategoria} value={c.idCategoria.toString()}>
+                {c.nombreCategoria}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* Tabla de productos */}
+      <table className="table table-bordered table-hover">
+        <thead className="table-light">
+          <tr>
+            <th>Producto</th>
+            <th>Marca</th>
+            <th>Cantidad Utilizada (gr)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {productosDisponibles.map((p) => (
+            <tr key={p.idPM}>
+              <td>{p.producto.descripcion}</td>
+              <td>{p.marca.nombre}</td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  step="1"
+                  placeholder="Cantidad"
+                  value={getCantidad(p.idPM)}
+                  onChange={(e) => handleCantidadChange(p.idPM, e.target.value)}
+                  className={`form-control ${isSelected(p.idPM) ? 'border-success' : ''}`}
+                />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Selector de tono */}
+      <div className="mt-4">
+        <label htmlFor="select-tono" className="form-label">
+          Seleccionar Tono (Opcional)
+        </label>
+        <select
+          id="select-tono"
+          value={tonoSeleccionadoId === null ? "" : tonoSeleccionadoId.toString()}
+          onChange={handleTonoChange}
+          className="form-select"
+        >
+          <option value="">Ninguno</option>
+          {tonosDisponibles.map((tono) => (
+            <option key={tono.idTono} value={tono.idTono}>
+              {tono.nombre}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Botón de guardar */}
+      <div className="d-flex justify-content-end mt-4">
+        <button className="btn btn-primary" onClick={handleSubmit}>
+          Guardar Productos Utilizados
+        </button>
+      </div>
+    </motion.div>
+  </div>
+);
 };
 
 export default ModificarAtSer;
