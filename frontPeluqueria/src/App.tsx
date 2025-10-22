@@ -25,9 +25,7 @@ import SobreNosotrosContacto from "./pages/NosotrosContacto.tsx"
 import Servicios from "./components/Admin/servicio/Servicios.tsx";
 import CrearServicio from "./components/Admin/servicio/CrearServicio.tsx";
 import ModificarServicio from "./components/Admin/servicio/ModificarServivicios.tsx";
-import Formula from "./components/Admin/formula/Formula.tsx";
-import CrearFormula from "./components/Admin/formula/CrearFormula.tsx";
-import ActualizarFormula from "./components/Admin/formula/ActualizarFormula.tsx";
+
 import Tono from "./components/Admin/tono/Tono.tsx";
 import CrearTono from "./components/Admin/tono/CrearTono.tsx";
 import VerFormula from "./components/Admin/tono/VerFormula.tsx";
@@ -63,9 +61,7 @@ function App() {
         <Route path="/servicios" element= {<Servicios/>}/>
         <Route path="/servicio/crear" element= {<CrearServicio/>}/>
         <Route path="/servicio/actualizar/:codServicio" element= {<ModificarServicio/>}/>
-        <Route path="/formula" element={<Formula />} />
-        <Route path="/formula/crear" element={<CrearFormula />} />
-        <Route path="/formula/actualizar/:idFormula" element={<ActualizarFormula />} />
+     
         <Route path="/tono" element={<Tono />} />
         <Route path="/tono/crear" element={<CrearTono />} />
         <Route path="/tono/formulas/:idTono" element={<VerFormula />} />
