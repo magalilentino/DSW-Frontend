@@ -44,7 +44,7 @@ export default function CrearPeluquero() {
       if (!res.ok) throw new Error(data.message || "Error en el registro");
 
       setSuccess("Registro exitoso");
-      setTimeout(() => navigate("/perfil"), 1500);
+      setTimeout(() => navigate("/admin"), 1500);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Ocurrió un error desconocido.");
     } finally {
