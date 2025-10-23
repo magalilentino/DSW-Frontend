@@ -104,7 +104,7 @@ export default function ServiciosDeAtencion() {
                     transition={{ duration: 0.5, delay: i * 0.1 }}
                   >
                     <div className="service-info me-3">
-                      <h5>Servicio #{as.servicio.codServicio}</h5>
+                      <h5>Servicio {as.servicio.codServicio}</h5>
                       <p className="mb-1">{as.servicio.nombreServicio}</p>
                     </div>
                     <div className="service-actions">

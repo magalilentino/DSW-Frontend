@@ -98,7 +98,7 @@ export default function AtencionPage() {
                     transition={{ duration: 0.5, delay: i * 0.1 }}
                   >
                     <div className="service-info me-3">
-                      <h5>Atención #{a.idAtencion}</h5>
+                      <h5>Atención {a.idAtencion}</h5>
                       <p className="mb-1">Cliente: {a.cliente.nombre}</p>
                     </div>
                     <div className="service-actions d-flex flex-column gap-2 flex-shrink-0">
