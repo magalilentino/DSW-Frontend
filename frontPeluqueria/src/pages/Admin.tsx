@@ -39,7 +39,30 @@ const Admin = () => {
   const [pendientesHoy, setPendientesHoy] = useState<number>(0);
   const [completadasHoy, setCompletadasHoy] = useState<number>(0);
   const [gananciasHoy, setGananciasHoy] = useState<number>(0);
+  const [turnosHoy, setTurnosHoy] = useState<
+  { hora: string; cliente: string; servicios: string }[]
+>([]);
 
+useEffect(() => {
+  if (!user) return;
+
+  const fetchTurnosHoy = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/api/atencion/turnos-hoy", {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
+      if (!res.ok) throw new Error("No autorizado");
+      const data = await res.json();
+      setTurnosHoy(data); // data: [{hora, cliente, servicios}, ...]
+    } catch (err) {
+      console.error("Error al obtener turnos del día:", err);
+    }
+  };
+
+  fetchTurnosHoy();
+}, [user]);
+
+  
 useEffect(() => {
   if (!user) return;
 
@@ -234,18 +257,24 @@ useEffect(() => {
 
         {/* Próximos Turnos */}
         <section className="turnos-section">
-          <h2>Próximos Turnos del Día</h2>
-          <ul>
-            <li>
-              <strong>15:00</strong> | Cliente A | Corte
-            </li>
-            <li>
-              <strong>16:30</strong> | Cliente B | Coloración
-            </li>
-            <li>
-              <strong>17:00</strong> | Cliente C | Peinado
-            </li>
-          </ul>
+          <h1>Próximos Turnos del Día</h1>
+          {turnosHoy.length === 0 ? (
+            <p>No hay turnos para hoy</p>
+          ) : (
+            <div className="turnos-grid">
+              {turnosHoy.map((turno, i) => (
+                <div key={i} className="turno-card">
+                  <div className="turno-header">
+                    <span className="turno-hora">{turno.hora}</span>
+                  </div>
+                  <div className="turno-body">
+                    <p><strong>Cliente:</strong> {turno.cliente}</p>
+                    <p><strong>Servicios:</strong> {turno.servicios}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
       </main>
 
