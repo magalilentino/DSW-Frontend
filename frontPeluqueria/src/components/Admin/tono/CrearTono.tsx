@@ -127,34 +127,36 @@ export default function CrearTono() {
           </div>
 
            {/* Listado de Productos */}
-            <table className="productos-disponibles-table">
-                <thead>
-                    <tr>
-                        <th>Producto</th>
-                        <th>Marca</th>
-                        <th>Cantidad</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {productosMar.map((p) => (
-                        <tr key={p.idPM}>
-                            <td>{p.producto.descripcion}</td>
-                            <td>{p.marca.nombre}</td>
-                            <td>
-                                <input
-                                    type="number"
-                                    min="0"
-                                    step="1"
-                                    placeholder="Ingresa cantidad"
-                                    value={getCantidad(p.idPM)}
-                                    onChange={(e) => handleCantidadChange(p.idPM, e.target.value)}
-                                    className={isSelected(p.idPM) ? 'selected-input' : ''}
-                                />
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            <label className="mt-4 mb-2">Productos utilizados</label>
+        <table className="table table-bordered table-hover">
+          <thead className="table-light">
+            <tr>
+              <th>Producto</th>
+              <th>Marca</th>
+              <th>Cantidad Utilizada (gr)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {productosMar.map((p) => (
+              <tr key={p.idPM}>
+                <td>{p.producto.descripcion}</td>
+                <td>{p.marca.nombre}</td>
+                <td>
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    placeholder="Cantidad"
+                    value={getCantidad(p.idPM)}
+                    onChange={(e) => handleCantidadChange(p.idPM, e.target.value)}
+                    className={`form-control ${isSelected(p.idPM) ? 'border-success' : ''}`}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
 
           <button type="submit" className="btn btn-primary" disabled={loading}>
             {loading ? "Creando..." : "Crear Tono"}

@@ -92,18 +92,18 @@ const ModificarAtSer: React.FC = () => {
                 headers: { Authorization: `Bearer ${token}` } 
             });
             if (!res.ok) throw new Error("Fallo la carga de categorías.");
-             const responseData = await res.json();
-        //  CAMBIO CLAVE: Acceder a la propiedad 'data' que contiene el array.
-        // Se añade una verificación de seguridad (|| []) por si 'data' no existe.
-            const categoriaArray = responseData.data || []; 
-            
-            if (Array.isArray(categoriaArray)) {
-                setCategorias(categoriaArray); 
-            } else {
-                // Esto captura si 'data' existe pero NO es un array
-                console.error("La propiedad 'data' de la API de categorias no es un array.");
-                setCategorias([]);
-            }
+              const responseData = await res.json();
+          //  CAMBIO CLAVE: Acceder a la propiedad 'data' que contiene el array.
+          // Se añade una verificación de seguridad (|| []) por si 'data' no existe.
+              const categoriaArray = responseData.data || []; 
+              
+              if (Array.isArray(categoriaArray)) {
+                  setCategorias(categoriaArray); 
+              } else {
+                  // Esto captura si 'data' existe pero NO es un array
+                  console.error("La propiedad 'data' de la API de categorias no es un array.");
+                  setCategorias([]);
+              }
 
         } catch (err) {
             console.error(err);

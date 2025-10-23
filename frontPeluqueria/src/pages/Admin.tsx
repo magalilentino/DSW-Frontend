@@ -22,7 +22,6 @@ const sections = [
       { label: "Marca", path: "/marca" },
       { label: "Categoria", path: "/categoria" },
       { label: "Servicio", path: "/servicios" },
-      { label: "Fórmula", path: "/formula" },
       { label: "Tono", path: "/tono" },
       { label: "Producto", path: "/producto" },
     ],

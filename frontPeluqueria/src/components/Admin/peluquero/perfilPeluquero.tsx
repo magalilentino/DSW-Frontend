@@ -74,12 +74,12 @@ export default function PerfilPeluquero() {
     const response = await res.json();
     if (!res.ok) throw new Error(response.message);
 
-    setPersona(response.data);         // ✅ actualiza correctamente
-    setFormData(response.data);        // ✅ sincroniza el formulario
+    setPersona(response.data);         
+    setFormData(response.data);        
     setEditMode(false);
     setSuccess("Perfil actualizado correctamente");
 
-    setTimeout(() => setSuccess(""), 3000); // ✅ limpia el mensaje después de 3 segundos
+    setTimeout(() => setSuccess(""), 3000); 
   } catch (err: any) {
     setError(err.message);
   }
@@ -130,6 +130,18 @@ if (!user) {
                 >
                   ⬅ Volver al Home
                 </button>
+                <button
+                className="logout-button"
+                onClick={() => {
+                  localStorage.removeItem("token"); 
+                  localStorage.removeItem("type"); 
+                  localStorage.removeItem("nombre"); 
+
+                  window.location.href = "/";
+                }}
+                >
+                Cerrar sesión
+              </button>
               </div>
             </div>
           )}
