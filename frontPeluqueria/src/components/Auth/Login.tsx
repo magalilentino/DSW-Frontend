@@ -24,8 +24,7 @@ function Login({ onToggleMode }: LoginProps) {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const type = localStorage.getItem("type");
-
+    const type = localStorage.getItem("type"); 
     if (token && type) {
       if (type === "cliente") navigate("/reserve");
       else if (type === "peluquero") navigate("/admin");
@@ -36,27 +35,22 @@ function Login({ onToggleMode }: LoginProps) {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     try {
       const res = await fetch("http://localhost:3000/api/persona/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, clave }),
       });
-
       const data: LoginResponse = await res.json();
-
       if (!res.ok) {
         throw new Error(data?.message || `Error ${res.status}: No se pudo iniciar sesión`);
       }
-
       login({
         token: data.token,
         type: data.type,
         nombre: data.nombre,
         idPersona: data.idPersona,
       });
-
       if (data.type === "cliente") {
         navigate("/");
       } else if (data.type === "peluquero") {
@@ -93,7 +87,6 @@ function Login({ onToggleMode }: LoginProps) {
           className="mt-2"
         />
         {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
-
         <button
           type="submit"
           disabled={loading}

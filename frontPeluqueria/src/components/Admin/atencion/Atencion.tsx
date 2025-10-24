@@ -17,7 +17,7 @@ export default function AtencionPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token"); 
 
     fetch("http://localhost:3000/api/atencion/pendientes", {
       method: "GET",
@@ -26,7 +26,7 @@ export default function AtencionPage() {
       },
     })
       .then((res) => {
-        if (!res.ok) throw new Error("No autorizado");
+        if (!res.ok) throw new Error("No autorizado"); 
         return res.json();
       })
       .then((data) => {

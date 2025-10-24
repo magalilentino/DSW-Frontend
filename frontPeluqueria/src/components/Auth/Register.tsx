@@ -21,10 +21,10 @@ function Register({ onToggleMode }: RegisterProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => { 
     e.preventDefault();
     setError("");
-    setLoading(true);
+    setLoading(true);   
 
       try {
       const res = await fetch("http://localhost:3000/api/persona/register", {
@@ -32,9 +32,7 @@ function Register({ onToggleMode }: RegisterProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ dni, clave, nombre, apellido, telefono, email, type:"cliente"}),
       });
-
       const data: RegisterResponse = await res.json();
-
       if (!res.ok) {
         throw new Error(data.message || "Error en el registro");
       }

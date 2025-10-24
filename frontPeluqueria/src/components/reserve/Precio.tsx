@@ -41,7 +41,7 @@ export default function Precio({
   };
 
 const confirmarReserva = async () => {
-  const clienteIdString = localStorage.getItem("idPersona");
+  const clienteIdString = localStorage.getItem("idPersona"); //se obtiene el id del cliente logueado
   const token = localStorage.getItem("token");
 
   if (
@@ -100,7 +100,7 @@ const confirmarReserva = async () => {
   const isButtonDisabled =
     (step === 1 && serviciosSeleccionados.length === 0) ||
     (step === 2 && !peluquero) ||
-    (step === 3 && bloquesSeleccionados.length === 0);
+    (step === 3 && bloquesSeleccionados.length === 0); 
 
   const closeModalAndGoHome = () => {
     setShowModal(false);

@@ -35,23 +35,6 @@ export default function Reservas({
   const [peluqueros, setPeluqueros] = useState<PeluqueroItem[]>([]);
   const [bloquesDisponibles, setBloquesDisponibles] = useState<{ hora_inicio: string; hora_fin: string }[]>([]);
   const totalDuracionMin = serviciosSeleccionados.reduce((sum, s) => sum + s.cantTurnos * 45, 0);
-  const [, setBloquesDia] = useState<{ hora_inicio: string; hora_fin: string; estado: "libre" | "ocupado" }[]>([]);
-
-useEffect(() => {
-  const fetchBloquesDia = async () => {
-    if (!peluqueroSeleccionado || !diaSeleccionado) return;
-    try {
-      const res = await fetch(
-        `http://localhost:3000/api/bloque/byFecha?fecha=${diaSeleccionado}&peluqueroId=${peluqueroSeleccionado.idPersona}`
-      );
-      const data = await res.json();
-      setBloquesDia(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-  fetchBloquesDia();
-}, [peluqueroSeleccionado, diaSeleccionado]);
 
   useEffect(() => {
     const fetchPeluqueros = async () => {
