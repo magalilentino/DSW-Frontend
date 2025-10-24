@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import "../styles/Reservas.css";
 import Footer from "../components/general/Footer.tsx";
-import Reservas from "../components/reserve/Reservas.tsx"; //componetes
+import Reservas from "../components/reserve/Reservas.tsx"; 
 import Precio from "../components/reserve/Precio.tsx";
 import type { ServicioItem } from "../components/home/Servicio.tsx";
-import type { PeluqueroItem } from "../components/home/Peluqueros.tsx"; //estructuras
+import type { PeluqueroItem } from "../components/home/Peluqueros.tsx"; 
 
 function Reserve() {
   const [step, setStep] = useState(1);
@@ -35,7 +35,7 @@ function Reserve() {
     <>
       <main>
         <section className="reservas-servicio my-4">
-          {/* Botón de volver */}
+          
           <button
             className="reservas-back-button"
             onClick={() => {
@@ -56,7 +56,7 @@ function Reserve() {
               <path d="M15 18l-6-6 6-6" />
             </svg>
           </button>
-          {/* Filtrado por precio */}
+         
           <div className="filtro-precio mb-4 mt-3">
             <h5>Filtrar servicios por precio</h5>
             <div className="d-flex gap-2 flex-wrap align-items-center">
@@ -109,14 +109,14 @@ function Reserve() {
               </button>
             </div>
 
-            {/* Contador de resultados */}
+            
             {serviciosFiltrados.length > 0 && (
               <p className="mt-2 text-muted">
                 Mostrando {serviciosFiltrados.length} servicio{serviciosFiltrados.length > 1 ? "s" : ""} filtrado{serviciosFiltrados.length > 1 ? "s" : ""}.
               </p>
             )}
 
-            {/* Mensaje si no hay resultados */}
+            
             {serviciosFiltrados.length === 0 && minPrecio !== null && maxPrecio !== null && (
               <p className="mt-2 text-danger">
                 No se encontraron servicios en ese rango de precio.
@@ -124,13 +124,13 @@ function Reserve() {
             )}
           </div>
 
-          {/* Contenido principal */}
+          
           <div className="row">
             <Reservas
               step={step}
               setStep={setStep}
               onNextStep={() => setStep(step + 1)}
-              servicios={serviciosFiltrados.length > 0 ? serviciosFiltrados : servicios} //props para reserve(información que reserva recibe de su reserve)
+              servicios={serviciosFiltrados.length > 0 ? serviciosFiltrados : servicios} 
               serviciosSeleccionados={serviciosSeleccionados}
               setServiciosSeleccionados={setServiciosSeleccionados}
               peluqueroSeleccionado={peluqueroSeleccionado}
@@ -143,7 +143,7 @@ function Reserve() {
             <Precio
               peluquero={peluqueroSeleccionado}
               bloquesSeleccionados={bloquesSeleccionados}
-              onNextStep={() => setStep(prev => prev + 1)} //props para precio(información que precio recibe de su reserve)
+              onNextStep={() => setStep(prev => prev + 1)} 
               step={step}
               serviciosSeleccionados={serviciosSeleccionados}
               setServiciosSeleccionados={setServiciosSeleccionados}

@@ -41,7 +41,7 @@ export default function Precio({
   };
 
 const confirmarReserva = async () => {
-  const clienteIdString = localStorage.getItem("idPersona"); //se obtiene el id del cliente logueado
+  const clienteIdString = localStorage.getItem("idPersona"); 
   const token = localStorage.getItem("token");
 
   if (

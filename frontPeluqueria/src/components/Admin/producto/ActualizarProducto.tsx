@@ -182,7 +182,7 @@ export default function ActualizarProducto() {
                   id="activo"
                   checked={activo}
                   onChange={(e) => {
-                    const nuevoEstado = e.target.checked; // esta propiedad siempre devuelve un valor booleano
+                    const nuevoEstado = e.target.checked; 
                     setActivo(nuevoEstado); 
                 }}
                 />

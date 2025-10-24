@@ -1,15 +1,15 @@
 
-// export default modificarAtSer;
+
 import { motion } from "framer-motion";
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../../../styles/Admin.css";
-// importamos la entidad ProdUt (Producto Utilizado) para tipado si es necesario
 
 
-// 1. INTERFACES
 
-// Interfaz del producto tal como viene de /api/productos
+
+
+
 interface ProdMar {
     idPM: number;
     producto: {
@@ -17,13 +17,13 @@ interface ProdMar {
     marca: {
         nombre: string};
 }
-// Interfaz para el estado de los productos seleccionados (Incluye la cantidad)
+
 interface ProductoSeleccionado {
     idPM: number;
     cantidad: number; 
 }
 
-// Interfaz para la entidad Tono
+
 interface Tono {
     idTono: number;
     nombre: string;
@@ -43,8 +43,7 @@ const ModificarAtSer: React.FC = () => {
     const { idAtSer } = useParams<{ idAtSer: string }>(); 
     const navigate = useNavigate();
 
-    // Estados
-    const [productosDisponibles, setProductosDisponibles] = useState<ProdMar[]>([]);
+       const [productosDisponibles, setProductosDisponibles] = useState<ProdMar[]>([]);
     const [productosSeleccionados, setProductosSeleccionados] = useState<ProductoSeleccionado[]>([]);
     const [filtroMarca, setFiltroMarca] = useState("");
     const [filtroCategoria, setFiltroCategoria] = useState("");
@@ -59,8 +58,8 @@ const ModificarAtSer: React.FC = () => {
     const token = localStorage.getItem("token");
 
     
-    // 2. FETCH de PRODUCTOS DISPONIBLES (con filtros)
-        //  NUEVO FETCH para Marcas
+    
+        
     const fetchMarcas = useCallback(async () => {
         try {
             const res = await fetch('http://localhost:3000/api/marca', { 
@@ -68,14 +67,14 @@ const ModificarAtSer: React.FC = () => {
             });
             if (!res.ok) throw new Error("Fallo la carga de marcas.");
             const responseData = await res.json();
-        // CAMBIO CLAVE: Acceder a la propiedad 'data' que contiene el array.
-        // Se añade una verificación de seguridad (|| []) por si 'data' no existe.
+        
+        
             const marcasArray = responseData.data || []; 
             
             if (Array.isArray(marcasArray)) {
                 setMarcas(marcasArray); 
             } else {
-                // Esto captura si 'data' existe pero NO es un array
+                
                 console.error("La propiedad 'data' de la API de marcas no es un array.");
                 setMarcas([]);
             }
@@ -85,7 +84,7 @@ const ModificarAtSer: React.FC = () => {
         }
     }, [token]);
     
-    //  NUEVO FETCH para Categorías
+    
     const fetchCategorias = useCallback(async () => {
         try {
             const res = await fetch('http://localhost:3000/api/categoria', { 
@@ -93,14 +92,13 @@ const ModificarAtSer: React.FC = () => {
             });
             if (!res.ok) throw new Error("Fallo la carga de categorías.");
              const responseData = await res.json();
-        //  CAMBIO CLAVE: Acceder a la propiedad 'data' que contiene el array.
-        // Se añade una verificación de seguridad (|| []) por si 'data' no existe.
+        
             const categoriaArray = responseData.data || []; 
             
             if (Array.isArray(categoriaArray)) {
                 setCategorias(categoriaArray); 
             } else {
-                // Esto captura si 'data' existe pero NO es un array
+                
                 console.error("La propiedad 'data' de la API de categorias no es un array.");
                 setCategorias([]);
             }
@@ -111,9 +109,9 @@ const ModificarAtSer: React.FC = () => {
     }, [token]);
 
     
-    // Función para cargar los productos disponibles (ya existente)
+    
     const fetchProductos = useCallback(async () => {
-        // ... (Lógica de fetchProductos existente)
+        
         const query = new URLSearchParams();
         if (filtroMarca) query.append('idMarca', filtroMarca);
         if (filtroCategoria) query.append('idCategoria', filtroCategoria);
@@ -130,12 +128,10 @@ const ModificarAtSer: React.FC = () => {
             console.error(err);
             setError("Error al cargar productos disponibles.");
         } 
-        // finally {
-        //     // No cambiamos loading aquí, lo dejamos al final de todo
-        // }
+        
     }, [filtroMarca, filtroCategoria, token]); 
     
-    // FETCH para Tonos
+    
     const fetchTonos = useCallback(async () => {
         try {
             const res = await fetch('http://localhost:3000/api/tono', { 
@@ -145,24 +141,22 @@ const ModificarAtSer: React.FC = () => {
             if (!res.ok) throw new Error("Fallo la carga de tonos disponibles.");
             const data = await res.json();
             
-            // Asumiendo que la respuesta es { data: Tono[] } o directamente Tono[]
-            setTonosDisponibles(data.data || data); 
+                        setTonosDisponibles(data.data || data); 
 
         } catch (err) {
             console.error(err);
-            setError(prev => prev + " Error al cargar tonos."); // Concatenar error
+            setError(prev => prev + " Error al cargar tonos."); 
         }
     }, [token]);
 
     const fetchAtencionId = async () => {
         try {
-            //  AJUSTA ESTA URL a tu endpoint para obtener el detalle de AtSer
-            const res = await fetch(`http://localhost:3000/api/atSer/${idAtSer}`, {
-                headers: { Authorization: `Bearer ${token}` },
+              const res = await fetch(`http://localhost:3000/api/atSer/${idAtSer}`, {
+              headers: { Authorization: `Bearer ${token}` },
             });
             if (!res.ok) throw new Error("Fallo la carga del AtSer.");
             const data = await res.json();
-            // 🛑 AJUSTA 'data.idAtencion' si el campo se llama diferente en tu backend
+            
             if (data.idAtencion) {
                 setIdAtencion(data.idAtencion.toString()); 
             } else {
@@ -170,11 +164,11 @@ const ModificarAtSer: React.FC = () => {
             }
         } catch (err) {
             console.error("Error al obtener el idAtencion:", err);
-            // Si falla, el botón de "Volver" no funcionará, o usará '#'
+            
         }
     };
 
-    // Ejecuta todos los fetches
+    
     useEffect(() => {
         setLoading(true);
         setError("");
@@ -183,15 +177,13 @@ const ModificarAtSer: React.FC = () => {
             .catch(err => console.error("Error en Promise.all:", err))
             .finally(() => setLoading(false));
             
-    }, [fetchProductos, fetchTonos, fetchMarcas, fetchCategorias]); // Dependencias que disparan los fetches
+    }, [fetchProductos, fetchTonos, fetchMarcas, fetchCategorias]); 
     
-    // 3. MANEJO DE SELECCIÓN Y CANTIDAD
-    // Helper para saber si un producto ya está seleccionado
-    const isSelected = (idPM: number) => productosSeleccionados.some(p => p.idPM === idPM);
     
-    // Función para manejar la cantidad, añadiendo o quitando de la lista de seleccionados
-    const handleCantidadChange = (idProducto: number, cantidadStr: string) => {
-        const cantidad = parseFloat(cantidadStr.replace(',', '.')); // Soporte para coma/punto
+        const isSelected = (idPM: number) => productosSeleccionados.some(p => p.idPM === idPM);
+    
+        const handleCantidadChange = (idProducto: number, cantidadStr: string) => {
+        const cantidad = parseFloat(cantidadStr.replace(',', '.')); 
         const productoInfo = productosDisponibles.find(p => p.idPM === idProducto);
 
         if (!productoInfo) return;
@@ -201,19 +193,19 @@ const ModificarAtSer: React.FC = () => {
 
             if (cantidad >= 0 && !isNaN(cantidad)) {
                 if (index > -1) {
-                    // Actualizar cantidad si ya existe
+                    
                     const newArray = [...prev];
                     newArray[index] = { ...newArray[index], cantidad };
                     return newArray;
                 } else {
-                    // Añadir nuevo producto
+                    
                     return [...prev, {
                         idPM: idProducto,
                         cantidad: cantidad,
                     }];
                 }
             } else {
-                // Si la cantidad es 0 o inválida, eliminar de la lista
+                
                 return prev.filter(p => p.idPM !== idProducto);
             }
         });
@@ -221,18 +213,18 @@ const ModificarAtSer: React.FC = () => {
 
     const handleTonoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.target.value;
-        // Si el valor es una cadena vacía (""), se establece a null (Ninguno)
+        
         const idTono = value === "" ? null : parseInt(value, 10); 
         setTonoSeleccionadoId(idTono);
     };
 
     const handleBack = () => {
         if (idAtencion) {
-            // Construye la URL de destino usando el idAtencion recuperado
+            
             navigate(`/atencion/serviciosDeAtencion/${idAtencion}`);
         } else {
             alert("No se pudo determinar la Atención para regresar.");
-            // Alternativa segura: navigate(-1)
+            
         }
     };
 
@@ -338,7 +330,7 @@ const ModificarAtSer: React.FC = () => {
         </div>
       </div>
 
-      {/* Tabla de productos */}
+      
       <table className="table table-bordered table-hover">
         <thead className="table-light">
           <tr>
@@ -368,7 +360,7 @@ const ModificarAtSer: React.FC = () => {
         </tbody>
       </table>
 
-      {/* Selector de tono */}
+      
       <div className="mt-4">
         <label htmlFor="select-tono" className="form-label">
           Seleccionar Tono (Opcional)
@@ -388,7 +380,7 @@ const ModificarAtSer: React.FC = () => {
         </select>
       </div>
 
-      {/* Botón de guardar */}
+      
       <div className="d-flex justify-content-end mt-4">
         <button className="btn btn-primary" onClick={handleSubmit}>
           Guardar Productos Utilizados

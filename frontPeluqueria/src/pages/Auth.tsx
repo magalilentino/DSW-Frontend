@@ -10,7 +10,6 @@ function Auth() {
 
   const searchParams = new URLSearchParams(location.search);
   const modeFromQuery = searchParams.get("mode");
-
   const [isRegistering, setIsRegistering] = useState(modeFromQuery === "register"); //indica que forma se muestra (login o register)
 
   useEffect(() => {
