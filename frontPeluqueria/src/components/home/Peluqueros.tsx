@@ -2,7 +2,7 @@ import Foto3 from "../../assets/foto3.avif";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-export interface PeluqueroItem {
+export interface PeluqueroItem { //tipo de dato que tienen los peluqueros
   idPersona: number;
   nombre: string;
   apellido?: string;
@@ -20,14 +20,14 @@ export function Estilista() {
   useEffect(() => {
     fetch("http://localhost:3000/api/persona/peluquero/findAllPeluquero")
       .then((res) => {
-        if (!res.ok) throw new Error("Error al cargar los peluqueros");
+        if (!res.ok) throw new Error("Error al cargar los peluqueros"); //manejo de errores si la respuesta de la bd no es correcta
         return res.json();
       })
       .then((data) => {
-        setPeluqueros(data.data || data);
+        setPeluqueros(data.data || data); //devuelve un objeto { data: [...] } o un array directamente.
       })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+      .catch((err) => setError(err.message)) //guarda el error 
+      .finally(() => setLoading(false)); //guarda el loading en false
   }, []);
 
   if (loading) return <p>Cargando peluqueros...</p>;
@@ -37,7 +37,7 @@ export function Estilista() {
     <section className="container text-center my-4">
       <h2 className="mb-4">Peluqueros</h2>
       <div className="row justify-content-center">
-        {peluqueros.map((peluquero) => (
+        {peluqueros.map((peluquero) => ( //for de peluquero
           <motion.div
             key={peluquero.idPersona}
             className="col-6 col-md-3 mb-4 d-flex justify-content-center"

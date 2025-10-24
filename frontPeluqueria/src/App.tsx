@@ -60,7 +60,6 @@ function App() {
         <Route path="/servicios" element= {<Servicios/>}/>
         <Route path="/servicio/crear" element= {<CrearServicio/>}/>
         <Route path="/servicio/actualizar/:codServicio" element= {<ModificarServicio/>}/>
-     
         <Route path="/tono" element={<Tono />} />
         <Route path="/tono/crear" element={<CrearTono />} />
         <Route path="/tono/formulas/:idTono" element={<VerFormula />} />

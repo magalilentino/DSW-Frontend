@@ -1,7 +1,7 @@
 import Foto1 from "../../assets/foto1.avif";
 import Foto2 from "../../assets/foto2.avif";
 import Foto3 from "../../assets/foto3.avif";
-
+//carrousel
 function Carrousel() {
   const servicios = [
     { foto: Foto1, titulo: "Corte de Cabello", descripcion: "Corte moderno y personalizado" },
@@ -28,7 +28,6 @@ function Carrousel() {
             </div>
           ))}
         </div>
-
         <button
           className="carousel-control-prev"
           type="button"
@@ -38,7 +37,6 @@ function Carrousel() {
           <span className="home-carousel-control-prev-icon"></span>
           <span className="visually-hidden">Anterior</span>
         </button>
-
         <button
           className="carousel-control-next"
           type="button"

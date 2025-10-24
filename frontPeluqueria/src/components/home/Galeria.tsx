@@ -1,6 +1,5 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
-
+import { useState } from "react"; //manejar estados dentro del componente
+import { motion, AnimatePresence } from "motion/react"; //animaciones
 import Foto1 from "../../assets/foto1.avif";
 import Foto2 from "../../assets/foto2.avif";
 import Foto3 from "../../assets/foto3.avif";
@@ -15,11 +14,11 @@ function Galeria() {
   const [selected, setSelected] = useState<number | null>(null);
 
   const nextFoto = () => {
-    if (selected !== null) setSelected((selected + 1) % fotos.length);
+    if (selected !== null) setSelected((selected + 1) % fotos.length); //% fotos.length asegura que el índice se mantenga dentro del rango de 0 a fotos.length - 1.
   };
 
   const prevFoto = () => {
-    if (selected !== null)
+    if (selected !== null) //selected es distinto de null
       setSelected((selected - 1 + fotos.length) % fotos.length);
   };
 
@@ -57,12 +56,12 @@ function Galeria() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="home-galeria-animate"
-            onClick={() => setSelected(null)}
+            onClick={() => setSelected(null)} //apretar afuera de la foto y que se haga null
           >
             <button
               className="home-button-galeria home-button-prev"
               onClick={(e) => {
-                e.stopPropagation();
+                e.stopPropagation(); //evita que no se cierre cuando apretas fuera de la foto en los botones
                 prevFoto();
               }}
             >

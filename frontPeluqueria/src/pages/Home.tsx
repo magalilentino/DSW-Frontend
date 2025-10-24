@@ -24,3 +24,4 @@ function Home() {
 }
 
 export default Home;
+// dividido en subcomponentes

@@ -1,20 +1,20 @@
-import { useEffect, useState } from "react";
-import { motion } from "motion/react";
+import { useEffect, useState } from "react"; //manejar estados y  efectos secundarios
+import { motion } from "motion/react"; //animaciones
 import { useNavigate } from "react-router-dom";
-import { HORARIOS, DIRECCION, GOOGLE_MAPS_LINK } from "./Constants";
+import { HORARIOS, DIRECCION, GOOGLE_MAPS_LINK } from "./Constants"; //informacion del negocio
 
-export interface ServicioItem {
+export interface ServicioItem { //tipo de dato que tiene los servicio
   codServicio: number;
   nombreServicio: string;
   cantTurnos: number;
   precio: number;
 }
 
+//Sirve para convertir la cantidad de turnos en horas y minutos
 const formatDuration = (cantTurnos: number): string => {
   const totalMinutes = cantTurnos * 45;
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
-
   if (hours > 0) {
     return `${hours} h ${minutes > 0 ? `${minutes} min` : ""}`;
   }
@@ -31,14 +31,15 @@ function Servicio() {
   useEffect(() => {
     fetch("http://localhost:3000/api/servicio/findAll")
       .then((res) => {
-        if (!res.ok) throw new Error("Error al cargar servicios");
+        if (!res.ok) throw new Error("Error al cargar servicios"); //tira error si no es correcta
         return res.json();
       })
-      .then((data) => setServicios(data.data))
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+      .then((data) => setServicios(data.data))  //Si todo va bien, guarda los servicios en el estado servicios
+      .catch((err) => setError(err.message)) //Si hay error lo guarda en error 
+      .finally(() => setLoading(false)); //loading = false
   }, []);
 
+  //esqueleto de la espera del loading hasta que se ponga en false
   if (loading) {
     return (
       <section className="home-servicio my-4">
@@ -81,7 +82,7 @@ function Servicio() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false, amount: 0.2 }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-              >
+              > 
                 <div>
                   <h5>{s.nombreServicio}</h5>
                   <p className="mb-1">
@@ -98,10 +99,9 @@ function Servicio() {
               </motion.li>
             ))}
           </ul>
-         <button className="home-btn-todo" onClick={() => navigate("/reserve")}>
+         <button className="home-btn-todo" onClick={() => navigate("/auth")}>
           Ver todo
           </button>
-
         </div>
 
         <div className="col-lg-4">
@@ -146,7 +146,6 @@ function Servicio() {
                   }`}
                 ></i>
               </button>
-
               {showHorarios && (
                 <motion.ul
                   initial={{ opacity: 0, y: -10 }}

@@ -1,20 +1,18 @@
 import { useEffect, useState } from "react";
 import "../styles/Reservas.css";
 import Footer from "../components/general/Footer.tsx";
-import Reservas from "../components/reserve/Reservas.tsx";
+import Reservas from "../components/reserve/Reservas.tsx"; //componetes
 import Precio from "../components/reserve/Precio.tsx";
 import type { ServicioItem } from "../components/home/Servicio.tsx";
-import type { PeluqueroItem } from "../components/home/Peluqueros.tsx";
+import type { PeluqueroItem } from "../components/home/Peluqueros.tsx"; //estructuras
 
 function Reserve() {
   const [step, setStep] = useState(1);
-
   const [servicios, setServicios] = useState<ServicioItem[]>([]);
   const [serviciosSeleccionados, setServiciosSeleccionados] = useState<ServicioItem[]>([]);
   const [peluqueroSeleccionado, setPeluqueroSeleccionado] = useState<PeluqueroItem | null>(null);
   const [bloquesSeleccionados, setBloquesSeleccionados] = useState<{ inicio: string; fin: string }[]>([]);
   const [diaSeleccionado, setDiaSeleccionado] = useState<string>("");
-
   const [minPrecio, setMinPrecio] = useState<number | null>(null);
   const [maxPrecio, setMaxPrecio] = useState<number | null>(null);
   const [serviciosFiltrados, setServiciosFiltrados] = useState<ServicioItem[]>([]);
@@ -58,8 +56,7 @@ function Reserve() {
               <path d="M15 18l-6-6 6-6" />
             </svg>
           </button>
-
-          {/* Filtro por precio */}
+          {/* Filtrado por precio */}
           <div className="filtro-precio mb-4 mt-3">
             <h5>Filtrar servicios por precio</h5>
             <div className="d-flex gap-2 flex-wrap align-items-center">
@@ -86,7 +83,6 @@ function Reserve() {
                     const query = `?min=${minPrecio ?? 0}&max=${maxPrecio ?? Number.MAX_SAFE_INTEGER}`;
                     const res = await fetch(`http://localhost:3000/api/servicio/listarPorPrecio${query}`);
                     const data = await res.json();
-
                     if (res.ok && Array.isArray(data)) {
                       setServiciosFiltrados(data);
                     } else {
@@ -134,7 +130,7 @@ function Reserve() {
               step={step}
               setStep={setStep}
               onNextStep={() => setStep(step + 1)}
-              servicios={serviciosFiltrados.length > 0 ? serviciosFiltrados : servicios}
+              servicios={serviciosFiltrados.length > 0 ? serviciosFiltrados : servicios} //props para reserve(información que reserva recibe de su reserve)
               serviciosSeleccionados={serviciosSeleccionados}
               setServiciosSeleccionados={setServiciosSeleccionados}
               peluqueroSeleccionado={peluqueroSeleccionado}
@@ -147,7 +143,7 @@ function Reserve() {
             <Precio
               peluquero={peluqueroSeleccionado}
               bloquesSeleccionados={bloquesSeleccionados}
-              onNextStep={() => setStep(prev => prev + 1)}
+              onNextStep={() => setStep(prev => prev + 1)} //props para precio(información que precio recibe de su reserve)
               step={step}
               serviciosSeleccionados={serviciosSeleccionados}
               setServiciosSeleccionados={setServiciosSeleccionados}
@@ -163,6 +159,3 @@ function Reserve() {
 }
 
 export default Reserve;
-
-
-

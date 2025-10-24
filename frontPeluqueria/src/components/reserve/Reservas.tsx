@@ -169,7 +169,6 @@ useEffect(() => {
                 const seleccionado = bloquesSeleccionados.some(
                   sel => sel.inicio === bloque.hora_inicio && sel.fin === bloque.hora_fin
                 );
-
                 return (
                   <motion.li
                     key={i}

@@ -1,5 +1,5 @@
 import Foto3 from "../../assets/foto3.avif";
-
+//recomendaciones
 function Recomendacion() {
   const recomendaciones = [1, 2, 3];
 

@@ -3,9 +3,9 @@ import { useAuth } from "./AuthContext";
 
 function Header() {
   const { user, logout } = useAuth();
-
+  
+//define a dónde lleva el botón "Mi Perfil"
   let profileLink = "/"; 
-
   if (user) {
     if (user.type === 'peluquero') {
       profileLink = "/admin";
@@ -23,10 +23,11 @@ function Header() {
           </Link>
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav ms-auto">
+              {/* If si es usuario */}
               {user ? (
                 <>
                   <li className="nav-item">
-                    <Link className="nav-link" to={profileLink}>Mi Perfil</Link>
+                    <Link className="nav-link" to={profileLink}>Mi Perfil</Link> 
                   </li>
                   <li className="nav-item">
                     <button className="nav-link" onClick={logout}>Cerrar sesión</button>
@@ -34,6 +35,7 @@ function Header() {
                 </>
               ) : (
                 <>
+                  {/* Else */}
                   <li className="nav-item">
                     <Link className="nav-link" to="/NosotrosContacto">Contacto</Link>
                   </li>
