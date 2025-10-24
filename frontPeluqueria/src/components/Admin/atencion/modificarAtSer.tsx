@@ -92,18 +92,18 @@ const ModificarAtSer: React.FC = () => {
                 headers: { Authorization: `Bearer ${token}` } 
             });
             if (!res.ok) throw new Error("Fallo la carga de categorías.");
-              const responseData = await res.json();
-          //  CAMBIO CLAVE: Acceder a la propiedad 'data' que contiene el array.
-          // Se añade una verificación de seguridad (|| []) por si 'data' no existe.
-              const categoriaArray = responseData.data || []; 
-              
-              if (Array.isArray(categoriaArray)) {
-                  setCategorias(categoriaArray); 
-              } else {
-                  // Esto captura si 'data' existe pero NO es un array
-                  console.error("La propiedad 'data' de la API de categorias no es un array.");
-                  setCategorias([]);
-              }
+             const responseData = await res.json();
+        //  CAMBIO CLAVE: Acceder a la propiedad 'data' que contiene el array.
+        // Se añade una verificación de seguridad (|| []) por si 'data' no existe.
+            const categoriaArray = responseData.data || []; 
+            
+            if (Array.isArray(categoriaArray)) {
+                setCategorias(categoriaArray); 
+            } else {
+                // Esto captura si 'data' existe pero NO es un array
+                console.error("La propiedad 'data' de la API de categorias no es un array.");
+                setCategorias([]);
+            }
 
         } catch (err) {
             console.error(err);
@@ -199,7 +199,7 @@ const ModificarAtSer: React.FC = () => {
         setProductosSeleccionados(prev => {
             const index = prev.findIndex(p => p.idPM === idProducto);
 
-            if (cantidad > 0 && !isNaN(cantidad)) {
+            if (cantidad >= 0 && !isNaN(cantidad)) {
                 if (index > -1) {
                     // Actualizar cantidad si ya existe
                     const newArray = [...prev];
@@ -237,7 +237,6 @@ const ModificarAtSer: React.FC = () => {
     };
 
     
-    // 4. SUBMIT: GUARDAR PRODUCTOS UTILIZADOS
     
     const handleSubmit = async () => {
         const productosAEnviar = productosSeleccionados.map(p => ({
@@ -250,18 +249,14 @@ const ModificarAtSer: React.FC = () => {
             return;
         }
 
-        // Data a enviar (incluyendo el tono si está seleccionado)
-        // Nota: Si el backend espera el tono en el body del PATCH, agrégalo aquí.
-        // Si el tono se guarda en una tabla diferente, necesitarás otro fetch.
         const bodyToSend = { 
             prodMars: productosAEnviar,
-            idTono: tonoSeleccionadoId // Se envía null si no hay tono seleccionado
+            idTono: tonoSeleccionadoId 
         };
 
         try {
-            // Usamos el endpoint que definimos previamente
             const response = await fetch(`http://localhost:3000/api/prodUt/registrarProdsUt/${idAtSer}`, { 
-                method: 'PATCH', // Para modificar la lista de productos asociados
+                method: 'PATCH', 
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
@@ -272,7 +267,7 @@ const ModificarAtSer: React.FC = () => {
             if (!response.ok) throw new Error('Error al guardar los productos utilizados y/o el tono.');
             
             alert('Detalles del servicio actualizados exitosamente.');
-            navigate(-1); // Volver a la lista de servicios    
+            navigate(-1);     
             
         } catch (error) {
             console.error(error);
@@ -281,10 +276,6 @@ const ModificarAtSer: React.FC = () => {
     };
 
     
-    // 5. RENDERIZADO
-    
-
-    // Helper para obtener la cantidad actual de un producto
     const getCantidad = (idPM: number) => {
         const item = productosSeleccionados.find(p => p.idPM === idPM);
         return item ? item.cantidad.toString() : '';
@@ -365,7 +356,7 @@ const ModificarAtSer: React.FC = () => {
                 <input
                   type="number"
                   min="0"
-                  step="1"
+                  step="0.1"
                   placeholder="Cantidad"
                   value={getCantidad(p.idPM)}
                   onChange={(e) => handleCantidadChange(p.idPM, e.target.value)}

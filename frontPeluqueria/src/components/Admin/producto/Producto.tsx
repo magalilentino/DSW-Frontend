@@ -43,8 +43,8 @@ export default function ProductoPage() {
               throw new Error(errorData.message || 'Error al eliminar el producto.');
           }
 
-          const data = await res.json(); // Para obtener el mensaje de éxito del backend
-          setSuccessMessage(data.message); // Usa el mensaje de éxito del backend
+          const data = await res.json(); 
+          setSuccessMessage(data.message); 
         
           setProductos(prevProductos => 
               prevProductos.map(p => 
@@ -63,19 +63,10 @@ export default function ProductoPage() {
     fetchProductos();
   }, []);
 
-  // const productosExpandido = productos.flatMap((p) =>
-  //   p.marcas.map((marca) => ({
-  //     idProducto: p.idProducto,
-  //     descripcion: p.descripcion,
-  //     nombreCategoria: p.categoria.nombreCategoria,
-  //     nombreMarca: marca.nombre,
-  //     activo: p.activo ? "Activado" : "Desactivado",
-  //   }))
-  // );
 
   if (loading) return <p>Cargando productos...</p>;
   if (error) return <p className="text-danger">Error: {error}</p>;
-//habria que ponerle un estilo al mensaje de fracaso también 
+
   return (
     
     <div className="registro-page">
