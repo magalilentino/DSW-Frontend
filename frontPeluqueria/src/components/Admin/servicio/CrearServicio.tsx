@@ -43,47 +43,47 @@ export default function CrearServicio() {
   // };
 
   const handleChange = (
-  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-) => {
-  const { name, value } = e.target;
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
 
-  if (name === "cantTurnos") {
-    const parsed = parseInt(value);
-    setFormData({ ...formData, cantTurnos: isNaN(parsed) ? 0 : parsed });
-    return;
-  }
+    if (name === "cantTurnos") {
+      const parsed = parseInt(value);
+      setFormData({ ...formData, cantTurnos: isNaN(parsed) ? 0 : parsed });
+      return;
+    }
 
-  if (name === "precio") {
-    const raw = value.replace(",", "."); // permite coma como decimal
-    const cleaned = raw.replace(/^0+(?!\.)/, ""); // elimina ceros a la izquierda salvo decimales
-    const num = parseFloat(cleaned);
-    setFormData({ ...formData, precio: isNaN(num) ? 0 : num });
-    return;
-  }
+    if (name === "precio") {
+      const raw = value.replace(",", "."); // permite coma como decimal
+      const cleaned = raw.replace(/^0+(?!\.)/, ""); // elimina ceros a la izquierda salvo decimales
+      const num = parseFloat(cleaned);
+      setFormData({ ...formData, precio: isNaN(num) ? 0 : num });
+      return;
+    }
 
-  // Para nombreServicio y descripcion
-  setFormData({ ...formData, [name]: value });
-};
+    // Para nombreServicio y descripcion
+    setFormData({ ...formData, [name]: value });
+  };
 
-//   const handleChange = (
-//   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-// ) => {
-//   const { name, value } = e.target;
+  //   const handleChange = (
+  //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  // ) => {
+  //   const { name, value } = e.target;
 
-//   let parsedValue = value;
+  //   let parsedValue = value;
 
-//   if (name === "precio") {
-//     // Elimina ceros a la izquierda, excepto si el valor es "0"
-//     parsedValue = value.replace(/^0+(?!$)/, "");
-//   }
+  //   if (name === "precio") {
+  //     // Elimina ceros a la izquierda, excepto si el valor es "0"
+  //     parsedValue = value.replace(/^0+(?!$)/, "");
+  //   }
 
-//   setFormData({
-//     ...formData,
-//     [name]: name === "cantTurnos" || name === "precio"
-//       ? parseInt(parsedValue) || 0
-//       : value,
-//   });
-// };
+  //   setFormData({
+  //     ...formData,
+  //     [name]: name === "cantTurnos" || name === "precio"
+  //       ? parseInt(parsedValue) || 0
+  //       : value,
+  //   });
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,7 +92,9 @@ export default function CrearServicio() {
     setSuccess(null);
 
     if (formData.nombreServicio.trim() === "" || formData.precio <= 0) {
-      setError("El nombre del servicio y el precio son obligatorios y válidos.");
+      setError(
+        "El nombre del servicio y el precio son obligatorios y válidos.",
+      );
       setLoading(false);
       return;
     }
@@ -105,7 +107,8 @@ export default function CrearServicio() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Error al crear el servicio.");
+      if (!res.ok)
+        throw new Error(data.message || "Error al crear el servicio.");
 
       setSuccess(`Servicio "${formData.nombreServicio}" creado con éxito!`);
       setTimeout(() => navigate("/servicios"), 1500);
@@ -126,7 +129,10 @@ export default function CrearServicio() {
       >
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h2>Crear Servicio</h2>
-          <button className="btn btn-secondary" onClick={() => navigate("/servicios")}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => navigate("/servicios")}
+          >
             Volver
           </button>
         </div>
@@ -136,7 +142,9 @@ export default function CrearServicio() {
 
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label htmlFor="nombreServicio" className="form-label">Nombre del Servicio</label>
+            <label htmlFor="nombreServicio" className="form-label">
+              Nombre del Servicio
+            </label>
             <input
               type="text"
               className="form-control"
@@ -149,7 +157,9 @@ export default function CrearServicio() {
           </div>
 
           <div className="mb-3">
-            <label htmlFor="descripcion" className="form-label">Descripción (Opcional)</label>
+            <label htmlFor="descripcion" className="form-label">
+              Descripción (Opcional)
+            </label>
             <textarea
               className="form-control"
               id="descripcion"
@@ -161,7 +171,9 @@ export default function CrearServicio() {
           </div>
 
           <div className="mb-3">
-            <label htmlFor="cantTurnos" className="form-label">Duración (en turnos de 45 min)</label>
+            <label htmlFor="cantTurnos" className="form-label">
+              Duración (en turnos de 45 min)
+            </label>
             <input
               type="number"
               className="form-control"
@@ -178,21 +190,23 @@ export default function CrearServicio() {
           </div>
 
           <div className="mb-3">
-            <label htmlFor="precio" className="form-label">Precio (ARS)</label>
+            <label htmlFor="precio" className="form-label">
+              Precio (ARS)
+            </label>
             <input
-                type="text"
-                inputMode="decimal"
-                className="form-control"
-                id="precio"
-                name="precio"
-                value={formData.precio.toString()}
-                onChange={(e) => {
-                  const raw = e.target.value.replace(",", "."); // convierte coma a punto - no anda
-                  const cleaned = raw.replace(/^0+(?!\.)/, ""); // elimina ceros a la izquierda salvo decimales
-                  const num = parseFloat(cleaned);
-                  setFormData({ ...formData, precio: isNaN(num) ? 0 : num });
-                }}
-                required
+              type="text"
+              inputMode="decimal"
+              className="form-control"
+              id="precio"
+              name="precio"
+              value={formData.precio.toString()}
+              onChange={(e) => {
+                const raw = e.target.value.replace(",", "."); // convierte coma a punto - no anda
+                const cleaned = raw.replace(/^0+(?!\.)/, ""); // elimina ceros a la izquierda salvo decimales
+                const num = parseFloat(cleaned);
+                setFormData({ ...formData, precio: isNaN(num) ? 0 : num });
+              }}
+              required
 
               // type="number"
               // className="form-control"
@@ -207,10 +221,19 @@ export default function CrearServicio() {
           </div>
 
           <div className="d-flex justify-content-end mt-4 gap-2">
-            <button type="button" className="btn btn-dark" onClick={() => navigate(-1)} disabled={loading}>
+            <button
+              type="button"
+              className="btn btn-dark"
+              onClick={() => navigate(-1)}
+              disabled={loading}
+            >
               Cancelar
             </button>
-            <button type="submit" className="btn btn-primary" disabled={loading}>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={loading}
+            >
               {loading ? "Creando..." : "Crear Servicio"}
             </button>
           </div>

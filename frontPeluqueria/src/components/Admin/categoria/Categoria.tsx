@@ -34,15 +34,21 @@ export default function CategoriaPage() {
   };
 
   const handleDelete = async (idCategoria: number) => {
-    if (window.confirm(`¿Estás seguro que quieres borrar la categoría ${idCategoria}?`)) {
+    if (
+      window.confirm(
+        `¿Estás seguro que quieres borrar la categoría ${idCategoria}?`,
+      )
+    ) {
       try {
-       
         setError(null);
         setSuccessMessage(null);
 
-        const res = await fetch(`http://localhost:3000/api/categoria/${idCategoria}`, {
-          method: "DELETE",
-        });
+        const res = await fetch(
+          `http://localhost:3000/api/categoria/${idCategoria}`,
+          {
+            method: "DELETE",
+          },
+        );
 
         const data = await res.json();
 
@@ -51,7 +57,9 @@ export default function CategoriaPage() {
         }
 
         setSuccessMessage(data.mensaje);
-        setCategorias((prev) => prev.filter((c) => c.idCategoria !== idCategoria));
+        setCategorias((prev) =>
+          prev.filter((c) => c.idCategoria !== idCategoria),
+        );
       } catch (err) {
         setError((err as Error).message);
       }
@@ -66,14 +74,12 @@ export default function CategoriaPage() {
 
   return (
     <div className="registro-page">
-  
       {successMessage && (
         <div className="alert alert-success" role="alert">
           {successMessage}
         </div>
       )}
 
-     
       {error && (
         <div className="alert alert-danger" role="alert">
           {error}
@@ -102,7 +108,10 @@ export default function CategoriaPage() {
           </svg>
         </button>
         <h2>Listado de Categorías</h2>
-        <button className="crear-button" onClick={() => navigate("/categoria/crear")}>
+        <button
+          className="crear-button"
+          onClick={() => navigate("/categoria/crear")}
+        >
           Crear Categoría
         </button>
       </div>
@@ -123,7 +132,9 @@ export default function CategoriaPage() {
               <td>
                 <button
                   className="action-button update"
-                  onClick={() => navigate(`/categoria/actualizar/${c.idCategoria}`)}
+                  onClick={() =>
+                    navigate(`/categoria/actualizar/${c.idCategoria}`)
+                  }
                 >
                   Actualizar
                 </button>
@@ -141,4 +152,3 @@ export default function CategoriaPage() {
     </div>
   );
 }
-

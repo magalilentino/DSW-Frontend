@@ -10,10 +10,9 @@ interface RegisterResponse {
 }
 
 function Register({ onToggleMode }: RegisterProps) {
-
   const [nombre, setNombre] = useState<string>("");
   const [apellido, setApellido] = useState<string>("");
-  const [dni, setDni]= useState<string>("");
+  const [dni, setDni] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [telefono, setTelefono] = useState<string>("");
   const [clave, setClave] = useState<string>("");
@@ -21,16 +20,24 @@ function Register({ onToggleMode }: RegisterProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => { 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
-    setLoading(true);   
+    setLoading(true);
 
-      try {
+    try {
       const res = await fetch("http://localhost:3000/api/persona/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ dni, clave, nombre, apellido, telefono, email, type:"cliente"}),
+        body: JSON.stringify({
+          dni,
+          clave,
+          nombre,
+          apellido,
+          telefono,
+          email,
+          type: "cliente",
+        }),
       });
       const data: RegisterResponse = await res.json();
       if (!res.ok) {
@@ -54,24 +61,27 @@ function Register({ onToggleMode }: RegisterProps) {
     <>
       <h2>Registrarse</h2>
       <form onSubmit={handleSubmit}>
-        <input 
-          type="text" 
-          placeholder="DNI" 
+        <input
+          type="text"
+          placeholder="DNI"
           value={dni}
           onChange={(e) => setDni(e.target.value)}
-          required />
-        <input 
-          type="text" 
-          placeholder="Nombre" 
+          required
+        />
+        <input
+          type="text"
+          placeholder="Nombre"
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
-          required />
-        <input 
-          type="text" 
-          placeholder="Apellido" 
+          required
+        />
+        <input
+          type="text"
+          placeholder="Apellido"
           value={apellido}
           onChange={(e) => setApellido(e.target.value)}
-          required />
+          required
+        />
         <input
           type="email"
           placeholder="Email"
@@ -79,12 +89,13 @@ function Register({ onToggleMode }: RegisterProps) {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <input 
-          type="tel" 
+        <input
+          type="tel"
           placeholder="Teléfono"
           value={telefono}
           onChange={(e) => setTelefono(e.target.value)}
-          required />
+          required
+        />
         <input
           type="password"
           placeholder="Contraseña"
@@ -96,11 +107,7 @@ function Register({ onToggleMode }: RegisterProps) {
 
         {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
 
-        <button
-          type="submit"
-          className="auth-button-usser"
-          disabled={loading}
-        >
+        <button type="submit" className="auth-button-usser" disabled={loading}>
           {loading ? "Registrando..." : "Registrarse"}
         </button>
       </form>

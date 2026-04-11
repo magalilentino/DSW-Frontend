@@ -1,5 +1,5 @@
 .dashboard {
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
   background-color: #f4f6f8;
   min-height: 100vh;
 }
@@ -11,8 +11,7 @@
   background-color: white;
   color: rgb(0, 0, 0);
   padding: 15px 30px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-left {
@@ -25,16 +24,16 @@
   display: flex;
   gap: 20px;
   position: relative;
-  overflow: visible;          /* si estaba hidden, el dropdown se corta */
+  overflow: visible; /* si estaba hidden, el dropdown se corta */
 }
 
 .navbar-link {
   color: inherit;
   text-decoration: none;
   font-weight: 500;
-  padding: 10px 5px; 
+  padding: 10px 5px;
   display: inline-block;
-  overflow: visible
+  overflow: visible;
 }
 
 .navbar-link:hover {
@@ -42,14 +41,14 @@
 }
 
 .navbar-item-container {
-  position: relative; 
-  display: inline-block;      /* importante para el posicionamiento absoluto del dropdown */
+  position: relative;
+  display: inline-block; /* importante para el posicionamiento absoluto del dropdown */
 }
 
 /* Contenedor del título y la flecha */
 .navbar-dropdown-trigger {
-    /* No es necesario display: flex si el link tiene display: inline-block */
-    cursor: pointer;
+  /* No es necesario display: flex si el link tiene display: inline-block */
+  cursor: pointer;
 }
 
 /* Estilos del menú desplegable */
@@ -59,13 +58,13 @@
   left: 0;
   z-index: 9999;
   background-color: white;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   min-width: 180px;
   display: flex;
   flex-direction: column;
   padding: 8px 0;
   border-radius: 6px;
-  pointer-events: auto; 
+  pointer-events: auto;
 }
 
 .custom-dropdown-menu .custom-dropdown-item {
@@ -89,7 +88,7 @@
   background-color: white;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 /*logout*/
@@ -105,7 +104,6 @@
 .logout-button:hover {
   background-color: #c82333;
 }
-
 
 /*Reservas*/
 .admin-servicio {
@@ -124,7 +122,9 @@
   border: 1px solid #dddddd;
   border-radius: 12px;
   padding: 12px;
-  transition: border-color 0.3s, box-shadow 0.3s;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
 }
 
 .admin-servicio-item:hover {
@@ -133,36 +133,37 @@
 }
 
 .admin-btn-action {
-  width: 120px; 
+  width: 120px;
   max-width: none;
 }
 
 .admin-btn-agregar {
-    background-color: #ccaf6a;
-    color: #FFFFFF;
-    border: 1px solid #ccaf6a;
-    border-radius: 6px;
-    padding: 10px 15px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-    appearance: none;
+  background-color: #ccaf6a;
+  color: #ffffff;
+  border: 1px solid #ccaf6a;
+  border-radius: 6px;
+  padding: 10px 15px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+  appearance: none;
 }
 
 .admin-btn-agregar:hover {
-    background-color: #ad945a;
-    border-color: #ad945a;
+  background-color: #ad945a;
+  border-color: #ad945a;
 }
-  /* ----------------------------------------------- */
+/* ----------------------------------------------- */
 .profile-card {
   display: flex;
   flex-direction: column;
-  align-items: center; 
-  text-align: center;    
-
+  align-items: center;
+  text-align: center;
 }
 
 .stats-cards {
@@ -183,8 +184,8 @@
 .stats-section {
   display: flex;
   flex-direction: column;
-  align-items: center; 
-  text-align: center;   
+  align-items: center;
+  text-align: center;
   padding: 3rem;
 }
 
@@ -203,13 +204,15 @@
   background-color: #f9f9f9;
   border-radius: 10px;
   padding: 1rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .turno-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .turno-header {

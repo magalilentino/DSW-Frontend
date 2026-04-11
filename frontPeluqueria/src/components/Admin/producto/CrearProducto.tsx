@@ -54,11 +54,14 @@ export default function CrearProducto() {
         throw new Error(data.message || "Error al crear el producto");
       }
       const idProducto = data.data.idProducto;
-      const res2 = await fetch(`http://localhost:3000/api/prodMar/${idProducto}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({marcasIds}),
-      });
+      const res2 = await fetch(
+        `http://localhost:3000/api/prodMar/${idProducto}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ marcasIds }),
+        },
+      );
 
       const data2 = await res2.json();
 
@@ -85,7 +88,10 @@ export default function CrearProducto() {
       >
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h2>Crear Producto</h2>
-          <button className="btn btn-secondary" onClick={() => navigate("/producto")}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => navigate("/producto")}
+          >
             Volver
           </button>
         </div>
@@ -140,7 +146,7 @@ export default function CrearProducto() {
                       setMarcasIds((prev) =>
                         prev.includes(id)
                           ? prev.filter((pid) => pid !== id)
-                          : [...prev, id]
+                          : [...prev, id],
                       );
                     }}
                   />

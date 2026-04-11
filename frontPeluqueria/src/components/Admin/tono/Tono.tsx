@@ -5,11 +5,11 @@ import "../../../styles/Registros.css";
 interface Tono {
   idTono: number;
   nombre: string;
-  formulas:Formula[];
+  formulas: Formula[];
   activo: boolean;
 }
 
-interface Formula{
+interface Formula {
   idFormula: number;
 }
 
@@ -33,9 +33,12 @@ export default function TonoPage() {
   };
 
   const handleDelete = async (idTono: number) => {
-    if (window.confirm(`¿Seguro que querés borrar el tono ${idTono}?, también se borrarán sus formulas asociadas`)) {
+    if (
+      window.confirm(
+        `¿Seguro que querés borrar el tono ${idTono}?, también se borrarán sus formulas asociadas`,
+      )
+    ) {
       try {
-
         // if(formulas){
         //   for (const f of formulas) {
         //     const resForm = await fetch(`http://localhost:3000/api/formula/${f.idFormula}`, {
@@ -66,60 +69,73 @@ export default function TonoPage() {
   if (error) return <p>Error: {error}</p>;
 
   return (
-  <div className="registro-page">
-    <div className="registro-header">
-      <button
-        className="reservas-back-button"
-        onClick={() => navigate("/admin")}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-          <path d="M15 18l-6-6 6-6" />
-        </svg>
-      </button>
-      <h2>Listado de Tonos</h2>
-      <button className="crear-button" onClick={() => navigate("/tono/crear")}>
-        Crear Tono
-      </button>
-    </div>
+    <div className="registro-page">
+      <div className="registro-header">
+        <button
+          className="reservas-back-button"
+          onClick={() => navigate("/admin")}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="30"
+            height="30"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            viewBox="0 0 24 24"
+          >
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+        <h2>Listado de Tonos</h2>
+        <button
+          className="crear-button"
+          onClick={() => navigate("/tono/crear")}
+        >
+          Crear Tono
+        </button>
+      </div>
 
-    {tonos.length === 0 ? (
-      <p className="text-muted">No hay tonos disponibles.</p>
-    ) : (
-      <table className="registro-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tonos.map((t, i) => (
-            <tr key={t.idTono}>
-              <td>{t.idTono}</td>
-              <td>{t.nombre}</td>
-              <td>{t.activo ? "Activado" : "Desactivado"}</td>
-              <td>
-                <button
-                  className="action-button view"
-                  onClick={() => navigate(`/tono/formulas/${t.idTono}`)}
-                >
-                  Ver fórmulas
-                </button>
-
-                <button
-                  className="action-button delete"
-                  onClick={() => handleDelete(t.idTono)}
-                >
-                  Eliminar
-                </button>
-              </td>
+      {tonos.length === 0 ? (
+        <p className="text-muted">No hay tonos disponibles.</p>
+      ) : (
+        <table className="registro-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Estado</th>
+              <th>Acciones</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    )}
-  </div>
-);
+          </thead>
+          <tbody>
+            {tonos.map((t, i) => (
+              <tr key={t.idTono}>
+                <td>{t.idTono}</td>
+                <td>{t.nombre}</td>
+                <td>{t.activo ? "Activado" : "Desactivado"}</td>
+                <td>
+                  <button
+                    className="action-button view"
+                    onClick={() => navigate(`/tono/formulas/${t.idTono}`)}
+                  >
+                    Ver fórmulas
+                  </button>
+
+                  <button
+                    className="action-button delete"
+                    onClick={() => handleDelete(t.idTono)}
+                  >
+                    Eliminar
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
 }

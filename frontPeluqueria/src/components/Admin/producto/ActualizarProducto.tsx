@@ -5,9 +5,10 @@ import "../../../styles/Admin.css";
 
 interface ProdMar {
   idPM: number;
-  marca:{
+  marca: {
     idMarca: number;
-    nombre: string};
+    nombre: string;
+  };
 }
 
 interface Marca {
@@ -49,7 +50,7 @@ export default function ActualizarProducto() {
         setCategoriaId(data.data.categoria?.idCategoria || null);
         setActivo(data.data.activo);
         setLoading(false);
-      })
+      });
 
     fetch(`http://localhost:3000/api/prodMar/marcasPorProd/${idProducto}`)
       .then((res) => res.json())
@@ -61,7 +62,6 @@ export default function ActualizarProducto() {
         setError("No se pudo cargar el producto.");
         setLoading(false);
       });
-
   }, [idProducto]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -73,23 +73,31 @@ export default function ActualizarProducto() {
     const payload = { descripcion, categoria: categoriaId };
 
     try {
-      const res = await fetch(`http://localhost:3000/api/producto/${idProducto}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch(
+        `http://localhost:3000/api/producto/${idProducto}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        },
+      );
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Error al actualizar el producto");
+      if (!res.ok)
+        throw new Error(data.message || "Error al actualizar el producto");
 
-      const res2 = await fetch(`http://localhost:3000/api/prodMar/sincronizarProdMar/${idProducto}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({prodMarcIds}),
-      });
+      const res2 = await fetch(
+        `http://localhost:3000/api/prodMar/sincronizarProdMar/${idProducto}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prodMarcIds }),
+        },
+      );
 
       const data2 = await res2.json();
-      if (!res2.ok) throw new Error(data2.message || "Error al actualizar el producto");
+      if (!res2.ok)
+        throw new Error(data2.message || "Error al actualizar el producto");
 
       setSuccess("Producto actualizado correctamente");
       setTimeout(() => navigate("/producto"), 1500);
@@ -110,7 +118,10 @@ export default function ActualizarProducto() {
       >
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h2>Actualizar Producto</h2>
-          <button className="btn btn-secondary" onClick={() => navigate("/producto")}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => navigate("/producto")}
+          >
             Volver
           </button>
         </div>
@@ -120,7 +131,9 @@ export default function ActualizarProducto() {
         ) : (
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
-              <label htmlFor="descripcion" className="form-label">Descripción</label>
+              <label htmlFor="descripcion" className="form-label">
+                Descripción
+              </label>
               <input
                 type="text"
                 id="descripcion"
@@ -163,7 +176,7 @@ export default function ActualizarProducto() {
                         setProdMarcIds((prev) =>
                           prev.includes(id)
                             ? prev.filter((pid) => pid !== id)
-                            : [...prev, id]
+                            : [...prev, id],
                         );
                       }}
                     />
@@ -174,7 +187,9 @@ export default function ActualizarProducto() {
             </div>
 
             <div className="mb-3">
-              <label htmlFor="activo" className="form-label">Estado</label>
+              <label htmlFor="activo" className="form-label">
+                Estado
+              </label>
               <div className="form-check">
                 <input
                   className="form-check-input"
@@ -182,9 +197,9 @@ export default function ActualizarProducto() {
                   id="activo"
                   checked={activo}
                   onChange={(e) => {
-                    const nuevoEstado = e.target.checked; 
-                    setActivo(nuevoEstado); 
-                }}
+                    const nuevoEstado = e.target.checked;
+                    setActivo(nuevoEstado);
+                  }}
                 />
                 <label className="form-check-label" htmlFor="activo">
                   Activo
@@ -195,7 +210,11 @@ export default function ActualizarProducto() {
             {error && <p className="text-danger">Error: {error}</p>}
             {success && <p className="text-success">{success}</p>}
 
-            <button type="submit" className="btn btn-primary" disabled={loading}>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={loading}
+            >
               {loading ? "Actualizando..." : "Actualizar Producto"}
             </button>
           </form>

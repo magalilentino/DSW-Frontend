@@ -6,7 +6,7 @@
 
 .perfil-left-side {
   flex: 1;
-  
+
   background-size: cover;
 }
 
@@ -25,7 +25,7 @@
   border-radius: 10px;
   text-align: center;
   background: #fff;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .perfil-box-peluquero {
@@ -40,7 +40,7 @@
 
 .perfil-box h2 {
   margin-bottom: 20px;
-  font-family: 'Poppins', 'Roboto', sans-serif;
+  font-family: "Poppins", "Roboto", sans-serif;
   font-weight: 700;
   color: #111;
 }
@@ -56,7 +56,7 @@
 
 .perfil-info {
   text-align: left;
-  font-family: 'Poppins', 'Roboto', sans-serif;
+  font-family: "Poppins", "Roboto", sans-serif;
   font-size: 16px;
   color: #333;
   line-height: 1.6;
@@ -81,7 +81,7 @@
   margin: 8px 0;
   border: 1px solid #ccc;
   border-radius: 6px;
-  font-family: 'Poppins', 'Roboto', sans-serif;
+  font-family: "Poppins", "Roboto", sans-serif;
   font-size: 15px;
 }
 
@@ -109,7 +109,7 @@
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
-  font-family: 'Poppins', 'Roboto', sans-serif;
+  font-family: "Poppins", "Roboto", sans-serif;
   transition: background 0.2s ease;
 }
 
@@ -127,7 +127,7 @@
 .perfil-left-content {
   max-width: 90%;
   margin: 0 auto;
-  font-family: 'Poppins', 'Roboto', sans-serif;
+  font-family: "Poppins", "Roboto", sans-serif;
   color: #333;
 }
 
@@ -148,4 +148,3 @@
   border-bottom: 1px solid #ddd;
   font-size: 14px;
 }
-

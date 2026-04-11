@@ -18,7 +18,8 @@ function Galeria() {
   };
 
   const prevFoto = () => {
-    if (selected !== null) //selected es distinto de null
+    if (selected !== null)
+      //selected es distinto de null
       setSelected((selected - 1 + fotos.length) % fotos.length);
   };
 

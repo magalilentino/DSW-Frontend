@@ -55,7 +55,7 @@ export default function MiPerfil() {
         // Perfil
         const resPerfil = await fetch(
           `http://localhost:3000/api/persona/${user.idPersona}`,
-          { headers: { Authorization: `Bearer ${user.token}` } }
+          { headers: { Authorization: `Bearer ${user.token}` } },
         );
         const dataPerfil = await resPerfil.json();
         if (!resPerfil.ok) throw new Error(dataPerfil.message);
@@ -64,13 +64,19 @@ export default function MiPerfil() {
 
         // Histórico y pendientes
         const [resHist, resPend] = await Promise.all([
-        fetch(`http://localhost:3000/api/atencion/historico/${user.idPersona}`, {
-          headers: { Authorization: `Bearer ${user.token}` },
-        }),
-        fetch(`http://localhost:3000/api/atencion/pendientes/${user.idPersona}`, {
-          headers: { Authorization: `Bearer ${user.token}` },
-        }),
-      ]);
+          fetch(
+            `http://localhost:3000/api/atencion/historico/${user.idPersona}`,
+            {
+              headers: { Authorization: `Bearer ${user.token}` },
+            },
+          ),
+          fetch(
+            `http://localhost:3000/api/atencion/pendientes/${user.idPersona}`,
+            {
+              headers: { Authorization: `Bearer ${user.token}` },
+            },
+          ),
+        ]);
 
         const dataHist = await resHist.json();
         const dataPend = await resPend.json();
@@ -80,13 +86,11 @@ export default function MiPerfil() {
 
         setHistorico(dataHist);
         setPendientes(dataPend);
-        
       } catch (err: any) {
         setError(err.message);
       } finally {
         setLoading(false);
       }
-    
     };
 
     fetchData();
@@ -96,97 +100,109 @@ export default function MiPerfil() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
- const handleSave = async () => {
-  if (!user || !persona) return;
-  try {
-    const res = await fetch(
-      `http://localhost:3000/api/persona/cliente/${persona.idPersona}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
+  const handleSave = async () => {
+    if (!user || !persona) return;
+    try {
+      const res = await fetch(
+        `http://localhost:3000/api/persona/cliente/${persona.idPersona}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+          body: JSON.stringify(formData),
         },
-        body: JSON.stringify(formData),
-      }
-    );
+      );
 
-    const response = await res.json();
-    if (!res.ok) throw new Error(response.message);
+      const response = await res.json();
+      if (!res.ok) throw new Error(response.message);
 
-    setPersona(response.data);       
-    setFormData(response.data);       
-    setEditMode(false);
-    setSuccess("Perfil actualizado correctamente ✅");
+      setPersona(response.data);
+      setFormData(response.data);
+      setEditMode(false);
+      setSuccess("Perfil actualizado correctamente ✅");
 
-    setTimeout(() => setSuccess(""), 3000); 
-  } catch (err: any) {
-    setError(err.message);
-  }
-};
+      setTimeout(() => setSuccess(""), 3000);
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
 
-
-if (!user) {
-  return (
-    <div className="perfil-container">
-      <div className="perfil-box">
-        <h2>Debes iniciar sesión para ver tu perfil.</h2>
-        <div className="buttons-usser">
-          <button className="auth-button-cancel" onClick={() => navigate("/")}>
-            ⬅ Volver al Home
-          </button>
+  if (!user) {
+    return (
+      <div className="perfil-container">
+        <div className="perfil-box">
+          <h2>Debes iniciar sesión para ver tu perfil.</h2>
+          <div className="buttons-usser">
+            <button
+              className="auth-button-cancel"
+              onClick={() => navigate("/")}
+            >
+              ⬅ Volver al Home
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
   if (loading) return <div className="perfil-container">Cargando datos...</div>;
-  if (error) return <div className="perfil-container text-danger">Error: {error}</div>;
+  if (error)
+    return <div className="perfil-container text-danger">Error: {error}</div>;
 
   const renderServicios = (atencion: Atencion) => {
     const servicios = atencion.atencionServicios ?? [];
     if (servicios.length === 0) return <li>Sin servicios asociados</li>;
-    return servicios.map(as => (
-      <li key={as.idAtSer}>{as.servicio?.nombreServicio ?? "Servicio no disponible"}</li>
+    return servicios.map((as) => (
+      <li key={as.idAtSer}>
+        {as.servicio?.nombreServicio ?? "Servicio no disponible"}
+      </li>
     ));
   };
 
   return (
     <div className="perfil-container">
       {/* Panel izquierdo con histórico y pendientes */}
-        <div className="perfil-left-side">
+      <div className="perfil-left-side">
         <div className="perfil-left-content">
-            <h3>Histórico</h3>
-            {historico.length === 0 ? (
-              <p>No tienes atenciones pasadas.</p>
-            ) : (
-              <ul>
-                {historico.map(a => (
-                  <li key={a.idAtencion}>
-                    <strong>Atencion para el {new Date(a.fecha).toLocaleDateString()}</strong>
-                    <ul><strong>Servicios:</strong> {renderServicios(a)}</ul>
-                  </li>
-                ))}
-              </ul>
-            )}
+          <h3>Histórico</h3>
+          {historico.length === 0 ? (
+            <p>No tienes atenciones pasadas.</p>
+          ) : (
+            <ul>
+              {historico.map((a) => (
+                <li key={a.idAtencion}>
+                  <strong>
+                    Atencion para el {new Date(a.fecha).toLocaleDateString()}
+                  </strong>
+                  <ul>
+                    <strong>Servicios:</strong> {renderServicios(a)}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          )}
 
-            <h3>Pendientes</h3>
-            {pendientes.length === 0 ? (
-              <p>No tienes atenciones pendientes.</p>
-            ) : (
-              <ul>
-                {pendientes.map(a => (
-                  <li key={a.idAtencion}>
-                    <strong>Atencion para el {new Date(a.fecha).toLocaleDateString()}</strong>
-                    <ul><strong>Servicios:</strong> {renderServicios(a)}</ul>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+          <h3>Pendientes</h3>
+          {pendientes.length === 0 ? (
+            <p>No tienes atenciones pendientes.</p>
+          ) : (
+            <ul>
+              {pendientes.map((a) => (
+                <li key={a.idAtencion}>
+                  <strong>
+                    Atencion para el {new Date(a.fecha).toLocaleDateString()}
+                  </strong>
+                  <ul>
+                    <strong>Servicios:</strong> {renderServicios(a)}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
-      
+      </div>
 
       <div className="perfil-right-side">
         <div className="perfil-box">
@@ -195,12 +211,24 @@ if (!user) {
 
           {persona && !editMode && (
             <div className="perfil-info">
-              <p><strong>Nombre:</strong> {persona.nombre}</p>
-              <p><strong>Apellido:</strong> {persona.apellido}</p>
-              <p><strong>Email:</strong> {persona.email}</p>
-              <p><strong>Teléfono:</strong> {persona.telefono}</p>
-              <p><strong>DNI:</strong> {persona.dni}</p>
-              <p><strong>Tipo:</strong> {persona.type}</p>
+              <p>
+                <strong>Nombre:</strong> {persona.nombre}
+              </p>
+              <p>
+                <strong>Apellido:</strong> {persona.apellido}
+              </p>
+              <p>
+                <strong>Email:</strong> {persona.email}
+              </p>
+              <p>
+                <strong>Teléfono:</strong> {persona.telefono}
+              </p>
+              <p>
+                <strong>DNI:</strong> {persona.dni}
+              </p>
+              <p>
+                <strong>Tipo:</strong> {persona.type}
+              </p>
               <div className="buttons-usser">
                 <button
                   className="auth-button-usser"

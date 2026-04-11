@@ -3,14 +3,14 @@ import { useAuth } from "./AuthContext";
 
 function Header() {
   const { user, logout } = useAuth();
-  
-//define a dónde lleva el botón "Mi Perfil"
-  let profileLink = "/"; 
+
+  //define a dónde lleva el botón "Mi Perfil"
+  let profileLink = "/";
   if (user) {
-    if (user.type === 'peluquero') {
+    if (user.type === "peluquero") {
       profileLink = "/admin";
-    } else if (user.type === 'cliente') {
-      profileLink = "/perfil"; 
+    } else if (user.type === "cliente") {
+      profileLink = "/perfil";
     }
   }
 
@@ -27,26 +27,38 @@ function Header() {
               {user ? (
                 <>
                   <li className="nav-item">
-                    <Link className="nav-link" to={profileLink}>Mi Perfil</Link> 
+                    <Link className="nav-link" to={profileLink}>
+                      Mi Perfil
+                    </Link>
                   </li>
                   <li className="nav-item">
-                    <button className="nav-link" onClick={logout}>Cerrar sesión</button>
+                    <button className="nav-link" onClick={logout}>
+                      Cerrar sesión
+                    </button>
                   </li>
                 </>
               ) : (
                 <>
                   {/* Else */}
                   <li className="nav-item">
-                    <Link className="nav-link" to="/NosotrosContacto">Contacto</Link>
+                    <Link className="nav-link" to="/NosotrosContacto">
+                      Contacto
+                    </Link>
                   </li>
                   <li className="nav-item">
-                    <Link className="nav-link" to="/NosotrosContacto">Sobre Nosotros</Link>
+                    <Link className="nav-link" to="/NosotrosContacto">
+                      Sobre Nosotros
+                    </Link>
                   </li>
                   <li className="nav-item">
-                    <Link className="nav-link" to="/auth?mode=login">Iniciar sesión</Link>
+                    <Link className="nav-link" to="/auth?mode=login">
+                      Iniciar sesión
+                    </Link>
                   </li>
                   <li className="nav-item">
-                    <Link className="nav-link" to="/auth?mode=register">Registrar</Link>
+                    <Link className="nav-link" to="/auth?mode=register">
+                      Registrar
+                    </Link>
                   </li>
                 </>
               )}
@@ -59,4 +71,3 @@ function Header() {
 }
 
 export default Header;
-

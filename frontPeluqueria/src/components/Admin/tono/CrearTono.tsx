@@ -6,16 +6,17 @@ import { motion } from "framer-motion";
 interface ProdMar {
   idPM: number;
   producto: {
-    descripcion: string};
+    descripcion: string;
+  };
   marca: {
-    nombre: string};
+    nombre: string;
+  };
 }
 
 interface FormulaItem {
-    idPM: number; 
-    cantidad: number;
+  idPM: number;
+  cantidad: number;
 }
-
 
 export default function CrearTono() {
   const [nombre, setNombre] = useState("");
@@ -27,51 +28,53 @@ export default function CrearTono() {
   const navigate = useNavigate();
 
   useEffect(() => {
-      fetch("http://localhost:3000/api/prodMar")
-        .then((res) => res.json())
-        .then((data) => setProductosMar(data.data || []));
-    }, []);
+    fetch("http://localhost:3000/api/prodMar")
+      .then((res) => res.json())
+      .then((data) => setProductosMar(data.data || []));
+  }, []);
 
-  const isSelected = (idPM: number) => formulaItems.some(p => p.idPM === idPM);
-    
-    // Función para manejar la cantidad, añadiendo o quitando de la lista de seleccionados
+  const isSelected = (idPM: number) =>
+    formulaItems.some((p) => p.idPM === idPM);
+
+  // Función para manejar la cantidad, añadiendo o quitando de la lista de seleccionados
   const handleCantidadChange = (idPM: number, cantidadStr: string) => {
-        const cantidad = parseFloat(cantidadStr.replace(',', '.')); // Soporte para coma/punto
-        const productoInfo = productosMar.find(p => p.idPM === idPM);
+    const cantidad = parseFloat(cantidadStr.replace(",", ".")); // Soporte para coma/punto
+    const productoInfo = productosMar.find((p) => p.idPM === idPM);
 
-        if (!productoInfo) return;
+    if (!productoInfo) return;
 
-        setFormulaItems(prev => {
-            const index = prev.findIndex(p => p.idPM === idPM);
+    setFormulaItems((prev) => {
+      const index = prev.findIndex((p) => p.idPM === idPM);
 
-            if (cantidad > 0 && !isNaN(cantidad)) {
-                if (index > -1) {
-                    // Actualizar cantidad si ya existe
-                    const newArray = [...prev];
-                    newArray[index] = { ...newArray[index], cantidad };
-                    return newArray;
-                } else {
-                    // Añadir nuevo producto
-                    return [...prev, {
-                        idPM: idPM,
-                        cantidad: cantidad,
-                    }];
-                }
-            } else {
-                // Si la cantidad es 0 o inválida, eliminar de la lista
-                return prev.filter(p => p.idPM !== idPM);
-            }
-        });
-    };
+      if (cantidad > 0 && !isNaN(cantidad)) {
+        if (index > -1) {
+          // Actualizar cantidad si ya existe
+          const newArray = [...prev];
+          newArray[index] = { ...newArray[index], cantidad };
+          return newArray;
+        } else {
+          // Añadir nuevo producto
+          return [
+            ...prev,
+            {
+              idPM: idPM,
+              cantidad: cantidad,
+            },
+          ];
+        }
+      } else {
+        // Si la cantidad es 0 o inválida, eliminar de la lista
+        return prev.filter((p) => p.idPM !== idPM);
+      }
+    });
+  };
 
-    // Helper para obtener la cantidad actual de un producto
-    const getCantidad = (idPM: number) => {
-        const item = formulaItems.find(p => p.idPM === idPM);
-        return item ? item.cantidad.toString() : '';
-    };
+  // Helper para obtener la cantidad actual de un producto
+  const getCantidad = (idPM: number) => {
+    const item = formulaItems.find((p) => p.idPM === idPM);
+    return item ? item.cantidad.toString() : "";
+  };
 
-  
-  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -83,7 +86,7 @@ export default function CrearTono() {
       });
 
       if (!resTono.ok) throw new Error("Error al crear el tono");
-  
+
       setSuccess("Tono creado correctamente");
       setTimeout(() => navigate("/tono"), 1500);
     } catch (err) {
@@ -103,7 +106,10 @@ export default function CrearTono() {
       >
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h2>Crear Tono</h2>
-          <button className="btn btn-secondary" onClick={() => navigate("/tono")}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => navigate("/tono")}
+          >
             Volver
           </button>
         </div>
@@ -126,37 +132,38 @@ export default function CrearTono() {
             />
           </div>
 
-           {/* Listado de Productos */}
-            <label className="mt-4 mb-2">Productos utilizados</label>
-        <table className="table table-bordered table-hover">
-          <thead className="table-light">
-            <tr>
-              <th>Producto</th>
-              <th>Marca</th>
-              <th>Cantidad Utilizada (gr)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {productosMar.map((p) => (
-              <tr key={p.idPM}>
-                <td>{p.producto.descripcion}</td>
-                <td>{p.marca.nombre}</td>
-                <td>
-                  <input
-                    type="number"
-                    min="0"
-                    step="1"
-                    placeholder="Cantidad"
-                    value={getCantidad(p.idPM)}
-                    onChange={(e) => handleCantidadChange(p.idPM, e.target.value)}
-                    className={`form-control ${isSelected(p.idPM) ? 'border-success' : ''}`}
-                  />
-                </td>
+          {/* Listado de Productos */}
+          <label className="mt-4 mb-2">Productos utilizados</label>
+          <table className="table table-bordered table-hover">
+            <thead className="table-light">
+              <tr>
+                <th>Producto</th>
+                <th>Marca</th>
+                <th>Cantidad Utilizada (gr)</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-
+            </thead>
+            <tbody>
+              {productosMar.map((p) => (
+                <tr key={p.idPM}>
+                  <td>{p.producto.descripcion}</td>
+                  <td>{p.marca.nombre}</td>
+                  <td>
+                    <input
+                      type="number"
+                      min="0"
+                      step="1"
+                      placeholder="Cantidad"
+                      value={getCantidad(p.idPM)}
+                      onChange={(e) =>
+                        handleCantidadChange(p.idPM, e.target.value)
+                      }
+                      className={`form-control ${isSelected(p.idPM) ? "border-success" : ""}`}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
           <button type="submit" className="btn btn-primary" disabled={loading}>
             {loading ? "Creando..." : "Crear Tono"}

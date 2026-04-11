@@ -17,7 +17,7 @@ export default function AtencionPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-      const token = localStorage.getItem("token"); 
+    const token = localStorage.getItem("token");
 
     fetch("http://localhost:3000/api/atencion/pendientes", {
       method: "GET",
@@ -26,7 +26,7 @@ export default function AtencionPage() {
       },
     })
       .then((res) => {
-        if (!res.ok) throw new Error("No autorizado"); 
+        if (!res.ok) throw new Error("No autorizado");
         return res.json();
       })
       .then((data) => {
@@ -46,13 +46,16 @@ export default function AtencionPage() {
   const handleCancelar = async (idAtencion: number) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:3000/api/atencion/cancelar/${idAtencion}`, {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `http://localhost:3000/api/atencion/cancelar/${idAtencion}`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
 
       if (!response.ok) throw new Error("Error al cancelar la atención.");
 
@@ -74,7 +77,10 @@ export default function AtencionPage() {
       >
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h2>Atenciones Pendientes</h2>
-          <button className="btn btn-secondary" onClick={() => navigate("/admin")}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => navigate("/admin")}
+          >
             Volver
           </button>
         </div>
@@ -125,4 +131,3 @@ export default function AtencionPage() {
     </div>
   );
 }
-

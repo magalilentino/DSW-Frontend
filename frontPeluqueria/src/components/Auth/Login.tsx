@@ -24,7 +24,7 @@ function Login({ onToggleMode }: LoginProps) {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const type = localStorage.getItem("type"); 
+    const type = localStorage.getItem("type");
     if (token && type) {
       if (type === "cliente") navigate("/reserve");
       else if (type === "peluquero") navigate("/admin");
@@ -43,7 +43,9 @@ function Login({ onToggleMode }: LoginProps) {
       });
       const data: LoginResponse = await res.json();
       if (!res.ok) {
-        throw new Error(data?.message || `Error ${res.status}: No se pudo iniciar sesión`);
+        throw new Error(
+          data?.message || `Error ${res.status}: No se pudo iniciar sesión`,
+        );
       }
       login({
         token: data.token,

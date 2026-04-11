@@ -15,6 +15,7 @@ interface Persona {
 }
 
 const sections = [
+  /*
   {
     label: "Registros",
     subsections: [
@@ -27,6 +28,25 @@ const sections = [
     ],
   },
   { label: "Atenciones Pendientes", path: "/atencion" },
+  { label: "Perfil", path: "/peluquero/perfilPeluquero" },*/
+  {
+    label: "Registros",
+    subsections: [
+      { label: "Peluquero", path: "/peluquero/CrearPeluquero" },
+      { label: "Marca", path: "/marca" },
+      { label: "Categoria", path: "/categoria" },
+      { label: "Servicio", path: "/servicios" },
+      { label: "Tono", path: "/tono" },
+      { label: "Producto", path: "/producto" },
+    ],
+  },
+  {
+    label: "Agenda",
+    subsections: [
+      { label: "Bloquear día/horario", path: "/Bloqueardia" },
+      { label: "Ver disponibilidad", path: "/Disponibilidad" },
+    ],
+  },
   { label: "Perfil", path: "/peluquero/perfilPeluquero" },
 ];
 
@@ -39,49 +59,52 @@ const Admin = () => {
   const [completadasHoy, setCompletadasHoy] = useState<number>(0);
   const [gananciasHoy, setGananciasHoy] = useState<number>(0);
   const [turnosHoy, setTurnosHoy] = useState<
-  { hora: string; cliente: string; servicios: string }[]
->([]);
+    { hora: string; cliente: string; servicios: string }[]
+  >([]);
 
-useEffect(() => {
-  if (!user) return;
+  useEffect(() => {
+    if (!user) return;
 
-  const fetchTurnosHoy = async () => {
-    try {
-      const res = await fetch("http://localhost:3000/api/atencion/turnos-hoy", {
-        headers: { Authorization: `Bearer ${user.token}` },
-      });
-      if (!res.ok) throw new Error("No autorizado");
-      const data = await res.json();
-      setTurnosHoy(data); // data: [{hora, cliente, servicios}, ...]
-    } catch (err) {
-      console.error("Error al obtener turnos del día:", err);
-    }
-  };
+    const fetchTurnosHoy = async () => {
+      try {
+        const res = await fetch(
+          "http://localhost:3000/api/atencion/turnos-hoy",
+          {
+            headers: { Authorization: `Bearer ${user.token}` },
+          },
+        );
+        if (!res.ok) throw new Error("No autorizado");
+        const data = await res.json();
+        setTurnosHoy(data); // data: [{hora, cliente, servicios}, ...]
+      } catch (err) {
+        console.error("Error al obtener turnos del día:", err);
+      }
+    };
 
-  fetchTurnosHoy();
-}, [user]);
+    fetchTurnosHoy();
+  }, [user]);
 
-  
-useEffect(() => {
-  if (!user) return;
+  useEffect(() => {
+    if (!user) return;
 
-  const fetchGananciasHoy = async () => {
-    try {
-      const res = await fetch("http://localhost:3000/api/atencion/ganancias-hoy", {
-        headers: { Authorization: `Bearer ${user.token}` },
-      });
-      if (!res.ok) throw new Error("No autorizado");
-      const data = await res.json();
-      setGananciasHoy(data.total);
-    } catch (err) {
-      console.error("Error al obtener ganancias del día:", err);
-    }
-  };
+    const fetchGananciasHoy = async () => {
+      try {
+        const res = await fetch(
+          "http://localhost:3000/api/atencion/ganancias-hoy",
+          {
+            headers: { Authorization: `Bearer ${user.token}` },
+          },
+        );
+        if (!res.ok) throw new Error("No autorizado");
+        const data = await res.json();
+        setGananciasHoy(data.total);
+      } catch (err) {
+        console.error("Error al obtener ganancias del día:", err);
+      }
+    };
 
-  fetchGananciasHoy();
-}, [user]);
-
-
+    fetchGananciasHoy();
+  }, [user]);
 
   useEffect(() => {
     if (!user) return;
@@ -92,7 +115,7 @@ useEffect(() => {
           "http://localhost:3000/api/atencion/completadas-hoy",
           {
             headers: { Authorization: `Bearer ${user.token}` },
-          }
+          },
         );
         if (!res.ok) throw new Error("No autorizado");
         const data = await res.json();
@@ -114,7 +137,7 @@ useEffect(() => {
           "http://localhost:3000/api/atencion/pendientes-hoy",
           {
             headers: { Authorization: `Bearer ${user.token}` },
-          }
+          },
         );
         if (!res.ok) throw new Error("No autorizado");
         const data = await res.json();
@@ -136,7 +159,7 @@ useEffect(() => {
           `http://localhost:3000/api/persona/${user.idPersona}`,
           {
             headers: { Authorization: `Bearer ${user.token}` },
-          }
+          },
         );
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || "Error al obtener datos");
@@ -267,8 +290,12 @@ useEffect(() => {
                     <span className="turno-hora">{turno.hora}</span>
                   </div>
                   <div className="turno-body">
-                    <p><strong>Cliente:</strong> {turno.cliente}</p>
-                    <p><strong>Servicios:</strong> {turno.servicios}</p>
+                    <p>
+                      <strong>Cliente:</strong> {turno.cliente}
+                    </p>
+                    <p>
+                      <strong>Servicios:</strong> {turno.servicios}
+                    </p>
                   </div>
                 </div>
               ))}

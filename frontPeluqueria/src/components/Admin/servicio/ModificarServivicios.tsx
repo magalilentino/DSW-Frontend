@@ -37,27 +37,31 @@ function ModificarServicio() {
   // 1. Efecto para cargar los datos del servicio al montar el componente
   useEffect(() => {
     if (!codServicio) {
-        setError("ID de servicio no proporcionado.");
-        setLoading(false);
-        return;
+      setError("ID de servicio no proporcionado.");
+      setLoading(false);
+      return;
     }
 
     const fetchServicio = async () => {
       try {
         // Ajusta la ruta si tu API requiere un endpoint diferente para buscar por ID
-        const res = await fetch(`http://localhost:3000/api/servicio/findById/${codServicio}`);
-        
+        const res = await fetch(
+          `http://localhost:3000/api/servicio/findById/${codServicio}`,
+        );
+
         if (!res.ok) {
           throw new Error("No se pudo cargar el servicio.");
         }
-        
+
         const data = await res.json();
-        
+
         // Asumiendo que 'data.data' contiene el objeto ServicioData
         if (data.data) {
-             setFormData(data.data);
+          setFormData(data.data);
         } else {
-             throw new Error("Respuesta de API inválida o servicio no encontrado.");
+          throw new Error(
+            "Respuesta de API inválida o servicio no encontrado.",
+          );
         }
       } catch (err) {
         setError((err as Error).message);
@@ -69,29 +73,28 @@ function ModificarServicio() {
     fetchServicio();
   }, [codServicio]);
 
-
   // 2. Manejador para actualizar el estado del formulario
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     if (!formData) return;
 
     const { name, value } = e.target;
-    
+
     let newValue: string | number = value;
 
     // Para 'cantTurnos' y 'precio', nos aseguramos de que sean números
     // if (name === "cantTurnos" || name === "precio") {
     //   // Usamos parseFloat/parseInt para permitir que el campo se vacíe temporalmente
     //   // y se maneje la entrada de números.
-    //   newValue = parseInt(value) || 0; 
+    //   newValue = parseInt(value) || 0;
     // }
 
     if (name === "cantTurnos" || name === "precio") {
       const parsed = parseFloat(value);
       newValue = isNaN(parsed) ? 0 : parsed;
     }
-    
+
     setFormData({
       ...formData,
       [name]: newValue,
@@ -105,21 +108,30 @@ function ModificarServicio() {
     setError(null);
     setSuccess(null);
 
-    if (!formData || formData.nombreServicio.trim() === "" || formData.precio <= 0) {
-        setError("El nombre del servicio y el precio son obligatorios y válidos.");
-        setSaving(false);
-        return;
+    if (
+      !formData ||
+      formData.nombreServicio.trim() === "" ||
+      formData.precio <= 0
+    ) {
+      setError(
+        "El nombre del servicio y el precio son obligatorios y válidos.",
+      );
+      setSaving(false);
+      return;
     }
 
     try {
-      const res = await fetch(`http://localhost:3000/api/servicio/${codServicio}`, {
-        method: "PUT", // Usamos PUT para la actualización
-        headers: {
-          "Content-Type": "application/json",
+      const res = await fetch(
+        `http://localhost:3000/api/servicio/${codServicio}`,
+        {
+          method: "PUT", // Usamos PUT para la actualización
+          headers: {
+            "Content-Type": "application/json",
+          },
+          // Enviamos los datos del formulario, excluyendo elS si no debe ir en el body
+          body: JSON.stringify(formData),
         },
-        // Enviamos los datos del formulario, excluyendo elS si no debe ir en el body
-        body: JSON.stringify(formData), 
-      });
+      );
 
       const data = await res.json();
 
@@ -127,13 +139,14 @@ function ModificarServicio() {
         throw new Error(data.message || "Error al actualizar el servicio.");
       }
 
-      setSuccess(`Servicio "${formData.nombreServicio}" actualizado con éxito!`);
-      
+      setSuccess(
+        `Servicio "${formData.nombreServicio}" actualizado con éxito!`,
+      );
+
       // Opcional: Redirigir al listado después de un breve momento
       setTimeout(() => {
-        navigate("/servicios"); 
+        navigate("/servicios");
       }, 1500);
-
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -144,27 +157,34 @@ function ModificarServicio() {
   // 4. Renderizado de estados
   if (loading) {
     return (
-        <div className="container my-5 text-center">
-            <p>Cargando datos del servicio...</p>
-        </div>
+      <div className="container my-5 text-center">
+        <p>Cargando datos del servicio...</p>
+      </div>
     );
   }
 
-  if (error && !formData) { // Solo si hay un error y no se pudo cargar el formulario
-    return <div className="alert alert-danger container my-5">Error: {error}</div>;
+  if (error && !formData) {
+    // Solo si hay un error y no se pudo cargar el formulario
+    return (
+      <div className="alert alert-danger container my-5">Error: {error}</div>
+    );
   }
-  
+
   if (!formData) {
-    return <div className="alert alert-warning container my-5">Servicio no encontrado.</div>;
+    return (
+      <div className="alert alert-warning container my-5">
+        Servicio no encontrado.
+      </div>
+    );
   }
 
   // 5. Renderizado del formulario de edición
   return (
-    <motion.div 
-        className="admin-form my-4 container"
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.5 }}
+    <motion.div
+      className="admin-form my-4 container"
+      initial={{ opacity: 0, x: -50 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.5 }}
     >
       <div className="row justify-content-center">
         <div className="col-md-8">
@@ -189,7 +209,7 @@ function ModificarServicio() {
                 disabled
               />
             </div> */}
-            
+
             {/* Nombre del Servicio */}
             <div className="mb-3">
               <label htmlFor="nombreServicio" className="form-label">
@@ -247,7 +267,7 @@ function ModificarServicio() {
                 Precio (ARS)
               </label>
               <input
-                 type="text"
+                type="text"
                 inputMode="decimal"
                 className="form-control"
                 id="precio"
@@ -264,7 +284,9 @@ function ModificarServicio() {
             </div>
 
             <div className="mb-3">
-              <label htmlFor="activo" className="form-label">Estado</label>
+              <label htmlFor="activo" className="form-label">
+                Estado
+              </label>
               <div className="form-check">
                 <input
                   className="form-check-input"
@@ -274,7 +296,6 @@ function ModificarServicio() {
                   onChange={(e) => {
                     setFormData({ ...formData, activo: e.target.checked });
                   }}
-
                 />
                 <label className="form-check-label" htmlFor="activo">
                   Activo

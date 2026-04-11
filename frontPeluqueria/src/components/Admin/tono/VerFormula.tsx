@@ -27,7 +27,9 @@ export default function VerFormulasTono() {
         const tonoData = await tonoRes.json();
         setNombreTono(tonoData.data.nombre);
 
-        const formulasRes = await fetch(`http://localhost:3000/api/formula/formulasPorTono/${idTono}`);
+        const formulasRes = await fetch(
+          `http://localhost:3000/api/formula/formulasPorTono/${idTono}`,
+        );
         const formulasData = await formulasRes.json();
         setFormulas(formulasData.data || []);
       } catch (err) {
@@ -43,15 +45,30 @@ export default function VerFormulasTono() {
   return (
     <div className="registro-page">
       <div className="registro-header">
-        <button className="reservas-back-button" onClick={() => navigate("/tono")}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+        <button
+          className="reservas-back-button"
+          onClick={() => navigate("/tono")}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="30"
+            height="30"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            viewBox="0 0 24 24"
+          >
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>
         <h2>Fórmulas del Tono {idTono}</h2>
       </div>
 
-      <p className="mb-3"><strong>Nombre:</strong> {nombreTono}</p>
+      <p className="mb-3">
+        <strong>Nombre:</strong> {nombreTono}
+      </p>
 
       {loading ? (
         <p>Cargando fórmulas...</p>

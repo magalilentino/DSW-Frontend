@@ -28,7 +28,9 @@ export default function MarcaPage() {
   };
 
   const handleDelete = async (idMarca: number) => {
-    if (window.confirm(`¿Estás seguro que quieres borrar la marca ${idMarca}?`)) {
+    if (
+      window.confirm(`¿Estás seguro que quieres borrar la marca ${idMarca}?`)
+    ) {
       try {
         setError(null);
         setSuccessMessage(null);
@@ -95,7 +97,10 @@ export default function MarcaPage() {
           </svg>
         </button>
         <h2>Listado de Marcas</h2>
-        <button className="crear-button" onClick={() => navigate("/marca/crear/")}>
+        <button
+          className="crear-button"
+          onClick={() => navigate("/marca/crear/")}
+        >
           Crear Marca
         </button>
       </div>

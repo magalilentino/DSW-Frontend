@@ -11,13 +11,19 @@ interface ReservasProps {
   onNextStep: () => void;
   servicios: ServicioItem[];
   serviciosSeleccionados: ServicioItem[];
-  setServiciosSeleccionados: React.Dispatch<React.SetStateAction<ServicioItem[]>>;
+  setServiciosSeleccionados: React.Dispatch<
+    React.SetStateAction<ServicioItem[]>
+  >;
   peluqueroSeleccionado: PeluqueroItem | null;
-  setPeluqueroSeleccionado: React.Dispatch<React.SetStateAction<PeluqueroItem | null>>;
-  setBloquesSeleccionados: React.Dispatch<React.SetStateAction<{ inicio: string; fin: string }[]>>;
+  setPeluqueroSeleccionado: React.Dispatch<
+    React.SetStateAction<PeluqueroItem | null>
+  >;
+  setBloquesSeleccionados: React.Dispatch<
+    React.SetStateAction<{ inicio: string; fin: string }[]>
+  >;
   bloquesSeleccionados: { inicio: string; fin: string }[];
-  diaSeleccionado: string; 
-  setDiaSeleccionado: React.Dispatch<React.SetStateAction<string>>; 
+  diaSeleccionado: string;
+  setDiaSeleccionado: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function Reservas({
@@ -29,17 +35,24 @@ export default function Reservas({
   setPeluqueroSeleccionado,
   setBloquesSeleccionados,
   bloquesSeleccionados,
-  diaSeleccionado, 
-  setDiaSeleccionado, 
+  diaSeleccionado,
+  setDiaSeleccionado,
 }: ReservasProps) {
   const [peluqueros, setPeluqueros] = useState<PeluqueroItem[]>([]);
-  const [bloquesDisponibles, setBloquesDisponibles] = useState<{ hora_inicio: string; hora_fin: string }[]>([]);
-  const totalDuracionMin = serviciosSeleccionados.reduce((sum, s) => sum + s.cantTurnos * 45, 0);
+  const [bloquesDisponibles, setBloquesDisponibles] = useState<
+    { hora_inicio: string; hora_fin: string }[]
+  >([]);
+  const totalDuracionMin = serviciosSeleccionados.reduce(
+    (sum, s) => sum + s.cantTurnos * 45,
+    0,
+  );
 
   useEffect(() => {
     const fetchPeluqueros = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/persona/peluquero/findAllPeluquero");
+        const res = await fetch(
+          "http://localhost:3000/api/persona/peluquero/findAllPeluquero",
+        );
         const data = await res.json();
         setPeluqueros(data.data || data);
       } catch (err) {
@@ -51,10 +64,11 @@ export default function Reservas({
 
   useEffect(() => {
     const fetchBloques = async () => {
-      if (!peluqueroSeleccionado || !diaSeleccionado || totalDuracionMin === 0) return;
+      if (!peluqueroSeleccionado || !diaSeleccionado || totalDuracionMin === 0)
+        return;
       try {
         const res = await fetch(
-          `http://localhost:3000/api/bloque/disponibles?fecha=${diaSeleccionado}&peluqueroId=${peluqueroSeleccionado.idPersona}&duracionTotal=${totalDuracionMin}`
+          `http://localhost:3000/api/bloque/disponibles?fecha=${diaSeleccionado}&peluqueroId=${peluqueroSeleccionado.idPersona}&duracionTotal=${totalDuracionMin}`,
         );
         const data = await res.json();
         setBloquesDisponibles(data);
@@ -87,28 +101,42 @@ export default function Reservas({
           <h2>Servicios</h2>
           <ul className="list-group">
             {servicios.map((s, i) => (
-              <motion.li key={i} className="reservas-servicio-item d-flex justify-content-between align-items-center mb-3">
+              <motion.li
+                key={i}
+                className="reservas-servicio-item d-flex justify-content-between align-items-center mb-3"
+              >
                 <div>
                   <h5>{s.nombreServicio}</h5>
                   <p className="mb-1">
-                    Duración: {Math.floor((s.cantTurnos * 45) / 60)}h {(s.cantTurnos * 45) % 60}min
+                    Duración: {Math.floor((s.cantTurnos * 45) / 60)}h{" "}
+                    {(s.cantTurnos * 45) % 60}min
                   </p>
                   <small>{s.precio} ARS</small>
                 </div>
                 <button
                   type="button"
                   className={`servicio-btn ${
-                    serviciosSeleccionados.some(serv => serv.codServicio === s.codServicio) ? "selected" : ""
+                    serviciosSeleccionados.some(
+                      (serv) => serv.codServicio === s.codServicio,
+                    )
+                      ? "selected"
+                      : ""
                   }`}
                   onClick={() =>
-                    setServiciosSeleccionados(prev =>
-                      prev.some(serv => serv.codServicio === s.codServicio)
-                        ? prev.filter(serv => serv.codServicio !== s.codServicio)
-                        : [...prev, s]
+                    setServiciosSeleccionados((prev) =>
+                      prev.some((serv) => serv.codServicio === s.codServicio)
+                        ? prev.filter(
+                            (serv) => serv.codServicio !== s.codServicio,
+                          )
+                        : [...prev, s],
                     )
                   }
                 >
-                  {serviciosSeleccionados.some(serv => serv.codServicio === s.codServicio) ? "-" : "+"}
+                  {serviciosSeleccionados.some(
+                    (serv) => serv.codServicio === s.codServicio,
+                  )
+                    ? "-"
+                    : "+"}
                 </button>
               </motion.li>
             ))}
@@ -118,16 +146,26 @@ export default function Reservas({
       {step === 2 && (
         <div className="row my-4">
           {peluqueros.map((p, i) => (
-            <motion.div key={i} className="col-6 col-md-3 mb-4 d-flex justify-content-start">
+            <motion.div
+              key={i}
+              className="col-6 col-md-3 mb-4 d-flex justify-content-start"
+            >
               <div
                 className={`d-flex flex-column align-items-center text-center mt-3 peluquero-card ${
-                  peluqueroSeleccionado?.idPersona === p.idPersona ? "selected" : ""
+                  peluqueroSeleccionado?.idPersona === p.idPersona
+                    ? "selected"
+                    : ""
                 }`}
               >
                 <motion.img
                   src={Foto3}
                   className="d-block rounded-circle mb-2"
-                  style={{ width: "120px", height: "120px", objectFit: "cover", cursor: "pointer" }}
+                  style={{
+                    width: "120px",
+                    height: "120px",
+                    objectFit: "cover",
+                    cursor: "pointer",
+                  }}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.8 }}
                   onClick={() => setPeluqueroSeleccionado(p)}
@@ -150,7 +188,9 @@ export default function Reservas({
             {bloquesDisponibles.length > 0 ? (
               bloquesDisponibles.map((bloque, i) => {
                 const seleccionado = bloquesSeleccionados.some(
-                  sel => sel.inicio === bloque.hora_inicio && sel.fin === bloque.hora_fin
+                  (sel) =>
+                    sel.inicio === bloque.hora_inicio &&
+                    sel.fin === bloque.hora_fin,
                 );
                 return (
                   <motion.li
@@ -162,13 +202,17 @@ export default function Reservas({
                     transition={{ duration: 0.3, delay: i * 0.05 }}
                   >
                     <div>
-                      <span className="fw-bold">{bloque.hora_inicio} - {bloque.hora_fin}</span>
+                      <span className="fw-bold">
+                        {bloque.hora_inicio} - {bloque.hora_fin}
+                      </span>
                     </div>
                     <button
                       type="button"
                       className={`servicio-btn ${seleccionado ? "selected" : ""}`}
                       onClick={() => {
-                        setBloquesSeleccionados([{ inicio: bloque.hora_inicio, fin: bloque.hora_fin }]);
+                        setBloquesSeleccionados([
+                          { inicio: bloque.hora_inicio, fin: bloque.hora_fin },
+                        ]);
                       }}
                     >
                       {seleccionado ? "-" : "+"}
@@ -183,6 +227,6 @@ export default function Reservas({
         </div>
       )}
       {step === 4}
-          </div>
-        );
-      }
+    </div>
+  );
+}

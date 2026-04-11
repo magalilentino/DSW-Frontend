@@ -28,7 +28,10 @@ export default function ServiciosDeAtencion() {
 
     fetch(`http://localhost:3000/api/atSer/${idAtencion}/serviciosPorAtencion`)
       .then((res) => {
-        if (!res.ok) throw new Error(`Error ${res.status}: No autorizado o recurso no encontrado.`);
+        if (!res.ok)
+          throw new Error(
+            `Error ${res.status}: No autorizado o recurso no encontrado.`,
+          );
         return res.json();
       })
       .then((data) => {
@@ -51,14 +54,17 @@ export default function ServiciosDeAtencion() {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:3000/api/atencion/finalizar/${idAtencion}`, {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `http://localhost:3000/api/atencion/finalizar/${idAtencion}`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ descripcion }),
         },
-        body: JSON.stringify({ descripcion }),
-      });
+      );
 
       if (!response.ok) throw new Error("Error al finalizar la atención.");
 
@@ -80,7 +86,10 @@ export default function ServiciosDeAtencion() {
       >
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h2>Servicios de la Atención</h2>
-          <button className="btn btn-secondary" onClick={() => navigate("/atencion")}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => navigate("/atencion")}
+          >
             Volver
           </button>
         </div>
@@ -121,7 +130,9 @@ export default function ServiciosDeAtencion() {
             )}
 
             <div className="mt-4">
-              <label htmlFor="descripcion" className="form-label">Especificaciones adicionales</label>
+              <label htmlFor="descripcion" className="form-label">
+                Especificaciones adicionales
+              </label>
               <textarea
                 id="descripcion"
                 className="form-control"
@@ -132,7 +143,10 @@ export default function ServiciosDeAtencion() {
             </div>
 
             <div className="d-flex justify-content-end mt-3">
-              <button className="btn btn-success" onClick={handleFinalizarAtencion}>
+              <button
+                className="btn btn-success"
+                onClick={handleFinalizarAtencion}
+              >
                 Registrar Atención como Finalizada
               </button>
             </div>

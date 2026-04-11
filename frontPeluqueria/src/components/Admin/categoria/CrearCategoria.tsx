@@ -48,7 +48,10 @@ export default function CrearCategoria() {
       >
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h2>Crear Categoría</h2>
-          <button className="btn btn-secondary" onClick={() => navigate("/categoria")}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => navigate("/categoria")}
+          >
             Volver
           </button>
         </div>

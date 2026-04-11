@@ -14,7 +14,10 @@ interface CalendarProps {
   onSelectDia: (fecha: string) => void;
 }
 
-export function CalendarioDias({ diaSeleccionado, onSelectDia }: CalendarProps) {
+export function CalendarioDias({
+  diaSeleccionado,
+  onSelectDia,
+}: CalendarProps) {
   const [startIndex, setStartIndex] = useState(0);
   const [direction, setDirection] = useState(0);
 
@@ -51,9 +54,22 @@ export function CalendarioDias({ diaSeleccionado, onSelectDia }: CalendarProps) 
         <div
           className="clickable"
           onClick={prev}
-          style={{ cursor: startIndex === 0 ? "not-allowed" : "pointer", opacity: startIndex === 0 ? 0.5 : 1 }}
+          style={{
+            cursor: startIndex === 0 ? "not-allowed" : "pointer",
+            opacity: startIndex === 0 ? 0.5 : 1,
+          }}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="30"
+            height="30"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            viewBox="0 0 24 24"
+          >
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </div>
@@ -67,24 +83,50 @@ export function CalendarioDias({ diaSeleccionado, onSelectDia }: CalendarProps) 
             transition={{ type: "tween", duration: 0.3 }}
             className="d-flex flex-grow-1 gap-2"
           >
-            {diasVisibles.map((d) => (
-              <button
-                key={d.fecha}
-                className={`btn ${diaSeleccionado === d.fecha ? "btn-dark text-white" : "btn-light"} flex-grow-1 fs-5`}
-                onClick={() => onSelectDia(d.fecha)}
-              >
-                {d.label}
-              </button>
-            ))}
+            {diasVisibles.map((d) => {
+              const Lunes = dayjs(d.fecha).day() === 1;
+
+              return (
+                <button
+                  key={d.fecha}
+                  disabled={Lunes}
+                  className={`btn ${
+                    diaSeleccionado === d.fecha
+                      ? "btn-dark text-white"
+                      : "btn-light"
+                  } flex-grow-1 fs-5`}
+                  style={{
+                    opacity: Lunes ? 0.4 : 1,
+                    cursor: Lunes ? "not-allowed" : "pointer",
+                  }}
+                  onClick={() => !Lunes && onSelectDia(d.fecha)}
+                >
+                  {d.label}
+                </button>
+              );
+            })}
           </motion.div>
         </div>
 
         <div
           className="clickable"
           onClick={next}
-          style={{ cursor: startIndex + 7 >= dias.length ? "not-allowed" : "pointer", opacity: startIndex + 7 >= dias.length ? 0.5 : 1 }}
+          style={{
+            cursor: startIndex + 7 >= dias.length ? "not-allowed" : "pointer",
+            opacity: startIndex + 7 >= dias.length ? 0.5 : 1,
+          }}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="30"
+            height="30"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            viewBox="0 0 24 24"
+          >
             <path d="M9 6l6 6-6 6" />
           </svg>
         </div>

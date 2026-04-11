@@ -3,7 +3,8 @@ import { motion } from "motion/react"; //animaciones
 import { useNavigate } from "react-router-dom";
 import { HORARIOS, DIRECCION, GOOGLE_MAPS_LINK } from "./Constants"; //informacion del negocio
 
-export interface ServicioItem { //tipo de dato que tiene los servicio
+export interface ServicioItem {
+  //tipo de dato que tiene los servicio
   codServicio: number;
   nombreServicio: string;
   cantTurnos: number;
@@ -34,8 +35,8 @@ function Servicio() {
         if (!res.ok) throw new Error("Error al cargar servicios"); //tira error si no es correcta
         return res.json();
       })
-      .then((data) => setServicios(data.data))  //Si todo va bien, guarda los servicios en el estado servicios
-      .catch((err) => setError(err.message)) //Si hay error lo guarda en error 
+      .then((data) => setServicios(data.data)) //Si todo va bien, guarda los servicios en el estado servicios
+      .catch((err) => setError(err.message)) //Si hay error lo guarda en error
       .finally(() => setLoading(false)); //loading = false
   }, []);
 
@@ -82,7 +83,7 @@ function Servicio() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false, amount: 0.2 }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-              > 
+              >
                 <div>
                   <h5>{s.nombreServicio}</h5>
                   <p className="mb-1">
@@ -99,8 +100,8 @@ function Servicio() {
               </motion.li>
             ))}
           </ul>
-         <button className="home-btn-todo" onClick={() => navigate("/auth")}>
-          Ver todo
+          <button className="home-btn-todo" onClick={() => navigate("/auth")}>
+            Ver todo
           </button>
         </div>
 

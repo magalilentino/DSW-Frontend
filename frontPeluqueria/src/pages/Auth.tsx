@@ -10,7 +10,9 @@ function Auth() {
 
   const searchParams = new URLSearchParams(location.search);
   const modeFromQuery = searchParams.get("mode");
-  const [isRegistering, setIsRegistering] = useState(modeFromQuery === "register"); //indica que forma se muestra (login o register)
+  const [isRegistering, setIsRegistering] = useState(
+    modeFromQuery === "register",
+  ); //indica que forma se muestra (login o register)
 
   useEffect(() => {
     setIsRegistering(modeFromQuery === "register");
@@ -18,7 +20,9 @@ function Auth() {
 
   const toggleMode = () => {
     setIsRegistering((prev) => !prev);
-    navigate(`/auth?mode=${!isRegistering ? "register" : "login"}`, { replace: true });
+    navigate(`/auth?mode=${!isRegistering ? "register" : "login"}`, {
+      replace: true,
+    });
   };
 
   return (
@@ -27,7 +31,7 @@ function Auth() {
       <div className="auth-right-side">
         <div className="auth-box">
           <Link to="/">
-            <img src="/Logo.png" alt="Logo" className="auth-login-logo"/>
+            <img src="/Logo.png" alt="Logo" className="auth-login-logo" />
           </Link>
           {isRegistering ? (
             <Register onToggleMode={toggleMode} />

@@ -48,7 +48,10 @@ export default function CrearMarca() {
       >
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h2>Crear Marca</h2>
-          <button className="btn btn-secondary" onClick={() => navigate("/marca")}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => navigate("/marca")}
+          >
             Volver
           </button>
         </div>

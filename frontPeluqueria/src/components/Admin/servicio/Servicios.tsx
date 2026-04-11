@@ -44,17 +44,22 @@ export default function ServiciosPage() {
   const handleDelete = async (codServicio: number) => {
     if (
       window.confirm(
-        `¿Estás seguro que quieres borrar el servicio con código ${codServicio}? Esta acción es irreversible.`
+        `¿Estás seguro que quieres borrar el servicio con código ${codServicio}? Esta acción es irreversible.`,
       )
     ) {
       try {
-        const res = await fetch(`http://localhost:3000/api/servicio/delete/${codServicio}`, {
-          method: "DELETE",
-        });
+        const res = await fetch(
+          `http://localhost:3000/api/servicio/delete/${codServicio}`,
+          {
+            method: "DELETE",
+          },
+        );
         if (!res.ok) throw new Error("Error al borrar el servicio");
         const data = await res.json();
         setSuccessMessage(data.message);
-        setServicios((prev) => prev.filter((s) => s.codServicio !== codServicio));
+        setServicios((prev) =>
+          prev.filter((s) => s.codServicio !== codServicio),
+        );
       } catch (err) {
         setError((err as Error).message);
       }
@@ -66,25 +71,37 @@ export default function ServiciosPage() {
   }, []);
 
   return (
-      
     <div className="registro-page">
       {successMessage && (
-        <div className="alert alert-success">
-          {successMessage}
-        </div>
+        <div className="alert alert-success">{successMessage}</div>
       )}
 
       <div className="registro-header">
         <button
           className="reservas-back-button"
-          onClick={() => { window.location.href = "/admin"; }}
+          onClick={() => {
+            window.location.href = "/admin";
+          }}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="30"
+            height="30"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            viewBox="0 0 24 24"
+          >
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>
         <h2>Listado de Servicios</h2>
-        <button className="crear-button" onClick={() => navigate("/servicio/crear")}>
+        <button
+          className="crear-button"
+          onClick={() => navigate("/servicio/crear")}
+        >
           Crear Servicio
         </button>
       </div>
@@ -113,12 +130,20 @@ export default function ServiciosPage() {
                 <td>{s.nombreServicio}</td>
                 <td>{s.descripcion}</td>
                 <td>{formatDuration(s.cantTurnos)}</td>
-                <td>{s.precio.toLocaleString("es-AR", { style: "currency", currency: "ARS" })} ARS</td>
+                <td>
+                  {s.precio.toLocaleString("es-AR", {
+                    style: "currency",
+                    currency: "ARS",
+                  })}{" "}
+                  ARS
+                </td>
                 <td>{s.activo ? "Activado" : "Desactivado"}</td>
                 <td>
                   <button
                     className="action-button update"
-                    onClick={() => navigate(`/servicio/actualizar/${s.codServicio}`)}
+                    onClick={() =>
+                      navigate(`/servicio/actualizar/${s.codServicio}`)
+                    }
                   >
                     Actualizar
                   </button>

@@ -14,12 +14,14 @@
   border: 1px solid #dddddd;
   border-radius: 12px;
   padding: 12px;
-  transition: border-color 0.3s, box-shadow 0.3s;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
 }
 
 .reservas-servicio-item:hover {
   border-color: #cccccc;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .reservas-steps span {
@@ -70,7 +72,9 @@
   color: #343a40; /* color del + */
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 .servicio-btn.selected {
@@ -120,6 +124,3 @@
 .filtro-precio button {
   min-width: 100px;
 }
-
-
-

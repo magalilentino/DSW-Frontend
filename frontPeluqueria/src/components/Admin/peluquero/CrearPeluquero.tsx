@@ -46,7 +46,9 @@ export default function CrearPeluquero() {
       setSuccess("Registro exitoso");
       setTimeout(() => navigate("/admin"), 1500);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Ocurrió un error desconocido.");
+      setError(
+        err instanceof Error ? err.message : "Ocurrió un error desconocido.",
+      );
     } finally {
       setLoading(false);
     }
@@ -62,7 +64,10 @@ export default function CrearPeluquero() {
       >
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h2>Registrar Peluquero</h2>
-          <button className="btn btn-secondary" onClick={() => navigate("/admin")}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => navigate("/admin")}
+          >
             Volver
           </button>
         </div>

@@ -126,7 +126,9 @@
   border: 1px solid #dddddd;
   border-radius: 12px;
   padding: 12px;
-  transition: border-color 0.3s, box-shadow 0.3s;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
 }
 
 .home-servicio-item:hover {
@@ -197,13 +199,11 @@
   display: inline-block;
 }
 
-
 .home-carousel-control-prev-icon::after {
   content: "❮";
   color: black;
   font-size: 2rem;
 }
-
 
 .home-carousel-control-next-icon::after {
   content: "❯";

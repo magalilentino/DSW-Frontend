@@ -31,14 +31,18 @@ export default function ActualizarCategoria() {
     setLoading(true);
 
     try {
-      const res = await fetch(`http://localhost:3000/api/categoria/${idCategoria}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nombreCategoria }),
-      });
+      const res = await fetch(
+        `http://localhost:3000/api/categoria/${idCategoria}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nombreCategoria }),
+        },
+      );
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Error al actualizar la categoría");
+      if (!res.ok)
+        throw new Error(data.message || "Error al actualizar la categoría");
 
       setSuccess("Categoría actualizada correctamente");
       setTimeout(() => navigate("/categoria"), 1500);
@@ -59,7 +63,10 @@ export default function ActualizarCategoria() {
       >
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h2>Actualizar Categoría</h2>
-          <button className="btn btn-secondary" onClick={() => navigate("/categoria")}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => navigate("/categoria")}
+          >
             Volver
           </button>
         </div>
@@ -85,7 +92,11 @@ export default function ActualizarCategoria() {
             {error && <p className="text-danger">Error: {error}</p>}
             {success && <p className="text-success">{success}</p>}
 
-            <button type="submit" className="btn btn-primary" disabled={loading}>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={loading}
+            >
               {loading ? "Actualizando..." : "Actualizar Categoría"}
             </button>
           </form>

@@ -38,7 +38,8 @@ export default function ActualizarMarca() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Error al actualizar la marca");
+      if (!res.ok)
+        throw new Error(data.message || "Error al actualizar la marca");
 
       setSuccess("Marca actualizada correctamente");
       setTimeout(() => navigate("/marca"), 1500);
@@ -59,7 +60,10 @@ export default function ActualizarMarca() {
       >
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h2>Actualizar Marca</h2>
-          <button className="btn btn-secondary" onClick={() => navigate("/marca")}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => navigate("/marca")}
+          >
             Volver
           </button>
         </div>
@@ -85,7 +89,11 @@ export default function ActualizarMarca() {
             {error && <p className="text-danger">Error: {error}</p>}
             {success && <p className="text-success">{success}</p>}
 
-            <button type="submit" className="btn btn-primary" disabled={loading}>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={loading}
+            >
               {loading ? "Actualizando..." : "Actualizar Marca"}
             </button>
           </form>

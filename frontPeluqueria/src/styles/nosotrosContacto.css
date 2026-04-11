@@ -3,7 +3,7 @@
   max-width: 900px;
   margin: auto;
   padding: 3rem 1.5rem;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
   color: #333;
   background-color: #fdfdfd;
 }
@@ -95,7 +95,7 @@
   max-width: 1000px;
   margin: auto;
   padding: 3rem 1.5rem;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
   color: #333;
   background-color: #fdfdfd;
 }
@@ -118,7 +118,7 @@ h2 {
 .nosotros-imagen img {
   width: 280px;
   border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .nosotros-texto {
@@ -289,18 +289,18 @@ h2 {
   background: linear-gradient(to right, #fff5f5, #fbe3e3);
   padding: 3rem 2rem;
   border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 .contacto {
   background: linear-gradient(to right, #fff5f5, #fbe3e3);
   padding: 3rem 2rem;
   border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);    
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
 .horarios {
- background: linear-gradient(to right, #fff5f5, #fbe3e3);
+  background: linear-gradient(to right, #fff5f5, #fbe3e3);
   padding: 3rem 2rem;
   border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
-  }
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
