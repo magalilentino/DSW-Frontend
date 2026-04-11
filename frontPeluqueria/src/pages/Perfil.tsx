@@ -23,14 +23,14 @@ interface Servicio {
 
 interface AtencionServicio {
   idAtSer: number;
-  servicio?: Servicio; // puede ser undefined
+  servicio?: Servicio;
 }
 
 interface Atencion {
   idAtencion: number;
   fecha: string;
   estado: "pendiente" | "finalizado" | "cancelado";
-  atencionServicios?: AtencionServicio[]; // puede ser undefined
+  atencionServicios?: AtencionServicio[];
 }
 
 export default function MiPerfil() {
@@ -46,6 +46,9 @@ export default function MiPerfil() {
 
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState<Partial<Persona>>({});
+
+  // NUEVO: Estado para el filtro del histórico
+  const [filtroEstado, setFiltroEstado] = useState<"todos" | "finalizado" | "cancelado">("todos");
 
   useEffect(() => {
     if (!user) return;
@@ -66,15 +69,11 @@ export default function MiPerfil() {
         const [resHist, resPend] = await Promise.all([
           fetch(
             `http://localhost:3000/api/atencion/historico/${user.idPersona}`,
-            {
-              headers: { Authorization: `Bearer ${user.token}` },
-            },
+            { headers: { Authorization: `Bearer ${user.token}` } },
           ),
           fetch(
             `http://localhost:3000/api/atencion/pendientes/${user.idPersona}`,
-            {
-              headers: { Authorization: `Bearer ${user.token}` },
-            },
+            { headers: { Authorization: `Bearer ${user.token}` } },
           ),
         ]);
 
@@ -129,6 +128,12 @@ export default function MiPerfil() {
     }
   };
 
+  // NUEVO: Lógica de filtrado para el histórico
+  const historicoFiltrado = historico.filter((atencion) => {
+    if (filtroEstado === "todos") return true;
+    return atencion.estado === filtroEstado;
+  });
+
   if (!user) {
     return (
       <div className="perfil-container">
@@ -151,46 +156,68 @@ export default function MiPerfil() {
   if (error)
     return <div className="perfil-container text-danger">Error: {error}</div>;
 
-  const renderServicios = (atencion: Atencion) => {
-    const servicios = atencion.atencionServicios ?? [];
-    if (servicios.length === 0) return <li>Sin servicios asociados</li>;
-    return servicios.map((as) => (
-      <li key={as.idAtSer}>
-        {as.servicio?.nombreServicio ?? "Servicio no disponible"}
-      </li>
-    ));
-  };
+const renderServicios = (atencion: Atencion) => {
+  const servicios = atencion.atencionServicios ?? [];
+  if (servicios.length === 0) return <span className="servicio-tag">Sin servicios</span>;
+  return servicios.map((as) => (
+    <li key={as.idAtSer} className="servicio-tag">
+      {as.servicio?.nombreServicio ?? "Servicio no disponible"}
+    </li>
+  ));
+};
 
   return (
     <div className="perfil-container">
       {/* Panel izquierdo con histórico y pendientes */}
       <div className="perfil-left-side">
         <div className="perfil-left-content">
-          <h3>Histórico</h3>
-          {historico.length === 0 ? (
-            <p>No tienes atenciones pasadas.</p>
+          
+          {/* Header de Histórico con Filtro */}
+          <div className="perfil-header-filter">
+            <h3>Histórico</h3>
+            <select 
+              className="perfil-select-filter"
+              value={filtroEstado} 
+              onChange={(e) => setFiltroEstado(e.target.value as any)}
+            >
+              <option value="todos">Todos los estados</option>
+              <option value="finalizado">Finalizados</option>
+              <option value="cancelado">Cancelados</option>
+            </select>
+          </div>
+
+          {historicoFiltrado.length === 0 ? (
+            <p className="no-data-text">No hay atenciones para mostrar.</p>
           ) : (
-            <ul>
-              {historico.map((a) => (
-                <li key={a.idAtencion}>
-                  <strong>
-                    Atencion para el {new Date(a.fecha).toLocaleDateString()}
-                  </strong>
-                  <ul>
-                    <strong>Servicios:</strong> {renderServicios(a)}
-                  </ul>
-                </li>
+            <ul className="atencion-list">
+              {historicoFiltrado.map((a) => (
+                <li key={a.idAtencion} className={`atencion-item ${a.estado}`}>
+      <div className="atencion-card-header">
+      <span className="fecha-atencion">
+        <strong>{new Date(a.fecha).toLocaleDateString()}</strong>
+      </span>
+      <span className={`status-badge ${a.estado}`}>{a.estado}</span>
+    </div>
+    <div className="servicios-container">
+      <p style={{ margin: "10px 0 5px 0", fontSize: "0.85rem", color: "#888" }}>SERVICIOS:</p>
+      <ul className="servicios-grid">
+        {renderServicios(a)}
+      </ul>
+    </div>
+  </li>
               ))}
             </ul>
           )}
 
+          <hr className="perfil-divider" />
+
           <h3>Pendientes</h3>
           {pendientes.length === 0 ? (
-            <p>No tienes atenciones pendientes.</p>
+            <p className="no-data-text">No tienes atenciones pendientes.</p>
           ) : (
-            <ul>
+            <ul className="atencion-list">
               {pendientes.map((a) => (
-                <li key={a.idAtencion}>
+                <li key={a.idAtencion} className="atencion-item pendiente">
                   <strong>
                     Atencion para el {new Date(a.fecha).toLocaleDateString()}
                   </strong>
@@ -211,24 +238,12 @@ export default function MiPerfil() {
 
           {persona && !editMode && (
             <div className="perfil-info">
-              <p>
-                <strong>Nombre:</strong> {persona.nombre}
-              </p>
-              <p>
-                <strong>Apellido:</strong> {persona.apellido}
-              </p>
-              <p>
-                <strong>Email:</strong> {persona.email}
-              </p>
-              <p>
-                <strong>Teléfono:</strong> {persona.telefono}
-              </p>
-              <p>
-                <strong>DNI:</strong> {persona.dni}
-              </p>
-              <p>
-                <strong>Tipo:</strong> {persona.type}
-              </p>
+              <p><strong>Nombre:</strong> {persona.nombre}</p>
+              <p><strong>Apellido:</strong> {persona.apellido}</p>
+              <p><strong>Email:</strong> {persona.email}</p>
+              <p><strong>Teléfono:</strong> {persona.telefono}</p>
+              <p><strong>DNI:</strong> {persona.dni}</p>
+              <p><strong>Tipo:</strong> {persona.type}</p>
               <div className="buttons-usser">
                 <button
                   className="auth-button-usser"

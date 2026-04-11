@@ -15,7 +15,7 @@ interface Persona {
 }
 
 const sections = [
-  /*
+  
   {
     label: "Registros",
     subsections: [
@@ -28,8 +28,8 @@ const sections = [
     ],
   },
   { label: "Atenciones Pendientes", path: "/atencion" },
-  { label: "Perfil", path: "/peluquero/perfilPeluquero" },*/
-  {
+  { label: "Perfil", path: "/peluquero/perfilPeluquero" },
+  /*{
     label: "Registros",
     subsections: [
       { label: "Peluquero", path: "/peluquero/CrearPeluquero" },
@@ -39,7 +39,7 @@ const sections = [
       { label: "Tono", path: "/tono" },
       { label: "Producto", path: "/producto" },
     ],
-  },
+  },*/
   {
     label: "Agenda",
     subsections: [
