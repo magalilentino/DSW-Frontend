@@ -14,8 +14,19 @@ interface Persona {
   type: string;
 }
 
-const sections = [
-  
+interface Subsection {
+  label: string;
+  path?: string; // Opcional porque el de logout no tiene path
+  isLogout?: boolean;
+}
+
+interface Section {
+  label: string;
+  path?: string; // Opcional
+  subsections?: Subsection[];
+}
+
+const sections: Section[] = [
   {
     label: "Registros",
     subsections: [
@@ -27,27 +38,20 @@ const sections = [
       { label: "Producto", path: "/producto" },
     ],
   },
-  { label: "Atenciones Pendientes", path: "/atencion" },
-  { label: "Perfil", path: "/peluquero/perfilPeluquero" },
-  /*{
-    label: "Registros",
-    subsections: [
-      { label: "Peluquero", path: "/peluquero/CrearPeluquero" },
-      { label: "Marca", path: "/marca" },
-      { label: "Categoria", path: "/categoria" },
-      { label: "Servicio", path: "/servicios" },
-      { label: "Tono", path: "/tono" },
-      { label: "Producto", path: "/producto" },
-    ],
-  },*/
   {
     label: "Agenda",
     subsections: [
-      { label: "Bloquear día/horario", path: "/Bloqueardia" },
-      { label: "Ver disponibilidad", path: "/Disponibilidad" },
+      { label: "Bloquear día/horario", path: "/Calendario" },
+      { label: "Atenciones Pendientes", path: "/atencion" },
     ],
   },
-  { label: "Perfil", path: "/peluquero/perfilPeluquero" },
+  {
+    label: "Perfil",
+    subsections: [
+      { label: "Editar Perfil", path: "/peluquero/perfilPeluquero" },
+      { label: "Cerrar sesión", isLogout: true }, // Marcamos este como logout
+    ],
+  },
 ];
 
 const Admin = () => {
@@ -211,15 +215,42 @@ const Admin = () => {
                   onMouseEnter={() => setHovered(i)}
                   onMouseLeave={() => setHovered(null)}
                 >
-                  {section.subsections.map((sub, j) => (
-                    <Link
-                      key={j}
-                      to={sub.path}
-                      className="custom-dropdown-item"
-                    >
-                      {sub.label}
-                    </Link>
-                  ))}
+                  {section.subsections.map((sub, j) => {
+                    // SI ES LOGOUT: Renderizamos el botón con la lógica que tenías comentada
+                    if (sub.isLogout) {
+                      return (
+                        <button
+                          key={j}
+                          className="custom-dropdown-item logout-button" // Usamos tus clases de estilo
+                          style={{
+                            width: "100%",
+                            textAlign: "left",
+                            border: "none",
+                            background: "none",
+                          }} // Ajuste visual
+                          onClick={() => {
+                            localStorage.removeItem("token");
+                            localStorage.removeItem("type");
+                            localStorage.removeItem("nombre");
+                            window.location.href = "/";
+                          }}
+                        >
+                          {sub.label}
+                        </button>
+                      );
+                    }
+
+                    // SI NO ES LOGOUT: Renderizamos el Link normal
+                    return (
+                      <Link
+                        key={j}
+                        to={sub.path!}
+                        className="custom-dropdown-item"
+                      >
+                        {sub.label}
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -281,7 +312,7 @@ const Admin = () => {
         <section className="turnos-section">
           <h1>Próximos Turnos del Día</h1>
           {turnosHoy.length === 0 ? (
-            <p>No hay turnos para hoy</p>
+            <p className="text-center">No hay turnos para hoy</p>
           ) : (
             <div className="turnos-grid">
               {turnosHoy.map((turno, i) => (

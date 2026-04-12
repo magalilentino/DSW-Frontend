@@ -29,7 +29,6 @@ import CrearTono from "./components/Admin/tono/CrearTono.tsx";
 import VerFormula from "./components/Admin/tono/VerFormula.tsx";
 import PerfilPeluquero from "./components/Admin/peluquero/perfilPeluquero.tsx";
 import Calendario from "./components/Admin/calendario/Bloqueardia.tsx";
-import Disponibilidad from "./components/Admin/calendario/Disponibilidad.tsx";
 
 function App() {
   return (
@@ -85,7 +84,6 @@ function App() {
           element={<PerfilPeluquero />}
         />
         <Route path="/Calendario" element={<Calendario />} />
-        <Route path="/Disponibilidad" element={<Disponibilidad />} />
       </Routes>
     </Router>
   );

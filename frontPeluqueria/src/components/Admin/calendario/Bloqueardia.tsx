@@ -1,232 +1,276 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom"; // Importamos para la navegación
+import { CalendarioDias } from "../../reserve/Calendar.tsx";
 import { useAuth } from "../../general/AuthContext.tsx";
-import dayjs from "dayjs";
-import "dayjs/locale/es";
 
-dayjs.locale("es");
-
-interface Bloque {
+interface BloqueAgenda {
   hora_inicio: string;
   hora_fin: string;
+  estado: "libre" | "ocupado" | "bloqueado";
 }
 
-export default function GestorDias() {
+export default function BloquearAgenda() {
   const { user } = useAuth();
+  const navigate = useNavigate(); // Hook para volver atrás
   const [diaSeleccionado, setDiaSeleccionado] = useState<string>("");
-  const [horarioSeleccionado, setHorarioSeleccionado] = useState<Bloque | null>(
-    null,
+  const [bloques, setBloques] = useState<BloqueAgenda[]>([]);
+  const [horariosSeleccionados, setHorariosSeleccionados] = useState<string[]>(
+    [],
   );
-  const [bloquesDisponibles, setBloquesDisponibles] = useState<Bloque[]>([]);
+  const [diaEntero, setDiaEntero] = useState<boolean>(false);
+  const [conflictos, setConflictos] = useState<string[]>([]);
+  const [mensaje, setMensaje] = useState<{
+    texto: string;
+    tipo: "success" | "error" | "warning";
+  } | null>(null);
 
-  const peluqueroId = user?.idPersona;
-  const duracionTotal = 45;
-
-  // 🔥 Generador de días
-  const dias = Array.from({ length: 30 }).map((_, i) => {
-    const fecha = dayjs().add(i, "day");
-    return {
-      label: fecha.format("dddd D [de] MMMM"),
-      fecha: fecha.format("YYYY-MM-DD"),
-    };
-  });
-
-  // 🔥 Fetch de bloques
-  const fetchBloques = async () => {
-    if (!diaSeleccionado || !peluqueroId) return;
-
+  const fetchAgenda = async () => {
+    if (!diaSeleccionado || !user?.idPersona) return;
     try {
       const res = await fetch(
-        `http://localhost:3000/api/bloque/disponibles?fecha=${diaSeleccionado}&peluqueroId=${peluqueroId}&duracionTotal=${duracionTotal}`,
+        `http://localhost:3000/api/bloque/estado-agenda?fecha=${diaSeleccionado}&peluqueroId=${user.idPersona}`,
+        { headers: { Authorization: `Bearer ${user.token}` } },
       );
       const data = await res.json();
-      setBloquesDisponibles(data);
+      setBloques(data);
     } catch (err) {
-      console.error("Error al traer horarios:", err);
+      console.error(err);
     }
   };
 
   useEffect(() => {
-    if (!diaSeleccionado || !peluqueroId) return;
-    fetchBloques();
-  }, [diaSeleccionado, peluqueroId]);
+    fetchAgenda();
+    setHorariosSeleccionados([]);
+    setConflictos([]);
+    setMensaje(null);
+    setDiaEntero(false);
+  }, [diaSeleccionado]);
 
-  // 🔥 BLOQUEAR HORA
-  const bloquearBloque = async (bloque: Bloque) => {
+  const toggleHorario = (horaInicio: string) => {
+    setHorariosSeleccionados((prev) =>
+      prev.includes(horaInicio)
+        ? prev.filter((h) => h !== horaInicio)
+        : [...prev, horaInicio],
+    );
+  };
+
+  const handleGuardarBloqueo = async (forzar = false) => {
+    if (!diaSeleccionado || !user?.idPersona) return;
     try {
-      // ⚡ feedback instantáneo
-      setBloquesDisponibles((prev) =>
-        prev.filter((b) => b.hora_inicio !== bloque.hora_inicio),
-      );
-
-      await fetch("http://localhost:3000/api/bloque/bloquear", {
+      const res = await fetch("http://localhost:3000/api/bloque/bloqueodia", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
         },
         body: JSON.stringify({
+          peluqueroId: user.idPersona,
           fecha: diaSeleccionado,
-          peluqueroId,
-          hora_inicio: bloque.hora_inicio,
-          hora_fin: bloque.hora_fin,
+          diaEntero,
+          horarios: diaEntero ? [] : horariosSeleccionados,
+          forzar,
         }),
       });
 
-      // 🔄 refresco real
-      fetchBloques();
+      const data = await res.json();
+
+      if (res.status === 409) {
+        setConflictos(data.conflictos);
+        setMensaje({
+          texto: "Hay clientes citados en esos horarios.",
+          tipo: "warning",
+        });
+      } else if (res.ok) {
+        setMensaje({
+          texto: "Bloqueo realizado correctamente.",
+          tipo: "success",
+        });
+        setConflictos([]);
+        setHorariosSeleccionados([]);
+        setDiaEntero(false);
+        fetchAgenda();
+      }
     } catch (err) {
-      console.error("Error al bloquear:", err);
-    }
-  };
-
-  const handleSeleccionarDia = (fecha: string) => {
-    setDiaSeleccionado(fecha);
-    setHorarioSeleccionado(null);
-  };
-
-  const bloquearDiaCompleto = async () => {
-    if (!peluqueroId || !diaSeleccionado) return;
-
-    try {
-      await fetch("http://localhost:3000/api/bloque/bloquear-dia", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fecha: diaSeleccionado,
-          peluqueroId,
-        }),
-      });
-
-      // 🔄 refrescar
-      fetchBloques();
-    } catch (err) {
-      console.error("Error al bloquear el día:", err);
+      setMensaje({ texto: "Error al guardar.", tipo: "error" });
     }
   };
 
   return (
-    <section className="home-servicio my-4 container">
-      <div className="row gap-4 gap-lg-0">
-        {/* IZQUIERDA */}
-        <div className="col-lg-5">
-          <h2 className="mb-4">Fechas</h2>
-          <div className="overflow-auto" style={{ maxHeight: "600px" }}>
-            <ul className="list-group pe-2">
-              {dias.map((d, i) => (
-                <motion.li
-                  key={d.fecha}
-                  className={`home-servicio-item d-flex justify-content-between align-items-center mb-3 p-3 border rounded ${
-                    diaSeleccionado === d.fecha
-                      ? "border-dark shadow-sm bg-light"
-                      : ""
-                  }`}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: i * 0.05 }}
-                  style={{ cursor: "pointer" }}
-                  onClick={() => handleSeleccionarDia(d.fecha)}
-                >
-                  <h5 className="text-capitalize mb-0 fs-6">{d.label}</h5>
-                </motion.li>
-              ))}
-            </ul>
-          </div>
-        </div>
-        {/* DERECHA */}
-        <div className="col-lg-7">
-          <h2 className="mb-4">Disponibilidad</h2>
-          <div className="p-4 border rounded bg-white shadow-sm h-100 d-flex flex-column">
-            {!diaSeleccionado ? (
-              <div className="text-center text-muted m-auto">
-                <p>Selecciona un día para ver horarios.</p>
+    <div className="container mt-5">
+      {/* --- BOTÓN DE RETROCESO --- */}
+      <button
+        className="admin-back-button mb-3"
+        onClick={() => navigate("/admin")}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="30"
+          height="30"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          viewBox="0 0 24 24"
+        >
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+      </button>
+
+      {/* 1. CALENDARIO ARRIBA */}
+      <section className="mb-4 bg-white p-3 rounded shadow-sm border">
+        <CalendarioDias
+          diaSeleccionado={diaSeleccionado}
+          onSelectDia={setDiaSeleccionado}
+        />
+      </section>
+
+      {diaSeleccionado && (
+        <div className="row">
+          {/* 2. IZQUIERDA: HORARIOS (GRILLA) */}
+          <div className="col-lg-8">
+            <div className="bg-white p-4 rounded shadow-sm border">
+              <h4 className="mb-4 fw-bold">Horarios del Día</h4>
+              <div className="d-flex flex-wrap gap-2">
+                {bloques.map((b, i) => {
+                  const isSel = horariosSeleccionados.includes(b.hora_inicio);
+                  const isLibre = b.estado === "libre";
+                  const isBloqueado = b.estado === "bloqueado";
+                  const isOcupado = b.estado === "ocupado";
+                  const isClickable = isLibre || isBloqueado;
+
+                  return (
+                    <motion.button
+                      key={i}
+                      whileHover={isClickable ? { scale: 1.05 } : {}}
+                      className={`btn ${
+                        isOcupado
+                          ? "btn-danger opacity-50"
+                          : isBloqueado
+                            ? isSel
+                              ? "btn-outline-dark"
+                              : "btn-secondary"
+                            : isSel
+                              ? "btn-dark"
+                              : "btn-outline-dark"
+                      }`}
+                      onClick={() =>
+                        isClickable && toggleHorario(b.hora_inicio)
+                      }
+                      disabled={isOcupado}
+                    >
+                      <span className="d-block fw-bold">{b.hora_inicio}</span>
+                      <small style={{ fontSize: "0.7rem" }}>
+                        {isSel
+                          ? isBloqueado
+                            ? "A LIBERAR"
+                            : "A BLOQUEAR"
+                          : b.estado.toUpperCase()}
+                      </small>
+                    </motion.button>
+                  );
+                })}
               </div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="d-flex flex-column flex-grow-1"
-              >
-                <h4 className="border-bottom pb-2 mb-4">
-                  Gestión del{" "}
-                  <span className="text-primary fw-bold">
-                    {dayjs(diaSeleccionado).format("DD/MM/YYYY")}
-                  </span>
-                </h4>
-                <h5 className="fs-6 text-secondary mb-3">Horarios:</h5>
-                <ul
-                  className="list-group mb-4 overflow-auto pe-2"
-                  style={{ maxHeight: "350px" }}
-                >
-                  {bloquesDisponibles.length > 0 ? (
-                    bloquesDisponibles.map((bloque, i) => {
-                      const esSeleccionado =
-                        horarioSeleccionado?.hora_inicio ===
-                          bloque.hora_inicio &&
-                        horarioSeleccionado?.hora_fin === bloque.hora_fin;
+            </div>
+          </div>
 
-                      return (
-                        <motion.li
-                          key={i}
-                          className={`d-flex justify-content-between align-items-center mb-2 p-3 border rounded ${
-                            esSeleccionado ? "border-dark shadow" : "bg-light"
-                          }`}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.2, delay: i * 0.05 }}
-                          style={{ cursor: "pointer" }}
-                          onClick={() => setHorarioSeleccionado(bloque)}
+          {/* 3. DERECHA: CONFIRMACIÓN */}
+          <div className="col-lg-4">
+            <div
+              className="bg-white p-4 rounded shadow-sm border sticky-top"
+              style={{ top: "20px" }}
+            >
+              <h4 className="fw-bold mb-4">Confirmar</h4>
+              <div className="mb-3">
+                <label className="small fw-bold text-muted text-uppercase">
+                  Fecha
+                </label>
+                <div className="fw-bold fs-5">{diaSeleccionado}</div>
+              </div>
+
+              <div className="form-check form-switch mb-4 p-2 bg-light rounded border">
+                <input
+                  className="form-check-input ms-0 me-3"
+                  type="checkbox"
+                  checked={diaEntero}
+                  onChange={(e) => {
+                    setDiaEntero(e.target.checked);
+                    if (e.target.checked) setHorariosSeleccionados([]);
+                  }}
+                  id="diaEntero"
+                />
+                <label className="form-check-label fw-bold" htmlFor="diaEntero">
+                  Todo el día
+                </label>
+              </div>
+
+              {!diaEntero && (
+                <div className="mb-4">
+                  <label className="small fw-bold text-muted text-uppercase d-block mb-2">
+                    Bloques seleccionados
+                  </label>
+                  <div className="d-flex flex-wrap gap-1">
+                    {horariosSeleccionados.length > 0 ? (
+                      horariosSeleccionados.map((h) => (
+                        <span
+                          key={h}
+                          className="badge bg-dark rounded-pill px-3 py-2"
                         >
-                          <h5 className="mb-0 fs-5">
-                            {bloque.hora_inicio} - {bloque.hora_fin}
-                          </h5>
+                          {h}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-muted small italic">Ninguno</span>
+                    )}
+                  </div>
+                </div>
+              )}
 
-                          <button
-                            className="btn btn-sm btn-outline-secondary"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              bloquearBloque(bloque);
-                            }}
-                          >
-                            Bloquear hora
-                          </button>
-                        </motion.li>
-                      );
-                    })
-                  ) : (
-                    <div className="text-center text-muted mt-4">
-                      <p>No hay bloques disponibles.</p>
+              {mensaje && (
+                <div
+                  className={`alert alert-${mensaje.tipo === "warning" ? "warning" : mensaje.tipo === "error" ? "danger" : "success"} small py-2`}
+                >
+                  {mensaje.texto}
+                  {conflictos.length > 0 && (
+                    <div className="mt-1">
+                      <strong>Citas:</strong> {conflictos.join(", ")}
                     </div>
                   )}
-                </ul>
-                {/* Acciones de administración general */}
-                <div className="mt-auto pt-3 border-top">
-                  <h5 className="fs-6 text-danger mb-3">
-                    Acciones de administrador:
-                  </h5>
-                  <button
-                    className="btn btn-outline-danger w-100 py-2 d-flex align-items-center justify-content-center gap-2"
-                    onClick={bloquearDiaCompleto}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />{" "}
-                      <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />{" "}
-                    </svg>
-                    Bloquear todo el día seleccionado
-                  </button>
                 </div>
-              </motion.div>
-            )}
+              )}
+
+              {conflictos.length > 0 ? (
+                <button
+                  className="btn btn-warning w-100 fw-bold py-3 mt-2"
+                  style={{ borderRadius: "12px" }}
+                  onClick={() => handleGuardarBloqueo(true)}
+                >
+                  FORZAR Y BLOQUEAR
+                </button>
+              ) : (
+                <button
+                  className="btn btn-dark w-100 fw-bold py-3 mt-2"
+                  style={{ borderRadius: "12px" }}
+                  disabled={!diaEntero && horariosSeleccionados.length === 0}
+                  onClick={() => handleGuardarBloqueo(false)}
+                >
+                  CONFIRMAR
+                </button>
+              )}
+
+              {horariosSeleccionados.length > 0 && (
+                <button
+                  className="btn btn-link btn-sm w-100 mt-2 text-muted text-decoration-none"
+                  onClick={() => setHorariosSeleccionados([])}
+                >
+                  Limpiar selección
+                </button>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      )}
+    </div>
   );
 }
