@@ -62,21 +62,22 @@ const Admin = () => {
   const [pendientesHoy, setPendientesHoy] = useState<number>(0);
   const [completadasHoy, setCompletadasHoy] = useState<number>(0);
   const [gananciasHoy, setGananciasHoy] = useState<number>(0);
-  const [turnosHoy, setTurnosHoy] = useState<
-    { hora: string; cliente: string; servicios: string }[]
-  >([]);
+  const [turnosHoy, setTurnosHoy] = useState< { hora: string; cliente: string; servicios: string }[] >([]);
+  const [servicios, setServicios] = useState< { codServicio: number; nombreServicio: string }[] >([]);
+  const [servicioSeleccionado, setServicioSeleccionado] = useState<number | "">("");
 
   useEffect(() => {
     if (!user) return;
 
     const fetchTurnosHoy = async () => {
       try {
-        const res = await fetch(
-          "http://localhost:3000/api/atencion/turnos-hoy",
-          {
-            headers: { Authorization: `Bearer ${user.token}` },
-          },
-        );
+        const url = servicioSeleccionado
+          ? `http://localhost:3000/api/atencion/turnos-hoy?servicio=${servicioSeleccionado}`
+          : "http://localhost:3000/api/atencion/turnos-hoy";
+
+        const res = await fetch(url, {
+          headers: { Authorization: `Bearer ${user.token}` },
+        });
         if (!res.ok) throw new Error("No autorizado");
         const data = await res.json();
         setTurnosHoy(data); // data: [{hora, cliente, servicios}, ...]
@@ -86,7 +87,7 @@ const Admin = () => {
     };
 
     fetchTurnosHoy();
-  }, [user]);
+  }, [user, servicioSeleccionado]);
 
   useEffect(() => {
     if (!user) return;
@@ -176,6 +177,23 @@ const Admin = () => {
     };
     fetchData();
   }, [user]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    fetch("http://localhost:3000/api/servicio/findAll", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setServicios(data.data || []);
+      })
+      .catch((err) => {
+        console.error("Error al cargar servicios", err);
+      });
+  }, []);
 
   if (loading) {
     return (
@@ -311,6 +329,22 @@ const Admin = () => {
         {/* Próximos Turnos */}
         <section className="turnos-section">
           <h1>Próximos Turnos del Día</h1>
+              <select
+                className="form-select w-auto" //mx-auto para centrar
+                value={servicioSeleccionado}
+                onChange={(e) => setServicioSeleccionado(
+                    e.target.value === "" ? "" : Number(e.target.value)
+                  )
+                }
+              >
+                <option value="">Todos</option>
+
+                {servicios.map((s) => (
+                  <option key={s.codServicio} value={s.codServicio}>
+                    {s.nombreServicio}
+                  </option>
+                ))}
+              </select>
           {turnosHoy.length === 0 ? (
             <p className="text-center">No hay turnos para hoy</p>
           ) : (
