@@ -30,6 +30,11 @@ import VerFormula from "./components/Admin/tono/VerFormula.tsx";
 import PerfilPeluquero from "./components/Admin/peluquero/perfilPeluquero.tsx";
 import Calendario from "./components/Admin/calendario/Bloqueardia.tsx";
 
+// NUEVOS IMPORTS DE DESCUENTO
+import Descuento from "./components/Admin/descuento/Descuento.tsx";
+import CrearDescuento from "./components/Admin/descuento/CrearDescuento.tsx";
+import ActualizarDescuento from "./components/Admin/descuento/ActualizarDescuento.tsx";
+
 function App() {
   return (
     <Router>
@@ -84,6 +89,14 @@ function App() {
           element={<PerfilPeluquero />}
         />
         <Route path="/Calendario" element={<Calendario />} />
+
+        {/* RUTAS DE DESCUENTO */}
+        <Route path="/descuento" element={<Descuento />} />
+        <Route path="/descuento/crear" element={<CrearDescuento />} />
+        <Route
+          path="/descuento/actualizar/:idDescuento"
+          element={<ActualizarDescuento />}
+        />
       </Routes>
     </Router>
   );

@@ -36,6 +36,7 @@ const sections: Section[] = [
       { label: "Servicio", path: "/servicios" },
       { label: "Tono", path: "/tono" },
       { label: "Producto", path: "/producto" },
+      { label: "Descuentos", path: "/descuento" },
     ],
   },
   {

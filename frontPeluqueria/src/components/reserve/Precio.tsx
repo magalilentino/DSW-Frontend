@@ -36,9 +36,20 @@ export default function Precio({
   // 1. EFECTO: Verificar descuento al llegar al paso 3 (Resumen)
   useEffect(() => {
     const clienteId = localStorage.getItem("idPersona");
-    if (step === 3 && clienteId) {
-      fetch(`http://localhost:3000/api/atencion/verificar-descuento/${clienteId}`)
-        .then((res) => res.json())
+    const token = localStorage.getItem("token"); // <--- AGREGAMOS ESTO
+
+    if (step === 3 && clienteId && token) { // <--- VALIDAMOS QUE EXISTA EL TOKEN
+      fetch(`http://localhost:3000/api/atencion/verificar-descuento/${clienteId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` // <--- ESTO ES LO QUE TE FALTABA
+        }
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Error en la autenticación o servidor");
+          return res.json();
+        })
         .then((data) => {
           if (data.aplicaDescuento) {
             setInfoDescuento({ aplica: true, detalle: data.descuento });
