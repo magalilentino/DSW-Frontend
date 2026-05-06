@@ -37,18 +37,12 @@ const ModificarAtSer: React.FC = () => {
   const { idAtSer } = useParams<{ idAtSer: string }>();
   const navigate = useNavigate();
 
-  const [productosDisponibles, setProductosDisponibles] = useState<ProdMar[]>(
-    [],
-  );
-  const [productosSeleccionados, setProductosSeleccionados] = useState<
-    ProductoSeleccionado[]
-  >([]);
+  const [productosDisponibles, setProductosDisponibles] = useState<ProdMar[]>([],);
+  const [productosSeleccionados, setProductosSeleccionados] = useState<ProductoSeleccionado[]>([]);
   const [filtroMarca, setFiltroMarca] = useState("");
   const [filtroCategoria, setFiltroCategoria] = useState("");
   const [tonosDisponibles, setTonosDisponibles] = useState<Tono[]>([]);
-  const [tonoSeleccionadoId, setTonoSeleccionadoId] = useState<number | null>(
-    null,
-  );
+  const [tonoSeleccionadoId, setTonoSeleccionadoId] = useState<number | null>(null,);
   const [marcas, setMarcas] = useState<Marca[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [idAtencion, setIdAtencion] = useState<string | null>(null);

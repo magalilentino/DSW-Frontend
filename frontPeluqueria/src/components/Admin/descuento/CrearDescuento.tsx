@@ -40,6 +40,7 @@ export default function CrearDescuento() {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="admin-servicio my-4 container-fluid">

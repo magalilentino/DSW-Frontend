@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import "../../../styles/Admin.css";
 
 interface AtSer {
   idAtSer: number;
-  servicio: {
-    codServicio: number;
-    nombreServicio: string;
-  };
+  nombreServicio: string;
+  modificado: boolean;
 }
 
 export default function ServiciosDeAtencion() {
@@ -18,6 +16,7 @@ export default function ServiciosDeAtencion() {
   const [descripcion, setDescripcion] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const location = useLocation();
 
   useEffect(() => {
     if (!idAtencion) {
@@ -43,7 +42,7 @@ export default function ServiciosDeAtencion() {
         setError("No se pudo cargar la lista de servicios.");
         setLoading(false);
       });
-  }, [idAtencion]);
+  }, [idAtencion, location]);
 
   const handleModificar = (idAtSer: number) => {
     navigate(`/atencion/modificarAtSer/${idAtSer}`);
@@ -113,15 +112,17 @@ export default function ServiciosDeAtencion() {
                     transition={{ duration: 0.5, delay: i * 0.1 }}
                   >
                     <div className="service-info me-3">
-                      <h5>Servicio {as.servicio.codServicio}</h5>
-                      <p className="mb-1">{as.servicio.nombreServicio}</p>
+                      <h5>Servicio </h5>
+                      <p className="mb-1">
+                        {as.nombreServicio}
+                      </p>
                     </div>
                     <div className="service-actions">
                       <button
                         className="btn btn-sm btn-outline-primary admin-btn-action"
                         onClick={() => handleModificar(as.idAtSer)}
                       >
-                        Modificar
+                        {as.modificado ? "Volver a modificar" : "Modificar"}
                       </button>
                     </div>
                   </motion.li>
