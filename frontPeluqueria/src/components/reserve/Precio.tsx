@@ -27,47 +27,55 @@ export default function Precio({
   setStep,
 }: PrecioProps) {
   const [showModal, setShowModal] = useState(false);
-  const [infoDescuento, setInfoDescuento] = useState<{ aplica: boolean; detalle: any | null }>({
+  const [infoDescuento, setInfoDescuento] = useState<{ aplica: boolean; porcentaje:number | null }>({ // detalle: any
     aplica: false,
-    detalle: null,
+    porcentaje: null,
+    // detalle: null,
   });
+  const [precioFinal, setPrecioFinal] = useState<number | null>(null);
+  const [subtotal, setSubtotal] = useState<number>(0);
   const navigate = useNavigate();
 
   // 1. EFECTO: Verificar descuento al llegar al paso 3 (Resumen)
   useEffect(() => {
     const clienteId = localStorage.getItem("idPersona");
     const token = localStorage.getItem("token"); // <--- AGREGAMOS ESTO
-
-    if (step === 3 && clienteId && token) { // <--- VALIDAMOS QUE EXISTA EL TOKEN
+    
+  setSubtotal(serviciosSeleccionados.reduce((sum, s) => sum + (s.precio ?? 0), 0));
+    if (step === 3 && clienteId && token && serviciosSeleccionados.length > 0) { // <--- VALIDAMOS QUE EXISTA EL TOKEN
+      const payload = {
+        servicios: serviciosSeleccionados.map((s) => s.codServicio),
+      };
       fetch(`http://localhost:3000/api/atencion/verificar-descuento/${clienteId}`, {
-        method: "GET",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}` // <--- ESTO ES LO QUE TE FALTABA
-        }
+        },
+        body: JSON.stringify(payload),
       })
         .then((res) => {
           if (!res.ok) throw new Error("Error en la autenticación o servidor");
           return res.json();
         })
         .then((data) => {
-          if (data.aplicaDescuento) {
-            setInfoDescuento({ aplica: true, detalle: data.descuento });
-          } else {
-            setInfoDescuento({ aplica: false, detalle: null });
-          }
+          setSubtotal(data.subtotal);
+          setPrecioFinal(data.precioTotal);
+          setInfoDescuento({
+            aplica: data.aplicaDescuento,
+            porcentaje: data.porcentaje,
+          });
         })
         .catch((err) => console.error("Error al verificar descuento:", err));
     }
-  }, [step]);
+  }, [step, serviciosSeleccionados]);
 
-  const subtotal = serviciosSeleccionados.reduce((sum, s) => sum + (s.precio ?? 0), 0);
   
   // 2. CÁLCULO DEL TOTAL CON DESCUENTO
-  const montoDescuento = infoDescuento.aplica 
-    ? (subtotal * infoDescuento.detalle.porcentaje) / 100 
-    : 0;
-  const totalPrecio = subtotal - montoDescuento;
+  // const montoDescuento = infoDescuento.aplica 
+  //   ? (subtotal * infoDescuento.detalle.porcentaje) / 100 
+  //   : 0;
+  // const totalPrecio = subtotal - montoDescuento;
 
   const totalDuracionMin = serviciosSeleccionados.reduce(
     (sum, s) => sum + s.cantTurnos * 45,
@@ -101,7 +109,7 @@ export default function Precio({
       horaInicio: bloquesSeleccionados[0].inicio,
       duracion: totalDuracionMin,
       servicios: serviciosSeleccionados.map((s) => s.codServicio),
-      idDescuento: infoDescuento.aplica ? infoDescuento.detalle.idDescuento : null, // Mandamos el ID al back
+      // idDescuento: infoDescuento.aplica ? infoDescuento.detalle.idDescuento : null, // Mandamos el ID al back
     };
 
     try {
@@ -115,7 +123,7 @@ export default function Precio({
       });
 
       if (!res.ok) throw new Error(`Error: ${res.statusText}`);
-
+      
       setStep(4);
       setShowModal(true);
     } catch (err) {
@@ -161,8 +169,8 @@ export default function Precio({
         {/* 4. UI DEL DESCUENTO */}
         {infoDescuento.aplica && (
           <div className="alert alert-success p-2 small mb-2">
-            <strong>¡Descuento aplicado!</strong> ({infoDescuento.detalle.porcentaje}%) <br/>
-            {infoDescuento.detalle.descripcion}
+            <strong>¡Descuento aplicado!</strong> ({infoDescuento.porcentaje}%) <br/>
+            {/* {infoDescuento.detalle.descripcion} */}
           </div>
         )}
 
@@ -170,13 +178,19 @@ export default function Precio({
             <span>Subtotal:</span>
             <span>{subtotal} ARS</span>
         </div>
-        {infoDescuento.aplica && (
+
+        {precioFinal !== null ? (
+          <h5 className="mt-2">Total (definitivo): {precioFinal} ARS</h5>
+        ) : (
+          <h5 className="mt-2">Total (estimado): {subtotal} ARS</h5>
+        )}
+        {/* {infoDescuento.aplica && (
             <div className="d-flex justify-content-between text-success">
                 <span>Descuento:</span>
                 <span>- {montoDescuento} ARS</span>
             </div>
         )}
-        <h5 className="mt-2">Total: {totalPrecio} ARS</h5>
+        <h5 className="mt-2">Total: {totalPrecio} ARS</h5> */}
         
         <small className="d-block">Duración: {horas}h {minutos}min</small>
         {peluquero && <small className="d-block">Peluquero: {peluquero.nombre}</small>}
