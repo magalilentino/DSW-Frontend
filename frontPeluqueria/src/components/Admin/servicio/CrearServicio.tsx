@@ -8,6 +8,8 @@ export interface NuevoServicio {
   descripcion: string;
   cantTurnos: number;
   precio: number;
+  activo: boolean;
+  requiereTono: boolean;
 }
 
 const formatDuration = (cantTurnos: number): string => {
@@ -27,6 +29,8 @@ export default function CrearServicio() {
     descripcion: "",
     cantTurnos: 1,
     precio: 0,
+    activo: true,
+    requiereTono: false,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -218,6 +222,26 @@ export default function CrearServicio() {
               // onChange={handleChange}
               // required
             />
+          </div>
+
+          <div className="mb-3">
+            <label htmlFor="activo" className="form-label">
+              Tono
+            </label>
+            <div className="form-check">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="requiereTono"
+                checked={formData.requiereTono}
+                onChange={(e) => {
+                  setFormData({ ...formData, requiereTono: e.target.checked });
+                }}
+              />
+              <label className="form-check-label" htmlFor="requiereTono">
+                Requiere Tono
+              </label>
+            </div>
           </div>
 
           <div className="d-flex justify-content-end mt-4 gap-2">

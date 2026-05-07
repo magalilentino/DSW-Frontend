@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 
-// Definición de la estructura de los datos del servicio
 export interface ServicioData {
   codServicio: number;
   nombreServicio: string;
@@ -10,6 +9,7 @@ export interface ServicioData {
   cantTurnos: number; // Duración en unidades de turno (45 min)
   precio: number;
   activo: boolean;
+  requiereTono: boolean;
 }
 
 // Función auxiliar para formatear la duración
@@ -26,15 +26,12 @@ const formatDuration = (cantTurnos: number): string => {
 function ModificarServicio() {
   const { codServicio } = useParams<{ codServicio: string }>(); // Obtiene el ID de la URL
   const navigate = useNavigate();
-
-  // Estado para los datos del formulario, inicializado como null hasta que se carguen
   const [formData, setFormData] = useState<ServicioData | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  // 1. Efecto para cargar los datos del servicio al montar el componente
   useEffect(() => {
     if (!codServicio) {
       setError("ID de servicio no proporcionado.");
@@ -44,7 +41,6 @@ function ModificarServicio() {
 
     const fetchServicio = async () => {
       try {
-        // Ajusta la ruta si tu API requiere un endpoint diferente para buscar por ID
         const res = await fetch(
           `http://localhost:3000/api/servicio/findById/${codServicio}`,
         );
@@ -73,7 +69,6 @@ function ModificarServicio() {
     fetchServicio();
   }, [codServicio]);
 
-  // 2. Manejador para actualizar el estado del formulario
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -82,13 +77,6 @@ function ModificarServicio() {
     const { name, value } = e.target;
 
     let newValue: string | number = value;
-
-    // Para 'cantTurnos' y 'precio', nos aseguramos de que sean números
-    // if (name === "cantTurnos" || name === "precio") {
-    //   // Usamos parseFloat/parseInt para permitir que el campo se vacíe temporalmente
-    //   // y se maneje la entrada de números.
-    //   newValue = parseInt(value) || 0;
-    // }
 
     if (name === "cantTurnos" || name === "precio") {
       const parsed = parseFloat(value);
@@ -101,7 +89,6 @@ function ModificarServicio() {
     });
   };
 
-  // 3. Manejador para enviar la actualización
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -124,7 +111,7 @@ function ModificarServicio() {
       const res = await fetch(
         `http://localhost:3000/api/servicio/${codServicio}`,
         {
-          method: "PUT", // Usamos PUT para la actualización
+          method: "PUT", 
           headers: {
             "Content-Type": "application/json",
           },
@@ -143,7 +130,6 @@ function ModificarServicio() {
         `Servicio "${formData.nombreServicio}" actualizado con éxito!`,
       );
 
-      // Opcional: Redirigir al listado después de un breve momento
       setTimeout(() => {
         navigate("/servicios");
       }, 1500);
@@ -154,7 +140,6 @@ function ModificarServicio() {
     }
   };
 
-  // 4. Renderizado de estados
   if (loading) {
     return (
       <div className="container my-5 text-center">
@@ -178,7 +163,6 @@ function ModificarServicio() {
     );
   }
 
-  // 5. Renderizado del formulario de edición
   return (
     <motion.div
       className="admin-form my-4 container"
@@ -299,6 +283,26 @@ function ModificarServicio() {
                 />
                 <label className="form-check-label" htmlFor="activo">
                   Activo
+                </label>
+              </div>
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="activo" className="form-label">
+                Tono
+              </label>
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id="requiereTono"
+                  checked={formData.requiereTono}
+                  onChange={(e) => {
+                    setFormData({ ...formData, requiereTono: e.target.checked });
+                  }}
+                />
+                <label className="form-check-label" htmlFor="requiereTono">
+                  Requiere Tono
                 </label>
               </div>
             </div>
