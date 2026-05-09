@@ -1,5 +1,0 @@
-{
-	"devDependencies": {
-		"vite-plugin-css-injected-by-js": "^5.0.1"
-	}
-}
