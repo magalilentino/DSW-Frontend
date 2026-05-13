@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import "../../../styles/Admin.css";
+import { apiFetch } from "../../../shared/apiFetch.ts";
 
 interface RegisterResponse {
   message: string;
@@ -26,9 +27,8 @@ export default function CrearPeluquero() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:3000/api/persona/register", {
+      const data = await apiFetch("/persona/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           dni,
           clave,
@@ -40,10 +40,7 @@ export default function CrearPeluquero() {
         }),
       });
 
-      const data: RegisterResponse = await res.json();
-      if (!res.ok) throw new Error(data.message || "Error en el registro");
-
-      setSuccess("Registro exitoso");
+      setSuccess(data.message);
       setTimeout(() => navigate("/admin"), 1500);
     } catch (err) {
       setError(

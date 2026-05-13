@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import "../../../styles/Admin.css";
+import { apiFetch } from "../../../shared/apiFetch.ts";
 
 export default function ActualizarCategoria() {
   const { idCategoria } = useParams();
@@ -12,16 +13,18 @@ export default function ActualizarCategoria() {
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/categoria/${idCategoria}`)
-      .then((res) => res.json())
-      .then((data) => {
+    const fetchCategoria = async () => {
+      try {
+        const data = await apiFetch(`/categoria/${idCategoria}`)
         setNombreCategoria(data.data.nombreCategoria);
-        setLoading(false);
-      })
-      .catch(() => {
+      } catch (error) {
         setError("No se pudo cargar la categoría.");
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+      
+    fetchCategoria();
   }, [idCategoria]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,20 +34,14 @@ export default function ActualizarCategoria() {
     setLoading(true);
 
     try {
-      const res = await fetch(
-        `http://localhost:3000/api/categoria/${idCategoria}`,
+      const data = await apiFetch(`/categoria/${idCategoria}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ nombreCategoria }),
         },
       );
 
-      const data = await res.json();
-      if (!res.ok)
-        throw new Error(data.message || "Error al actualizar la categoría");
-
-      setSuccess("Categoría actualizada correctamente");
+      setSuccess(data.message);
       setTimeout(() => navigate("/categoria"), 1500);
     } catch (err: any) {
       setError(err.message);

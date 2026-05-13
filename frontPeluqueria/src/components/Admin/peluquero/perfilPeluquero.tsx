@@ -2,6 +2,7 @@ import { useAuth } from "../../../components/general/AuthContext";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../../styles/perfil.css";
+import { apiFetch } from "../../../shared/apiFetch.ts";
 
 interface Persona {
   idPersona: number;
@@ -28,12 +29,7 @@ export default function PerfilPeluquero() {
 
     const fetchData = async () => {
       try {
-        const resPerfil = await fetch(
-          `http://localhost:3000/api/persona/${user.idPersona}`,
-          { headers: { Authorization: `Bearer ${user.token}` } },
-        );
-        const dataPerfil = await resPerfil.json();
-        if (!resPerfil.ok) throw new Error(dataPerfil.message);
+        const dataPerfil = await apiFetch(`/persona/${user.idPersona}`);
 
         setFormData(dataPerfil);
       } catch (err: any) {
@@ -53,22 +49,15 @@ export default function PerfilPeluquero() {
   const handleSave = async () => {
     if (!user) return;
     try {
-      const res = await fetch(
-        `http://localhost:3000/api/persona/peluquero/${user.idPersona}`,
+      const data = await apiFetch(
+        `/persona/peluquero/${user.idPersona}`,
         {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.token}`,
-          },
           body: JSON.stringify(formData),
         },
       );
 
-      const response = await res.json();
-      if (!res.ok) throw new Error(response.message);
-
-      setSuccess("Perfil actualizado correctamente");
+      setSuccess(data.message);
       setTimeout(() => setSuccess(""), 3000);
 
       // Opcional: recargar datos tras guardar

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import "../../../styles/Admin.css";
+import { apiFetch } from "../../../shared/apiFetch.ts";
 
 export default function CrearMarca() {
   const [nombre, setNombre] = useState("");
@@ -17,19 +18,12 @@ export default function CrearMarca() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:3000/api/marca", {
+      const data = await apiFetch("/marca", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nombre }),
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Error al crear la marca");
-      }
-
-      setSuccess("Marca creada correctamente");
+      setSuccess(data.message);
       setTimeout(() => navigate("/marca"), 1500);
     } catch (err: any) {
       setError(err.message);

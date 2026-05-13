@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../../../styles/Admin.css";
+import "../../../styles/Registros.css";
+import { apiFetch } from "../../../shared/apiFetch.ts";
 
 interface ProdMar {
   idPM: number;
@@ -48,52 +50,41 @@ const ModificarAtSer: React.FC = () => {
   const [idAtencion, setIdAtencion] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const token = localStorage.getItem("token");
 
   const fetchMarcas = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/marca", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("Fallo la carga de marcas.");
-      const responseData = await res.json();
-
-      const marcasArray = responseData.data || [];
+      const data = await apiFetch("/marca");
+     
+      const marcasArray = data.data || [];
 
       if (Array.isArray(marcasArray)) {
         setMarcas(marcasArray);
       } else {
-        console.error(
-          "La propiedad 'data' de la API de marcas no es un array.",
-        );
+        setError("La propiedad 'data' de la API de marcas no es un array.");
         setMarcas([]);
       }
     } catch (err) {
-      console.error(err);
+      setError("Error al buscar las marcas" + err);
     }
   }, [token]);
 
   const fetchCategorias = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/categoria", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("Fallo la carga de categorías.");
-      const responseData = await res.json();
-
-      const categoriaArray = responseData.data || [];
+      const data = await apiFetch("/categoria");
+  
+      const categoriaArray = data.data || [];
 
       if (Array.isArray(categoriaArray)) {
         setCategorias(categoriaArray);
       } else {
-        console.error(
-          "La propiedad 'data' de la API de categorias no es un array.",
-        );
+        setError("La propiedad 'data' de la API de categorias no es un array.");
         setCategorias([]);
       }
     } catch (err) {
-      console.error(err);
+      setError("Error al buscar las categorias" + err);
     }
   }, [token]);
 
@@ -103,51 +94,35 @@ const ModificarAtSer: React.FC = () => {
     if (filtroCategoria) query.append("idCategoria", filtroCategoria);
 
     try {
-      const url = `http://localhost:3000/api/prodMar/listarProductos?${query.toString()}`;
-      const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const data = await apiFetch( `/prodMar/listarProductos?${query.toString()}`);
 
-      if (!res.ok) throw new Error("Fallo la carga de productos disponibles.");
-      const data = await res.json();
       setProductosDisponibles(data);
     } catch (err) {
-      console.error(err);
       setError("Error al cargar productos disponibles.");
     }
   }, [filtroMarca, filtroCategoria, token]);
 
   const fetchTonos = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/tono", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.ok) throw new Error("Fallo la carga de tonos disponibles.");
-      const data = await res.json();
+      const data = await apiFetch("/tono");
 
       setTonosDisponibles(data.data || data);
     } catch (err) {
-      console.error(err);
       setError((prev) => prev + " Error al cargar tonos.");
     }
   }, [token]);
 
   const fetchAtencionId = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/api/atSer/${idAtSer}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("Fallo la carga del AtSer.");
-      const data = await res.json();
+      const data = await apiFetch(`/atSer/${idAtSer}`);
 
       if (data.idAtencion) {
         setIdAtencion(data.idAtencion.toString());
       } else {
-        console.error("No se encontró idAtencion en la respuesta del AtSer.");
+        setError("No se encontró idAtencion en la respuesta del AtSer.");
       }
     } catch (err) {
-      console.error("Error al obtener el idAtencion:", err);
+      setError("Error al obtener el idAtencion:" + err);
     }
   };
 
@@ -162,7 +137,7 @@ const ModificarAtSer: React.FC = () => {
       fetchMarcas(),
       fetchCategorias(),
     ])
-      .catch((err) => console.error("Error en Promise.all:", err))
+      .catch((err: any) => {setError("Error al cargar datos iniciales: " + err.message);})
       .finally(() => setLoading(false));
   }, [fetchProductos, fetchTonos, fetchMarcas, fetchCategorias]);
 
@@ -211,7 +186,7 @@ const ModificarAtSer: React.FC = () => {
     if (idAtencion) {
       navigate(`/atencion/serviciosDeAtencion/${idAtencion}`);
     } else {
-      alert("No se pudo determinar la Atención para regresar.");
+      setError("No se pudo determinar la Atención para regresar.");
     }
   };
 
@@ -222,7 +197,7 @@ const ModificarAtSer: React.FC = () => {
     }));
 
     if (productosAEnviar.length === 0) {
-      alert("Debe seleccionar al menos un producto con cantidad.");
+      setError("Debe seleccionar al menos un producto con cantidad.");
       return;
     }
 
@@ -232,28 +207,18 @@ const ModificarAtSer: React.FC = () => {
     };
 
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/prodUt/registrarProdsUt/${idAtSer}`,
+      const data = await apiFetch(`/prodUt/registrarProdsUt/${idAtSer}`,
         {
           method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
           body: JSON.stringify(bodyToSend),
         },
       );
-
-      if (!response.ok)
-        throw new Error(
-          "Error al guardar los productos utilizados y/o el tono.",
-        );
-
-      alert("Detalles del servicio actualizados exitosamente.");
+      
+      setSuccess(data.message);
       navigate(-1);
     } catch (error) {
       console.error(error);
-      alert("Error al procesar el guardado");
+      setError("Error al procesar el guardado");
     }
   };
 
@@ -267,6 +232,7 @@ const ModificarAtSer: React.FC = () => {
 
   return (
     <div className="admin-servicio my-4 container-fluid">
+    
       <motion.div
         className="card p-4"
         initial={{ opacity: 0, y: 20 }}
@@ -283,6 +249,8 @@ const ModificarAtSer: React.FC = () => {
             Volver
           </button>
         </div>
+
+        {success && <p className="text-success">{success}</p>}
 
         {/* Filtros */}
         <div className="row mb-4">

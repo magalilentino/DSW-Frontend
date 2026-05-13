@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import "../../../styles/Admin.css";
+import { apiFetch } from "../../../shared/apiFetch.ts";
 
 export default function CrearDescuento() {
   const [formData, setFormData] = useState({
@@ -19,9 +20,8 @@ export default function CrearDescuento() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:3000/api/descuento", {
+      const data = await apiFetch("/descuento", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           porcentaje: Number(formData.porcentaje),
           cantAtencionNecesaria: Number(formData.cantAtencionNecesaria),
@@ -29,10 +29,7 @@ export default function CrearDescuento() {
         }),
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Error al crear el descuento");
-
-      setSuccess("Descuento configurado correctamente");
+      setSuccess(data.message);
       setTimeout(() => navigate("/descuento"), 1500);
     } catch (err: any) {
       setError(err.message);

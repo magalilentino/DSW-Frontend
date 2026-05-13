@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../../styles/Registros.css";
+import { apiFetch } from "../../../shared/apiFetch.ts";
 
 interface Producto {
   idProducto: number;
@@ -20,9 +21,7 @@ export default function ProductoPage() {
 
   const fetchProductos = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/producto");
-      if (!res.ok) throw new Error("Error al cargar productos");
-      const data = await res.json();
+      const data = await apiFetch("/producto");
       setProductos(data.data || []);
     } catch (err) {
       setError((err as Error).message);
@@ -38,21 +37,12 @@ export default function ProductoPage() {
       )
     ) {
       try {
-        const res = await fetch(
-          `http://localhost:3000/api/producto/${idProducto}`,
+        const data = await apiFetch(`/producto/${idProducto}`,
           {
             method: "DELETE",
           },
         );
-
-        if (!res.ok) {
-          const errorData = await res.json();
-          throw new Error(
-            errorData.message || "Error al eliminar el producto.",
-          );
-        }
-
-        const data = await res.json();
+        
         setSuccessMessage(data.message);
 
         setProductos((prevProductos) =>

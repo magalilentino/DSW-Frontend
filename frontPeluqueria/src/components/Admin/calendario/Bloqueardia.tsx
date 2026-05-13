@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom"; // Importamos para la navegación
 import { CalendarioDias } from "../../reserve/Calendar.tsx";
 import { useAuth } from "../../general/AuthContext.tsx";
+import { apiFetch } from "../../../shared/apiFetch.ts";
 
 interface BloqueAgenda {
   hora_inicio: string;
@@ -28,14 +29,14 @@ export default function BloquearAgenda() {
   const fetchAgenda = async () => {
     if (!diaSeleccionado || !user?.idPersona) return;
     try {
-      const res = await fetch(
-        `http://localhost:3000/api/bloque/estado-agenda?fecha=${diaSeleccionado}&peluqueroId=${user.idPersona}`,
-        { headers: { Authorization: `Bearer ${user.token}` } },
-      );
-      const data = await res.json();
+      const data = await apiFetch(`/bloque/estado-agenda?fecha=${diaSeleccionado}&peluqueroId=${user.idPersona}`);
+      
       setBloques(data);
     } catch (err) {
-      console.error(err);
+      setMensaje({
+          texto: "Error al procesar agenda",
+          tipo: "error",
+        });
     }
   };
 
@@ -58,12 +59,8 @@ export default function BloquearAgenda() {
   const handleGuardarBloqueo = async (forzar = false) => {
     if (!diaSeleccionado || !user?.idPersona) return;
     try {
-      const res = await fetch("http://localhost:3000/api/bloque/bloqueodia", {
+      const data = await apiFetch("/bloque/bloqueodia", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-        },
         body: JSON.stringify({
           peluqueroId: user.idPersona,
           fecha: diaSeleccionado,
@@ -73,15 +70,13 @@ export default function BloquearAgenda() {
         }),
       });
 
-      const data = await res.json();
-
-      if (res.status === 409) {
+      if (data.conflictos && data.conflictos.length>0) {
         setConflictos(data.conflictos);
         setMensaje({
           texto: "Hay clientes citados en esos horarios.",
           tipo: "warning",
         });
-      } else if (res.ok) {
+      } else {
         setMensaje({
           texto: "Bloqueo realizado correctamente.",
           tipo: "success",

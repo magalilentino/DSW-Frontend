@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../../styles/Admin.css";
 import { motion } from "framer-motion";
+import { apiFetch } from "../../../shared/apiFetch.ts";
 
 interface ProdMar {
   idPM: number;
@@ -28,9 +29,18 @@ export default function CrearTono() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/prodMar")
-      .then((res) => res.json())
-      .then((data) => setProductosMar(data.data || []));
+    const fetchProdMar = async () => {
+      try {
+        const data = await apiFetch("/prodMar")
+        setProductosMar(data.data || []);
+      } catch (err) {
+        setError((err as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProdMar();
   }, []);
 
   const isSelected = (idPM: number) =>
@@ -79,15 +89,12 @@ export default function CrearTono() {
     e.preventDefault();
     try {
       const payload = { nombre, formulas: formulaItems };
-      const resTono = await fetch("http://localhost:3000/api/tono", {
+      const data = await apiFetch("/tono", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
-      if (!resTono.ok) throw new Error("Error al crear el tono");
-
-      setSuccess("Tono creado correctamente");
+      setSuccess(data.message);
       setTimeout(() => navigate("/tono"), 1500);
     } catch (err) {
       setError((err as Error).message);

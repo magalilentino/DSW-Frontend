@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../../styles/Registros.css";
+import { apiFetch } from "../../../shared/apiFetch.ts";
 
 interface Descuento {
   idDescuento: number;
@@ -18,9 +19,7 @@ export default function DescuentoPage() {
 
   const fetchDescuentos = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/descuento");
-      if (!res.ok) throw new Error("Error al cargar descuentos");
-      const data = await res.json();
+      const data = await apiFetch("/descuento");
       setDescuentos(data.data || []);
     } catch (err) {
       setError((err as Error).message);
@@ -35,14 +34,11 @@ export default function DescuentoPage() {
         setError(null);
         setSuccessMessage(null);
 
-        const res = await fetch(`http://localhost:3000/api/descuento/${idDescuento}`, {
+        const data = await apiFetch(`/descuento/${idDescuento}`, {
           method: "DELETE",
         });
 
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.mensaje || "Error al eliminar el descuento");
-
-        setSuccessMessage(data.mensaje);
+        setSuccessMessage(data.message);
         setDescuentos((prev) => prev.filter((d) => d.idDescuento !== idDescuento));
       } catch (err) {
         setError((err as Error).message);

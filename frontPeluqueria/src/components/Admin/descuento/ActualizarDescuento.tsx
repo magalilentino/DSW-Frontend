@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { apiFetch } from "../../../shared/apiFetch.ts";
 
 export default function ActualizarDescuento() {
   const { idDescuento } = useParams();
@@ -15,30 +16,32 @@ export default function ActualizarDescuento() {
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/descuento/${idDescuento}`)
-      .then((res) => res.json())
-      .then((data) => {
+    const fetchDescuento = async () => {
+      try {
+        const descuentoData = await apiFetch(`/descuento/${idDescuento}`);
         setFormData({
-          porcentaje: data.data.porcentaje,
-          cantAtencionNecesaria: data.data.cantAtencionNecesaria,
-          estado: data.data.estado
+          porcentaje: descuentoData.data.porcentaje,
+          cantAtencionNecesaria: descuentoData.data.cantAtencionNecesaria,
+          estado: descuentoData.data.estado,
         });
+      } catch (err: any) {
+        setError("No se pudo cargar el descuento: " + err.message);
+      } finally {
         setLoading(false);
-      })
-      .catch(() => {
-        setError("No se pudo cargar el descuento.");
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchDescuento();
   }, [idDescuento]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const res = await fetch(`http://localhost:3000/api/descuento/${idDescuento}`, {
+      const data = await apiFetch(`/descuento/${idDescuento}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           porcentaje: Number(formData.porcentaje),
           cantAtencionNecesaria: Number(formData.cantAtencionNecesaria),
@@ -46,9 +49,7 @@ export default function ActualizarDescuento() {
         }),
       });
 
-      if (!res.ok) throw new Error("Error al actualizar");
-
-      setSuccess("Descuento actualizado correctamente");
+      setSuccess(data.message);
       setTimeout(() => navigate("/descuento"), 1500);
     } catch (err: any) {
       setError(err.message);
@@ -65,17 +66,17 @@ export default function ActualizarDescuento() {
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label className="form-label">Porcentaje (%)</label>
-              <input type="number" className="form-control" value={formData.porcentaje} 
-                onChange={(e) => setFormData({...formData, porcentaje: e.target.value})} />
+              <input type="number" className="form-control" value={formData.porcentaje}
+                onChange={(e) => setFormData({ ...formData, porcentaje: e.target.value })} />
             </div>
             <div className="mb-3">
               <label className="form-label">Frecuencia de visitas</label>
-              <input type="number" className="form-control" value={formData.cantAtencionNecesaria} 
-                onChange={(e) => setFormData({...formData, cantAtencionNecesaria: e.target.value})} />
+              <input type="number" className="form-control" value={formData.cantAtencionNecesaria}
+                onChange={(e) => setFormData({ ...formData, cantAtencionNecesaria: e.target.value })} />
             </div>
             <div className="mb-3 form-check">
               <input type="checkbox" className="form-check-input" id="estado" checked={formData.estado}
-                onChange={(e) => setFormData({...formData, estado: e.target.checked})} />
+                onChange={(e) => setFormData({ ...formData, estado: e.target.checked })} />
               <label className="form-check-label" htmlFor="estado">Activo</label>
             </div>
             {error && <p className="text-danger">{error}</p>}

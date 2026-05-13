@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import "../../../styles/Admin.css";
+import "../../../styles/Registros.css";
+import { apiFetch } from "../../../shared/apiFetch.ts";
 
 interface AtSer {
   idAtSer: number;
@@ -16,6 +18,7 @@ export default function ServiciosDeAtencion() {
   const [descripcion, setDescripcion] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const location = useLocation();
 
   useEffect(() => {
@@ -25,23 +28,18 @@ export default function ServiciosDeAtencion() {
       return;
     }
 
-    fetch(`http://localhost:3000/api/atSer/${idAtencion}/serviciosPorAtencion`)
-      .then((res) => {
-        if (!res.ok)
-          throw new Error(
-            `Error ${res.status}: No autorizado o recurso no encontrado.`,
-          );
-        return res.json();
-      })
-      .then((data) => {
-        setAtSer(data.data || []);
+    const fetchServicios = async () => {
+      try {
+        const atSerData = await apiFetch(`/atSer/${idAtencion}/serviciosPorAtencion`);
+        setAtSer(atSerData.data || []);
+      } catch (err: any) {
+        setError("No se pudo cargar la lista de servicios: " + err.message);
+      } finally {
         setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error al cargar servicios:", err);
-        setError("No se pudo cargar la lista de servicios.");
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchServicios();
   }, [idAtencion, location]);
 
   const handleModificar = (idAtSer: number) => {
@@ -52,26 +50,17 @@ export default function ServiciosDeAtencion() {
     if (!idAtencion) return;
 
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `http://localhost:3000/api/atencion/finalizar/${idAtencion}`,
+      const data = await apiFetch(`/atencion/finalizar/${idAtencion}`,
         {
           method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
           body: JSON.stringify({ descripcion }),
         },
       );
 
-      if (!response.ok) throw new Error("Error al finalizar la atención.");
-
-      alert("Atención y servicios registrados como finalizados exitosamente.");
+      setSuccess(data.message);
       navigate("/atencion");
     } catch (error) {
-      console.error("Error al finalizar atención:", error);
-      alert("Error al registrar la atención como finalizada.");
+      setError("Error al registrar la atención como finalizada.");
     }
   };
 
@@ -94,7 +83,8 @@ export default function ServiciosDeAtencion() {
         </div>
 
         {loading && <p>Cargando servicios...</p>}
-        {error && <p className="text-danger">Error: {error}</p>}
+        {error && <p className="error">Error: {error}</p>}
+        {success && <p className="success">{success}</p>}
 
         {!loading && !error && (
           <>

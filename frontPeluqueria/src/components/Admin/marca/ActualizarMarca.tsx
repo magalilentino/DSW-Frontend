@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import "../../../styles/Admin.css";
+import { apiFetch } from "../../../shared/apiFetch.ts";
 
 export default function ActualizarMarca() {
   const { idMarca } = useParams();
@@ -12,16 +13,18 @@ export default function ActualizarMarca() {
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/marca/${idMarca}`)
-      .then((res) => res.json())
-      .then((data) => {
+    const fetchMarca = async () => {
+      try {
+        const data = await apiFetch(`/marca/${idMarca}`);
         setNombre(data.data.nombre);
+      } catch (err) {
+        setError((err as Error).message || "No se pudo cargar la marca.");
+      } finally {
         setLoading(false);
-      })
-      .catch(() => {
-        setError("No se pudo cargar la marca.");
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchMarca();
   }, [idMarca]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,17 +34,12 @@ export default function ActualizarMarca() {
     setLoading(true);
 
     try {
-      const res = await fetch(`http://localhost:3000/api/marca/${idMarca}`, {
+      const data = await apiFetch(`/marca/${idMarca}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nombre }),
       });
 
-      const data = await res.json();
-      if (!res.ok)
-        throw new Error(data.message || "Error al actualizar la marca");
-
-      setSuccess("Marca actualizada correctamente");
+      setSuccess(data.message);
       setTimeout(() => navigate("/marca"), 1500);
     } catch (err: any) {
       setError(err.message);

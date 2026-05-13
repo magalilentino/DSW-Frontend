@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../../styles/Registros.css";
+import { apiFetch } from "../../../shared/apiFetch.ts";
 
 interface Formula {
   idFormula: number;
@@ -23,14 +24,10 @@ export default function VerFormulasTono() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const tonoRes = await fetch(`http://localhost:3000/api/tono/${idTono}`);
-        const tonoData = await tonoRes.json();
+        const tonoData = await apiFetch(`/tono/${idTono}`);
         setNombreTono(tonoData.data.nombre);
 
-        const formulasRes = await fetch(
-          `http://localhost:3000/api/formula/formulasPorTono/${idTono}`,
-        );
-        const formulasData = await formulasRes.json();
+        const formulasData = await apiFetch(`/formula/formulasPorTono/${idTono}`);
         setFormulas(formulasData.data || []);
       } catch (err) {
         setError("Error al cargar las fórmulas.");

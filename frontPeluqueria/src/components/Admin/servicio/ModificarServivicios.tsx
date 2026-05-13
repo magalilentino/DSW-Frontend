@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
+import { apiFetch } from "../../../shared/apiFetch.ts";
 
 export interface ServicioData {
   codServicio: number;
@@ -41,17 +42,9 @@ function ModificarServicio() {
 
     const fetchServicio = async () => {
       try {
-        const res = await fetch(
-          `http://localhost:3000/api/servicio/findById/${codServicio}`,
-        );
+        const data = await apiFetch(`/servicio/findById/${codServicio}`);
 
-        if (!res.ok) {
-          throw new Error("No se pudo cargar el servicio.");
-        }
-
-        const data = await res.json();
-
-        // Asumiendo que 'data.data' contiene el objeto ServicioData
+        // 'data.data' contiene el objeto ServicioData
         if (data.data) {
           setFormData(data.data);
         } else {
@@ -108,27 +101,14 @@ function ModificarServicio() {
     }
 
     try {
-      const res = await fetch(
-        `http://localhost:3000/api/servicio/${codServicio}`,
+      const data = await apiFetch(`/servicio/${codServicio}`,
         {
           method: "PUT", 
-          headers: {
-            "Content-Type": "application/json",
-          },
-          // Enviamos los datos del formulario, excluyendo elS si no debe ir en el body
           body: JSON.stringify(formData),
         },
       );
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Error al actualizar el servicio.");
-      }
-
-      setSuccess(
-        `Servicio "${formData.nombreServicio}" actualizado con éxito!`,
-      );
+      setSuccess(data.message);
 
       setTimeout(() => {
         navigate("/servicios");

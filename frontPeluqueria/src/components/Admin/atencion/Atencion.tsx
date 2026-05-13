@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import "../../../styles/Admin.css";
+import "../../../styles/Registros.css";
+import { apiFetch } from "../../../shared/apiFetch.ts";
 
 interface Atencion {
   idAtencion: number;
@@ -17,30 +19,24 @@ export default function AtencionPage() {
   const [atenciones, setAtenciones] = useState<Atencion[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const fetchPendientes = async () => {
+      try {
+        const atencionesData = await apiFetch("/atencion/pendientes");
+        setAtenciones(atencionesData.data || []);
+      } catch (err: any) {
+        setError("No se pudo cargar la lista de atenciones: " + err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    fetch("http://localhost:3000/api/atencion/pendientes", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("No autorizado");
-        return res.json();
-      })
-      .then((data) => {
-        setAtenciones(data.data || []);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError("No se pudo cargar la lista de atenciones.");
-        setLoading(false);
-      });
+    fetchPendientes();
   }, []);
+
 
   const handleFinalizar = (idAtencion: number) => {
     navigate(`/atencion/serviciosDeAtencion/${idAtencion}`);
@@ -48,25 +44,16 @@ export default function AtencionPage() {
 
   const handleCancelar = async (idAtencion: number) => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `http://localhost:3000/api/atencion/cancelar/${idAtencion}`,
+      const data = await apiFetch(`/atencion/cancelar/${idAtencion}`,
         {
           method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
         },
       );
 
-      if (!response.ok) throw new Error("Error al cancelar la atención.");
-
       setAtenciones((prev) => prev.filter((a) => a.idAtencion !== idAtencion));
-      alert("Atención cancelada exitosamente.");
+      setSuccess(data.message);
     } catch (error) {
-      console.error(error);
-      alert("Error al cancelar la atención.");
+      setError("Error al cancelar la atención.");
     }
   };
 
@@ -90,6 +77,7 @@ export default function AtencionPage() {
 
         {loading && <p>Cargando atenciones...</p>}
         {error && <p className="text-danger">Error: {error}</p>}
+        {success && <p className="text-success">{success}</p>}
 
         {!loading && !error && (
           <>
@@ -113,7 +101,7 @@ export default function AtencionPage() {
                       <small className="text-muted">
                         {new Date(a.fecha).toLocaleDateString("es-AR")} |{" "}
                         {new Date(a.horaInicio).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", })} -{" "}
-                        {new Date(a.horaFin).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit",})}
+                        {new Date(a.horaFin).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", })}
                       </small>
                     </div>
                     <div className="service-actions d-flex flex-column gap-2 flex-shrink-0">

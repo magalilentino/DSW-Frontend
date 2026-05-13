@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import "../../../styles/Admin.css";
+import { apiFetch } from "../../../shared/apiFetch.ts";
 
 interface Marca {
   idMarca: number;
@@ -25,14 +26,21 @@ export default function CrearProducto() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/categoria")
-      .then((res) => res.json())
-      .then((data) => setCategorias(data.data || []));
+    const fetchData = async () => {
+      try {
+        const categoriasData = await apiFetch("/categoria");
+        setCategorias(categoriasData.data || []);
 
-    fetch("http://localhost:3000/api/marca")
-      .then((res) => res.json())
-      .then((data) => setMarcas(data.data || []));
+        const marcasData = await apiFetch("/marca");
+        setMarcas(marcasData.data || []);
+      } catch (err: any) {
+        setError("Error al cargar categorías o marcas:" + err.message);
+      }
+    };
+
+    fetchData();
   }, []);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,34 +50,20 @@ export default function CrearProducto() {
 
     try {
       const payload = { descripcion, categoria: categoriaId };
-      const res = await fetch("http://localhost:3000/api/producto", {
+      const data = await apiFetch("/producto", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Error al crear el producto");
-      }
       const idProducto = data.data.idProducto;
-      const res2 = await fetch(
-        `http://localhost:3000/api/prodMar/${idProducto}`,
+      const data2 = await apiFetch(`/prodMar/${idProducto}`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ marcasIds }),
         },
       );
 
-      const data2 = await res2.json();
-
-      if (!res2.ok) {
-        throw new Error(data2.message || "Error al crear el producto");
-      }
-
-      setSuccess("Producto creado correctamente");
+      setSuccess(data2.message);
       setTimeout(() => navigate("/producto"), 1500);
     } catch (err: any) {
       setError(err.message);

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../../styles/Registros.css";
+import { apiFetch } from "../../../shared/apiFetch.ts";
 
 interface Tono {
   idTono: number;
@@ -17,13 +18,12 @@ export default function TonoPage() {
   const [tonos, setTonos] = useState<Tono[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const fetchTonos = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/tono");
-      if (!res.ok) throw new Error("Error al cargar tonos");
-      const data = await res.json();
+      const data = await apiFetch("/tono");
       setTonos(data.data || []);
     } catch (err) {
       setError((err as Error).message);
@@ -39,21 +39,10 @@ export default function TonoPage() {
       )
     ) {
       try {
-        // if(formulas){
-        //   for (const f of formulas) {
-        //     const resForm = await fetch(`http://localhost:3000/api/formula/${f.idFormula}`, {
-        //       method: "DELETE",
-        //     });
-
-        //     if (!resForm.ok) {
-        //       const data = await resForm.json();
-        //       throw new Error(`Error al borrar la formula ${f.idFormula}: ${data.message}`);
-        //   }}
-        // }
-        const res = await fetch(`http://localhost:3000/api/tono/${idTono}`, {
+        const data = await apiFetch(`/tono/${idTono}`, {
           method: "DELETE",
         });
-        if (!res.ok) throw new Error("Error al borrar el tono");
+        setSuccessMessage(data.message);
         setTonos((prev) => prev.filter((t) => t.idTono !== idTono));
       } catch (err) {
         setError((err as Error).message);
@@ -70,6 +59,9 @@ export default function TonoPage() {
 
   return (
     <div className="registro-page">
+      {successMessage && (
+        <div className="alert alert-success">{successMessage}</div>
+      )}
       <div className="registro-header">
         <button
           className="reservas-back-button"

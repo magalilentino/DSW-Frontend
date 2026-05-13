@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import "../styles/Admin.css";
+import "../styles/Registros.css";
 import Footer from "../components/general/Footer.tsx";
 import { Link } from "react-router-dom";
 import Foto3 from "../assets/foto3.avif";
 import { useAuth } from "../components/general/AuthContext";
+import { apiFetch } from "../shared/apiFetch.ts";
 
 interface Persona {
   nombre: string;
@@ -63,9 +65,10 @@ const Admin = () => {
   const [pendientesHoy, setPendientesHoy] = useState<number>(0);
   const [completadasHoy, setCompletadasHoy] = useState<number>(0);
   const [gananciasHoy, setGananciasHoy] = useState<number>(0);
-  const [turnosHoy, setTurnosHoy] = useState< { hora: string; cliente: string; servicios: string }[] >([]);
-  const [servicios, setServicios] = useState< { codServicio: number; nombreServicio: string }[] >([]);
+  const [turnosHoy, setTurnosHoy] = useState<{ hora: string; cliente: string; servicios: string }[]>([]);
+  const [servicios, setServicios] = useState<{ codServicio: number; nombreServicio: string }[]>([]);
   const [servicioSeleccionado, setServicioSeleccionado] = useState<number | "">("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!user) return;
@@ -73,17 +76,13 @@ const Admin = () => {
     const fetchTurnosHoy = async () => {
       try {
         const url = servicioSeleccionado
-          ? `http://localhost:3000/api/atencion/turnos-hoy?servicio=${servicioSeleccionado}`
-          : "http://localhost:3000/api/atencion/turnos-hoy";
+          ? `/atencion/turnos-hoy?servicio=${servicioSeleccionado}`
+          : "/atencion/turnos-hoy";
 
-        const res = await fetch(url, {
-          headers: { Authorization: `Bearer ${user.token}` },
-        });
-        if (!res.ok) throw new Error("No autorizado");
-        const data = await res.json();
+        const data = await apiFetch(url);
         setTurnosHoy(data); // data: [{hora, cliente, servicios}, ...]
       } catch (err) {
-        console.error("Error al obtener turnos del día:", err);
+        setError("Error al obtener turnos del día:" + err);
       }
     };
 
@@ -95,17 +94,10 @@ const Admin = () => {
 
     const fetchGananciasHoy = async () => {
       try {
-        const res = await fetch(
-          "http://localhost:3000/api/atencion/ganancias-hoy",
-          {
-            headers: { Authorization: `Bearer ${user.token}` },
-          },
-        );
-        if (!res.ok) throw new Error("No autorizado");
-        const data = await res.json();
+        const data = await apiFetch("/atencion/ganancias-hoy");
         setGananciasHoy(data.total);
       } catch (err) {
-        console.error("Error al obtener ganancias del día:", err);
+        setError("Error al obtener ganancias del día:" + err);
       }
     };
 
@@ -117,17 +109,10 @@ const Admin = () => {
 
     const fetchCompletadasHoy = async () => {
       try {
-        const res = await fetch(
-          "http://localhost:3000/api/atencion/completadas-hoy",
-          {
-            headers: { Authorization: `Bearer ${user.token}` },
-          },
-        );
-        if (!res.ok) throw new Error("No autorizado");
-        const data = await res.json();
+        const data = await apiFetch("/atencion/completadas-hoy");
         setCompletadasHoy(data.count);
       } catch (err) {
-        console.error("Error al obtener atenciones completadas de hoy:", err);
+        setError("Error al obtener atenciones completadas de hoy:" + err);
       }
     };
 
@@ -139,17 +124,10 @@ const Admin = () => {
 
     const fetchPendientesHoy = async () => {
       try {
-        const res = await fetch(
-          "http://localhost:3000/api/atencion/pendientes-hoy",
-          {
-            headers: { Authorization: `Bearer ${user.token}` },
-          },
-        );
-        if (!res.ok) throw new Error("No autorizado");
-        const data = await res.json();
+        const data = await apiFetch("/atencion/pendientes-hoy");
         setPendientesHoy(data.count); // Solo usamos el número
       } catch (err) {
-        console.error("Error al obtener atenciones pendientes de hoy:", err);
+        setError("Error al obtener atenciones pendientes de hoy:" + err);
       }
     };
 
@@ -161,17 +139,10 @@ const Admin = () => {
 
     const fetchData = async () => {
       try {
-        const res = await fetch(
-          `http://localhost:3000/api/persona/${user.idPersona}`,
-          {
-            headers: { Authorization: `Bearer ${user.token}` },
-          },
-        );
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Error al obtener datos");
+        const data = await apiFetch(`/persona/${user.idPersona}`);
         setPersona(data);
       } catch (err) {
-        console.error("Error al obtener datos del usuario:", err);
+        setError("Error al obtener datos del usuario:" + err);
       } finally {
         setLoading(false);
       }
@@ -180,21 +151,23 @@ const Admin = () => {
   }, [user]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const fetchServicios = async () => {
+      setLoading(true);
+      setError("");
 
-    fetch("http://localhost:3000/api/servicio/findAll", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setServicios(data.data || []);
-      })
-      .catch((err) => {
-        console.error("Error al cargar servicios", err);
-      });
+      try {
+        const serviciosData = await apiFetch("/servicio/findAll");
+        setServicios(serviciosData.data || []);
+      } catch (err: any) {
+        setError("No se pudo cargar la lista de servicios: " + err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServicios();
   }, []);
+
 
   if (loading) {
     return (
@@ -278,6 +251,7 @@ const Admin = () => {
       </header>
 
       <main className="admin-main">
+        {error && <p className="error">Error: {error}</p>}
         {/* Perfil */}
         <img
           src={Foto3}
@@ -330,22 +304,22 @@ const Admin = () => {
         {/* Próximos Turnos */}
         <section className="turnos-section">
           <h1>Próximos Turnos del Día</h1>
-              <select
-                className="form-select w-auto" //mx-auto para centrar
-                value={servicioSeleccionado}
-                onChange={(e) => setServicioSeleccionado(
-                    e.target.value === "" ? "" : Number(e.target.value)
-                  )
-                }
-              >
-                <option value="">Todos</option>
+          <select
+            className="form-select w-auto" //mx-auto para centrar
+            value={servicioSeleccionado}
+            onChange={(e) => setServicioSeleccionado(
+              e.target.value === "" ? "" : Number(e.target.value)
+            )
+            }
+          >
+            <option value="">Todos</option>
 
-                {servicios.map((s) => (
-                  <option key={s.codServicio} value={s.codServicio}>
-                    {s.nombreServicio}
-                  </option>
-                ))}
-              </select>
+            {servicios.map((s) => (
+              <option key={s.codServicio} value={s.codServicio}>
+                {s.nombreServicio}
+              </option>
+            ))}
+          </select>
           {turnosHoy.length === 0 ? (
             <p className="text-center">No hay turnos para hoy</p>
           ) : (

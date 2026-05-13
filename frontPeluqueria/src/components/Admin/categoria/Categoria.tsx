@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import "../../../styles/Registros.css";
+import { apiFetch } from "../../../shared/apiFetch.ts";
 
 interface Categoria {
   idCategoria: number;
@@ -22,9 +23,7 @@ export default function CategoriaPage() {
 
   const fetchCategorias = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/categoria");
-      if (!res.ok) throw new Error("Error al cargar categorías");
-      const data = await res.json();
+      const data = await apiFetch("/categoria");
       setCategorias(data.data || []);
     } catch (err) {
       setError((err as Error).message);
@@ -43,20 +42,13 @@ export default function CategoriaPage() {
         setError(null);
         setSuccessMessage(null);
 
-        const res = await fetch(
-          `http://localhost:3000/api/categoria/${idCategoria}`,
+        const data = await apiFetch(`/categoria/${idCategoria}`,
           {
             method: "DELETE",
           },
         );
 
-        const data = await res.json();
-
-        if (!res.ok) {
-          throw new Error(data.mensaje || "Error al eliminar la categoría");
-        }
-
-        setSuccessMessage(data.mensaje);
+        setSuccessMessage(data.message);
         setCategorias((prev) =>
           prev.filter((c) => c.idCategoria !== idCategoria),
         );

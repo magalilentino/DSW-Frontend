@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../../styles/Registros.css";
+import { apiFetch } from "../../../shared/apiFetch.ts";
 
 export interface ServicioItem {
   codServicio: number;
@@ -30,9 +31,7 @@ export default function ServiciosPage() {
 
   const fetchServicios = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/servicio/findAllAyD");
-      if (!res.ok) throw new Error("Error al cargar servicios");
-      const data = await res.json();
+      const data = await apiFetch("/servicio/findAllAyD");
       setServicios(data.data || []);
     } catch (err) {
       setError((err as Error).message);
@@ -48,14 +47,11 @@ export default function ServiciosPage() {
       )
     ) {
       try {
-        const res = await fetch(
-          `http://localhost:3000/api/servicio/delete/${codServicio}`,
+        const data = await apiFetch(`/servicio/delete/${codServicio}`,
           {
             method: "DELETE",
           },
         );
-        if (!res.ok) throw new Error("Error al borrar el servicio");
-        const data = await res.json();
         setSuccessMessage(data.message);
         setServicios((prev) =>
           prev.filter((s) => s.codServicio !== codServicio),

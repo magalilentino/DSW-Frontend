@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../../styles/Registros.css";
+import { apiFetch } from "../../../shared/apiFetch.ts";
 
 interface Marca {
   idMarca: number;
@@ -16,9 +17,7 @@ export default function MarcaPage() {
 
   const fetchMarcas = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/marca");
-      if (!res.ok) throw new Error("Error al cargar marcas");
-      const data = await res.json();
+      const data = await apiFetch("/marca");
       setMarcas(data.data || []);
     } catch (err) {
       setError((err as Error).message);
@@ -35,17 +34,11 @@ export default function MarcaPage() {
         setError(null);
         setSuccessMessage(null);
 
-        const res = await fetch(`http://localhost:3000/api/marca/${idMarca}`, {
+        const data = await apiFetch(`/marca/${idMarca}`, {
           method: "DELETE",
         });
 
-        const data = await res.json();
-
-        if (!res.ok) {
-          throw new Error(data.mensaje || "Error al eliminar la marca");
-        }
-
-        setSuccessMessage(data.mensaje);
+        setSuccessMessage(data.message);
         setMarcas((prev) => prev.filter((m) => m.idMarca !== idMarca));
       } catch (err) {
         setError((err as Error).message);

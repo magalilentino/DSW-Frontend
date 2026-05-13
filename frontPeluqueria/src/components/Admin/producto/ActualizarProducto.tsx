@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import "../../../styles/Admin.css";
+import { apiFetch } from "../../../shared/apiFetch.ts";
 
 interface ProdMar {
   idPM: number;
@@ -35,34 +36,35 @@ export default function ActualizarProducto() {
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/categoria")
-      .then((res) => res.json())
-      .then((data) => setCategorias(data.data || []));
+    const fetchData = async () => {
+      try {
+        // Categorías
+        const categoriasData = await apiFetch("/categoria");
+        setCategorias(categoriasData.data || []);
 
-    fetch("http://localhost:3000/api/marca")
-      .then((res) => res.json())
-      .then((data) => setMarcas(data.data || []));
+        // Marcas
+        const marcasData = await apiFetch("/marca");
+        setMarcas(marcasData.data || []);
 
-    fetch(`http://localhost:3000/api/producto/${idProducto}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setDescripcion(data.data.descripcion);
-        setCategoriaId(data.data.categoria?.idCategoria || null);
-        setActivo(data.data.activo);
-        setLoading(false);
-      });
+        // Producto
+        const productoData = await apiFetch(`/producto/${idProducto}`);
+        setDescripcion(productoData.data.descripcion);
+        setCategoriaId(productoData.data.categoria?.idCategoria || null);
+        setActivo(productoData.data.activo);
 
-    fetch(`http://localhost:3000/api/prodMar/marcasPorProd/${idProducto}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setProdMarcIds(data.data.map((pm: ProdMar) => pm.marca.idMarca));
+        // ProdMar
+        const prodMarData = await apiFetch(`/prodMar/marcasPorProd/${idProducto}`);
+        setProdMarcIds(prodMarData.data.map((pm: ProdMar) => pm.marca.idMarca));
+      } catch (err) {
+        setError((err as Error).message || "No se pudo cargar el producto.");
+      } finally {
         setLoading(false);
-      })
-      .catch(() => {
-        setError("No se pudo cargar el producto.");
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchData();
   }, [idProducto]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,33 +75,21 @@ export default function ActualizarProducto() {
     const payload = { descripcion, categoria: categoriaId };
 
     try {
-      const res = await fetch(
-        `http://localhost:3000/api/producto/${idProducto}`,
+      const data = await apiFetch(`/producto/${idProducto}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         },
       );
 
-      const data = await res.json();
-      if (!res.ok)
-        throw new Error(data.message || "Error al actualizar el producto");
-
-      const res2 = await fetch(
-        `http://localhost:3000/api/prodMar/sincronizarProdMar/${idProducto}`,
+      const data2 = await apiFetch(`/prodMar/sincronizarProdMar/${idProducto}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ prodMarcIds }),
         },
       );
 
-      const data2 = await res2.json();
-      if (!res2.ok)
-        throw new Error(data2.message || "Error al actualizar el producto");
-
-      setSuccess("Producto actualizado correctamente");
+      setSuccess(data2.message);
       setTimeout(() => navigate("/producto"), 1500);
     } catch (err: any) {
       setError(err.message);

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import "../../../styles/Admin.css";
+import { apiFetch } from "../../../shared/apiFetch.ts";
 
 export interface NuevoServicio {
   nombreServicio: string;
@@ -36,16 +37,6 @@ export default function CrearServicio() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  // const handleChange = (
-  //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  // ) => {
-  //   const { name, value } = e.target;
-  //   setFormData({
-  //     ...formData,
-  //     [name]: name === "cantTurnos" || name === "precio" ? parseInt(value) || 0 : value,
-  //   });
-  // };
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -69,26 +60,6 @@ export default function CrearServicio() {
     setFormData({ ...formData, [name]: value });
   };
 
-  //   const handleChange = (
-  //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  // ) => {
-  //   const { name, value } = e.target;
-
-  //   let parsedValue = value;
-
-  //   if (name === "precio") {
-  //     // Elimina ceros a la izquierda, excepto si el valor es "0"
-  //     parsedValue = value.replace(/^0+(?!$)/, "");
-  //   }
-
-  //   setFormData({
-  //     ...formData,
-  //     [name]: name === "cantTurnos" || name === "precio"
-  //       ? parseInt(parsedValue) || 0
-  //       : value,
-  //   });
-  // };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -104,17 +75,12 @@ export default function CrearServicio() {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/api/servicio/add", {
+      const data = await apiFetch("/servicio/add", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      const data = await res.json();
-      if (!res.ok)
-        throw new Error(data.message || "Error al crear el servicio.");
-
-      setSuccess(`Servicio "${formData.nombreServicio}" creado con éxito!`);
+      setSuccess(data.message);
       setTimeout(() => navigate("/servicios"), 1500);
     } catch (err) {
       setError((err as Error).message);
