@@ -11,7 +11,7 @@ export const apiFetch = async (url: string, options: RequestInit = {}) => {
     });
     if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.mensaje || "Error en la petición");
+        throw new Error(errorData.mensaje || errorData.message || "Error en la petición");
     }
 
     return res.json();
