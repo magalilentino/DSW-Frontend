@@ -10,6 +10,13 @@ export const apiFetch = async (url: string, options: RequestInit = {}) => {
         ...options,
         headers,
     });
+<<<<<<< HEAD
+=======
+    if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.mensaje || errorData.message || "Error en la petición");
+    }
+>>>>>>> c20470d6df446bb8fda10c2900ef0f4ed8ef83dd
 
     if (res.status === 401 || res.status === 403) {
             localStorage.clear();
