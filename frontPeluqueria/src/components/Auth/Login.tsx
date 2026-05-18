@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../general/AuthContext";
 
@@ -22,20 +22,12 @@ function Login({ onToggleMode }: LoginProps) {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const type = localStorage.getItem("type");
-    if (token && type) {
-      if (type === "cliente") navigate("/reserve");
-      else if (type === "peluquero") navigate("/admin");
-    }
-  }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setLoading(true);
-    try {
+      try {
       const res = await fetch("http://localhost:3000/api/persona/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -47,12 +39,14 @@ function Login({ onToggleMode }: LoginProps) {
           data?.message || `Error ${res.status}: No se pudo iniciar sesión`,
         );
       }
+
       login({
         token: data.token,
         type: data.type,
         nombre: data.nombre,
         idPersona: data.idPersona,
       });
+
       if (data.type === "cliente") {
         navigate("/");
       } else if (data.type === "peluquero") {

@@ -46,19 +46,15 @@ export default function MiPerfil() {
 
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState<Partial<Persona>>({});
-
-  // NUEVO: Estado para el filtro del histórico
   const [filtroEstado, setFiltroEstado] = useState<"todos" | "finalizado" | "cancelado">("todos");
 
   useEffect(() => {
-    if (!user) return;
-
     const fetchData = async () => {
       try {
         // Perfil
         const resPerfil = await fetch(
-          `http://localhost:3000/api/persona/${user.idPersona}`,
-          { headers: { Authorization: `Bearer ${user.token}` } },
+          `http://localhost:3000/api/persona/${user?.idPersona}`,
+          { headers: { Authorization: `Bearer ${user?.token}` } },
         );
         const dataPerfil = await resPerfil.json();
         if (!resPerfil.ok) throw new Error(dataPerfil.message);
@@ -68,12 +64,12 @@ export default function MiPerfil() {
         // Histórico y pendientes
         const [resHist, resPend] = await Promise.all([
           fetch(
-            `http://localhost:3000/api/atencion/historico/${user.idPersona}`,
-            { headers: { Authorization: `Bearer ${user.token}` } },
+            `http://localhost:3000/api/atencion/historico/${user?.idPersona}`,
+            { headers: { Authorization: `Bearer ${user?.token}` } },
           ),
           fetch(
-            `http://localhost:3000/api/atencion/pendientes/${user.idPersona}`,
-            { headers: { Authorization: `Bearer ${user.token}` } },
+            `http://localhost:3000/api/atencion/pendientes/${user?.idPersona}`,
+            { headers: { Authorization: `Bearer ${user?.token}` } },
           ),
         ]);
 
@@ -100,7 +96,7 @@ export default function MiPerfil() {
   };
 
   const handleSave = async () => {
-    if (!user || !persona) return;
+    if (!persona) return;
     try {
       const res = await fetch(
         `http://localhost:3000/api/persona/cliente/${persona.idPersona}`,
@@ -108,7 +104,7 @@ export default function MiPerfil() {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${user.token}`,
+            Authorization: `Bearer ${user?.token}`,
           },
           body: JSON.stringify(formData),
         },
@@ -134,37 +130,18 @@ export default function MiPerfil() {
     return atencion.estado === filtroEstado;
   });
 
-  if (!user) {
-    return (
-      <div className="perfil-container">
-        <div className="perfil-box">
-          <h2>Debes iniciar sesión para ver tu perfil.</h2>
-          <div className="buttons-usser">
-            <button
-              className="auth-button-cancel"
-              onClick={() => navigate("/")}
-            >
-              ⬅ Volver al Home
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   if (loading) return <div className="perfil-container">Cargando datos...</div>;
-  if (error)
-    return <div className="perfil-container text-danger">Error: {error}</div>;
+  if (error) return <div className="perfil-container text-danger">Error: {error}</div>;
 
-const renderServicios = (atencion: Atencion) => {
-  const servicios = atencion.atencionServicios ?? [];
-  if (servicios.length === 0) return <span className="servicio-tag">Sin servicios</span>;
-  return servicios.map((as) => (
-    <li key={as.idAtSer} className="servicio-tag">
-      {as.servicio?.nombreServicio ?? "Servicio no disponible"}
-    </li>
-  ));
-};
+  const renderServicios = (atencion: Atencion) => {
+    const servicios = atencion.atencionServicios ?? [];
+    if (servicios.length === 0) return <span className="servicio-tag">Sin servicios</span>;
+    return servicios.map((as) => (
+      <li key={as.idAtSer} className="servicio-tag">
+        {as.servicio?.nombreServicio ?? "Servicio no disponible"}
+      </li>
+    ));
+  };
 
   return (
     <div className="perfil-container">

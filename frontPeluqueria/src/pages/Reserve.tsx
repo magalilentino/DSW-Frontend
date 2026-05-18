@@ -5,6 +5,7 @@ import Reservas from "../components/reserve/Reservas.tsx";
 import Precio from "../components/reserve/Precio.tsx";
 import type { ServicioItem } from "../components/home/Servicio.tsx";
 import type { PeluqueroItem } from "../components/home/Peluqueros.tsx";
+import { apiFetch } from "../shared/apiFetch.ts";
 
 function Reserve() {
   const [step, setStep] = useState(1);
@@ -18,21 +19,14 @@ function Reserve() {
     { inicio: string; fin: string }[]
   >([]);
   const [diaSeleccionado, setDiaSeleccionado] = useState<string>("");
-  const [minPrecio, setMinPrecio] = useState<number | null>(null);
-  const [maxPrecio, setMaxPrecio] = useState<number | null>(null);
-  const [serviciosFiltrados, setServiciosFiltrados] = useState<ServicioItem[]>(
-    [],
-  );
 
-  useEffect(() => {
+useEffect(() => {
     const fetchServicios = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/servicio/findAll");
-        if (!res.ok) throw new Error("Error al cargar servicios");
-        const data = await res.json();
-        setServicios(data.data);
+        const data = await apiFetch("/servicio/findAll");
+        setServicios(data.data || []);
       } catch (err) {
-        console.error(err);
+        console.error("Error al cargar servicios:", err);
       }
     };
     fetchServicios();
@@ -73,89 +67,12 @@ function Reserve() {
             </svg>
           </button>
 
-          <div className="filtro-precio mb-4 mt-3">
-            <h5>Filtrar servicios por precio</h5>
-            <div className="d-flex gap-2 flex-wrap align-items-center">
-              <input
-                type="number"
-                placeholder="Precio mínimo"
-                value={minPrecio ?? ""}
-                onChange={(e) =>
-                  setMinPrecio(e.target.value ? parseInt(e.target.value) : null)
-                }
-                className="form-control"
-                style={{ maxWidth: "150px" }}
-              />
-              <input
-                type="number"
-                placeholder="Precio máximo"
-                value={maxPrecio ?? ""}
-                onChange={(e) =>
-                  setMaxPrecio(e.target.value ? parseInt(e.target.value) : null)
-                }
-                className="form-control"
-                style={{ maxWidth: "150px" }}
-              />
-              <button
-                className="btn btn-success"
-                onClick={async () => {
-                  try {
-                    const query = `?min=${minPrecio ?? 0}&max=${maxPrecio ?? Number.MAX_SAFE_INTEGER}`;
-                    const res = await fetch(
-                      `http://localhost:3000/api/servicio/listarPorPrecio${query}`,
-                    );
-                    const data = await res.json();
-                    if (res.ok && Array.isArray(data)) {
-                      setServiciosFiltrados(data);
-                    } else {
-                      setServiciosFiltrados([]);
-                      console.error("Respuesta inesperada del servidor:", data);
-                    }
-                  } catch (err) {
-                    console.error("Error al filtrar servicios:", err);
-                  }
-                }}
-              >
-                Filtrar
-              </button>
-
-              <button
-                className="btn btn-outline-secondary"
-                onClick={() => {
-                  setMinPrecio(null);
-                  setMaxPrecio(null);
-                  setServiciosFiltrados([]);
-                }}
-              >
-                Limpiar filtros
-              </button>
-            </div>
-
-            {serviciosFiltrados.length > 0 && (
-              <p className="mt-2 text-muted">
-                Mostrando {serviciosFiltrados.length} servicio
-                {serviciosFiltrados.length > 1 ? "s" : ""} filtrado
-                {serviciosFiltrados.length > 1 ? "s" : ""}.
-              </p>
-            )}
-
-            {serviciosFiltrados.length === 0 &&
-              minPrecio !== null &&
-              maxPrecio !== null && (
-                <p className="mt-2 text-danger">
-                  No se encontraron servicios en ese rango de precio.
-                </p>
-              )}
-          </div>
-
           <div className="row">
             <Reservas
               step={step}
               setStep={setStep}
               onNextStep={() => setStep(step + 1)}
-              servicios={
-                serviciosFiltrados.length > 0 ? serviciosFiltrados : servicios
-              }
+              servicios={servicios}
               serviciosSeleccionados={serviciosSeleccionados}
               setServiciosSeleccionados={setServiciosSeleccionados}
               peluqueroSeleccionado={peluqueroSeleccionado}

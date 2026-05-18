@@ -98,7 +98,8 @@ function Footer() {
 
         <hr className="bg-dark" />
         <div className="text-center">
-          © 2025 Peluquería. Todos los derechos reservados.
+          {/* Realizamos el año dinámico automáticamente */}
+          © {new Date().getFullYear()} Peluquería. Todos los derechos reservados.
         </div>
       </div>
     </footer>
@@ -106,3 +107,5 @@ function Footer() {
 }
 
 export default Footer;
+
+// ver

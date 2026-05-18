@@ -4,15 +4,7 @@ import { useAuth } from "./AuthContext";
 function Header() {
   const { user, logout } = useAuth();
 
-  //define a dónde lleva el botón "Mi Perfil"
-  let profileLink = "/";
-  if (user) {
-    if (user.type === "peluquero") {
-      profileLink = "/admin";
-    } else if (user.type === "cliente") {
-      profileLink = "/perfil";
-    }
-  }
+  const profileLink = user?.type === "peluquero" ? "/admin" : "/perfil";
 
   return (
     <header>
@@ -41,12 +33,12 @@ function Header() {
                 <>
                   {/* Else */}
                   <li className="nav-item">
-                    <Link className="nav-link" to="/NosotrosContacto">
+                    <Link className="nav-link" to="/info">
                       Contacto
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link className="nav-link" to="/NosotrosContacto">
+                    <Link className="nav-link" to="/info">
                       Sobre Nosotros
                     </Link>
                   </li>

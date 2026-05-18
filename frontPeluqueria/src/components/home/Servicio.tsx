@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"; //manejar estados y  efectos secund
 import { motion } from "motion/react"; //animaciones
 import { useNavigate } from "react-router-dom";
 import { HORARIOS, DIRECCION, GOOGLE_MAPS_LINK } from "./Constants"; //informacion del negocio
+import { apiFetch } from "../../shared/apiFetch.ts";
+import { useAuth } from "../general/AuthContext.tsx";
 
 export interface ServicioItem {
   //tipo de dato que tiene los servicio
@@ -23,6 +25,7 @@ const formatDuration = (cantTurnos: number): string => {
 };
 
 function Servicio() {
+  const { user } = useAuth();
   const [showHorarios, setShowHorarios] = useState(false);
   const [servicios, setServicios] = useState<ServicioItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -30,17 +33,20 @@ function Servicio() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/servicio/findAll")
-      .then((res) => {
-        if (!res.ok) throw new Error("Error al cargar servicios"); //tira error si no es correcta
-        return res.json();
-      })
-      .then((data) => setServicios(data.data)) //Si todo va bien, guarda los servicios en el estado servicios
-      .catch((err) => setError(err.message)) //Si hay error lo guarda en error
-      .finally(() => setLoading(false)); //loading = false
-  }, []);
+      apiFetch("/servicio/findAll")
+        .then((data) => setServicios(data.data || data))
+        .catch((err) => setError(err.message))
+        .finally(() => setLoading(false));
+    }, []);
 
-  //esqueleto de la espera del loading hasta que se ponga en false
+    const handleReservaNavigation = () => {
+      if (user) {
+        navigate("/reserve");
+      } else {
+        navigate("/auth");
+      }
+    };
+
   if (loading) {
     return (
       <section className="home-servicio my-4">
@@ -93,14 +99,14 @@ function Servicio() {
                 </div>
                 <button
                   className="home-btn-reservar"
-                  onClick={() => navigate("/auth")}
+                  onClick={handleReservaNavigation} // <--- Tiene que decir esto
                 >
                   Reservar
                 </button>
               </motion.li>
             ))}
           </ul>
-          <button className="home-btn-todo" onClick={() => navigate("/auth")}>
+          <button className="home-btn-todo" onClick={handleReservaNavigation}>
             Ver todo
           </button>
         </div>
@@ -128,7 +134,7 @@ function Servicio() {
             </div>
             <button
               className="home-btn-reservar-general mb-3"
-              onClick={() => navigate("/auth")}
+              onClick={handleReservaNavigation} // <--- Y esto también
             >
               Reservar ahora
             </button>

@@ -3,16 +3,28 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import Login from "../components/Auth/Login";
 import Register from "../components/Auth/Register";
+import { useAuth } from "../components/general/AuthContext";
 
 function Auth() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const searchParams = new URLSearchParams(location.search);
   const modeFromQuery = searchParams.get("mode");
   const [isRegistering, setIsRegistering] = useState(
     modeFromQuery === "register",
   ); //indica que forma se muestra (login o register)
+
+  useEffect(() => {
+    if (user) {
+      if (user.type === "peluquero") {
+        navigate("/admin", { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
+    }
+  }, [user, navigate]);
 
   useEffect(() => {
     setIsRegistering(modeFromQuery === "register");

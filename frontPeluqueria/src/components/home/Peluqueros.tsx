@@ -1,6 +1,7 @@
 import Foto3 from "../../assets/foto3.avif";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { apiFetch } from "../../shared/apiFetch.ts";
 
 export interface PeluqueroItem {
   //tipo de dato que tienen los peluqueros
@@ -19,17 +20,13 @@ export function Estilista() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/persona/peluquero/findAllPeluquero")
-      .then((res) => {
-        if (!res.ok) throw new Error("Error al cargar los peluqueros"); //manejo de errores si la respuesta de la bd no es correcta
-        return res.json();
-      })
-      .then((data) => {
-        setPeluqueros(data.data || data); //devuelve un objeto { data: [...] } o un array directamente.
-      })
-      .catch((err) => setError(err.message)) //guarda el error
-      .finally(() => setLoading(false)); //guarda el loading en false
-  }, []);
+      apiFetch("/persona/peluquero/findAllPeluquero")
+        .then((data) => {
+          setPeluqueros(data.data || data); 
+        })
+        .catch((err) => setError(err.message))
+        .finally(() => setLoading(false));
+    }, []);
 
   if (loading) return <p>Cargando peluqueros...</p>;
   if (error) return <p>Error: {error}</p>;

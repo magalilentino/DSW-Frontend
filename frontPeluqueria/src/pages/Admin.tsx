@@ -18,13 +18,13 @@ interface Persona {
 
 interface Subsection {
   label: string;
-  path?: string; // Opcional porque el de logout no tiene path
+  path?: string;
   isLogout?: boolean;
 }
 
 interface Section {
   label: string;
-  path?: string; // Opcional
+  path?: string;
   subsections?: Subsection[];
 }
 
@@ -52,13 +52,14 @@ const sections: Section[] = [
     label: "Perfil",
     subsections: [
       { label: "Editar Perfil", path: "/peluquero/perfilPeluquero" },
-      { label: "Cerrar sesión", isLogout: true }, // Marcamos este como logout
+      { label: "Cerrar sesión", isLogout: true },
     ],
   },
 ];
 
 const Admin = () => {
-  const { user } = useAuth();
+  // 🚨 Traemos también 'logout' desde tu contexto
+  const { user, logout } = useAuth(); 
   const [persona, setPersona] = useState<Persona | null>(null);
   const [loading, setLoading] = useState(true);
   const [hovered, setHovered] = useState<number | null>(null);
@@ -71,8 +72,6 @@ const Admin = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!user) return;
-
     const fetchTurnosHoy = async () => {
       try {
         const url = servicioSeleccionado
@@ -80,98 +79,46 @@ const Admin = () => {
           : "/atencion/turnos-hoy";
 
         const data = await apiFetch(url);
-        setTurnosHoy(data); // data: [{hora, cliente, servicios}, ...]
+        setTurnosHoy(data);
       } catch (err) {
         setError("Error al obtener turnos del día:" + err);
       }
     };
 
     fetchTurnosHoy();
-  }, [user, servicioSeleccionado]);
+  }, [servicioSeleccionado]);
 
   useEffect(() => {
-    if (!user) return;
-
-    const fetchGananciasHoy = async () => {
-      try {
-        const data = await apiFetch("/atencion/ganancias-hoy");
-        setGananciasHoy(data.total);
-      } catch (err) {
-        setError("Error al obtener ganancias del día:" + err);
-      }
-    };
-
-    fetchGananciasHoy();
-  }, [user]);
-
-  useEffect(() => {
-    if (!user) return;
-
-    const fetchCompletadasHoy = async () => {
-      try {
-        const data = await apiFetch("/atencion/completadas-hoy");
-        setCompletadasHoy(data.count);
-      } catch (err) {
-        setError("Error al obtener atenciones completadas de hoy:" + err);
-      }
-    };
-
-    fetchCompletadasHoy();
-  }, [user]);
-
-  useEffect(() => {
-    if (!user) return;
-
-    const fetchPendientesHoy = async () => {
-      try {
-        const data = await apiFetch("/atencion/pendientes-hoy");
-        setPendientesHoy(data.count); // Solo usamos el número
-      } catch (err) {
-        setError("Error al obtener atenciones pendientes de hoy:" + err);
-      }
-    };
-
-    fetchPendientesHoy();
-  }, [user]);
-
-  useEffect(() => {
-    if (!user) return;
-
-    const fetchData = async () => {
-      try {
-        const data = await apiFetch(`/persona/${user.idPersona}`);
-        setPersona(data);
-      } catch (err) {
-        setError("Error al obtener datos del usuario:" + err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [user]);
-
-  useEffect(() => {
-    const fetchServicios = async () => {
+    const fetchDatosDashboard = async () => {
       setLoading(true);
-      setError("");
-
       try {
-        const serviciosData = await apiFetch("/servicio/findAll");
-        setServicios(serviciosData.data || []);
+        const [ganancias, completadas, pendientes, datosPerfil, listaServicios] = await Promise.all([
+          apiFetch("/atencion/ganancias-hoy"),
+          apiFetch("/atencion/completadas-hoy"),
+          apiFetch("/atencion/pendientes-hoy"),
+          apiFetch(`/persona/${user?.idPersona}`),
+          apiFetch("/servicio/findAll")
+        ]);
+
+        setGananciasHoy(ganancias.total);
+        setCompletadasHoy(completadas.count);
+        setPendientesHoy(pendientes.count);
+        setPersona(datosPerfil);
+        setServicios(listaServicios.data || []);
       } catch (err: any) {
-        setError("No se pudo cargar la lista de servicios: " + err.message);
+        setError("Error al cargar los datos del panel: " + err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchServicios();
-  }, []);
+    fetchDatosDashboard();
+  }, [user?.idPersona]);
 
 
   if (loading) {
     return (
-      <p style={{ padding: "2rem", textAlign: "center" }}>Cargando perfil...</p>
+      <p style={{ padding: "2rem", textAlign: "center" }}>Cargando panel de administración...</p>
     );
   }
 
@@ -208,31 +155,24 @@ const Admin = () => {
                   onMouseLeave={() => setHovered(null)}
                 >
                   {section.subsections.map((sub, j) => {
-                    // SI ES LOGOUT: Renderizamos el botón con la lógica que tenías comentada
                     if (sub.isLogout) {
                       return (
                         <button
                           key={j}
-                          className="custom-dropdown-item logout-button" // Usamos tus clases de estilo
+                          className="custom-dropdown-item logout-button"
                           style={{
                             width: "100%",
                             textAlign: "left",
                             border: "none",
                             background: "none",
-                          }} // Ajuste visual
-                          onClick={() => {
-                            localStorage.removeItem("token");
-                            localStorage.removeItem("type");
-                            localStorage.removeItem("nombre");
-                            window.location.href = "/";
                           }}
+                          onClick={logout} // 🚨 Simplificado: Llama directo a la función de tu AuthContext
                         >
                           {sub.label}
                         </button>
                       );
                     }
 
-                    // SI NO ES LOGOUT: Renderizamos el Link normal
                     return (
                       <Link
                         key={j}
@@ -251,8 +191,8 @@ const Admin = () => {
       </header>
 
       <main className="admin-main">
-        {error && <p className="error">Error: {error}</p>}
-        {/* Perfil */}
+        {error && <p className="error">{error}</p>}
+        
         <img
           src={Foto3}
           alt="Perfil"
@@ -264,25 +204,15 @@ const Admin = () => {
             margin: "30px",
           }}
         />
+        
         <section className="profile-card">
-          <h1>
-            Bienvenido, {persona?.nombre} {persona?.apellido}
-          </h1>
-          <p>
-            <strong>Dni:</strong> {persona?.dni}
-          </p>
-          <p>
-            <strong>Email:</strong> {persona?.email}
-          </p>
-          <p>
-            <strong>Teléfono:</strong> {persona?.telefono}
-          </p>
-          <p>
-            <strong>Tipo Usuario:</strong> {persona?.type}
-          </p>
+          <h1>Bienvenido, {persona?.nombre} {persona?.apellido}</h1>
+          <p><strong>Dni:</strong> {persona?.dni}</p>
+          <p><strong>Email:</strong> {persona?.email}</p>
+          <p><strong>Teléfono:</strong> {persona?.telefono}</p>
+          <p><strong>Tipo Usuario:</strong> {persona?.type}</p>
         </section>
 
-        {/* Estadísticas */}
         <section className="stats-section">
           <h1>Estadísticas</h1>
           <div className="stats-cards">
@@ -301,25 +231,28 @@ const Admin = () => {
           </div>
         </section>
 
-        {/* Próximos Turnos */}
         <section className="turnos-section">
-          <h1>Próximos Turnos del Día</h1>
-          <select
-            className="form-select w-auto" //mx-auto para centrar
-            value={servicioSeleccionado}
-            onChange={(e) => setServicioSeleccionado(
-              e.target.value === "" ? "" : Number(e.target.value)
-            )
-            }
-          >
-            <option value="">Todos</option>
-
-            {servicios.map((s) => (
-              <option key={s.codServicio} value={s.codServicio}>
-                {s.nombreServicio}
-              </option>
-            ))}
-          </select>
+          {/* Contenedor en forma de columna y centrado */}
+          <div className="d-flex flex-column align-items-center mb-4">
+            <h1 className="mb-2">Próximos Turnos del Día</h1>
+            
+            <select
+              className="form-select text-center w-auto"
+              value={servicioSeleccionado}
+              onChange={(e) => setServicioSeleccionado(
+                e.target.value === "" ? "" : Number(e.target.value)
+              )}
+            >
+              <option value="">Todos</option>
+              {servicios.map((s) => (
+                <option key={s.codServicio} value={s.codServicio}>
+                  {s.nombreServicio}
+                </option>
+              ))}
+            </select>
+          </div>
+          
+          {/* Resto de tu código... */}
           {turnosHoy.length === 0 ? (
             <p className="text-center">No hay turnos para hoy</p>
           ) : (
@@ -330,12 +263,8 @@ const Admin = () => {
                     <span className="turno-hora">{turno.hora}</span>
                   </div>
                   <div className="turno-body">
-                    <p>
-                      <strong>Cliente:</strong> {turno.cliente}
-                    </p>
-                    <p>
-                      <strong>Servicios:</strong> {turno.servicios}
-                    </p>
+                    <p><strong>Cliente:</strong> {turno.cliente}</p>
+                    <p><strong>Servicios:</strong> {turno.servicios}</p>
                   </div>
                 </div>
               ))}

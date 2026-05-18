@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import type { ServicioItem } from "../home/Servicio.tsx";
 import type { PeluqueroItem } from "../home/Peluqueros.tsx";
+import { apiFetch } from "../../shared/apiFetch.ts";
+import { useAuth } from "../general/AuthContext.tsx";
 
 interface PrecioProps {
   peluquero: PeluqueroItem | null;
@@ -26,11 +28,11 @@ export default function Precio({
   diaSeleccionado,
   setStep,
 }: PrecioProps) {
+  const { user } = useAuth();
   const [showModal, setShowModal] = useState(false);
   const [infoDescuento, setInfoDescuento] = useState<{ aplica: boolean; porcentaje:number | null }>({ // detalle: any
     aplica: false,
     porcentaje: null,
-    // detalle: null,
   });
   const [precioFinal, setPrecioFinal] = useState<number | null>(null);
   const [subtotal, setSubtotal] = useState<number>(0);
@@ -38,44 +40,26 @@ export default function Precio({
 
   // 1. EFECTO: Verificar descuento al llegar al paso 3 (Resumen)
   useEffect(() => {
-    const clienteId = localStorage.getItem("idPersona");
-    const token = localStorage.getItem("token"); // <--- AGREGAMOS ESTO
-    
-  setSubtotal(serviciosSeleccionados.reduce((sum, s) => sum + (s.precio ?? 0), 0));
-    if (step === 3 && clienteId && token && serviciosSeleccionados.length > 0) { // <--- VALIDAMOS QUE EXISTA EL TOKEN
-      const payload = {
-        servicios: serviciosSeleccionados.map((s) => s.codServicio),
-      };
-      fetch(`http://localhost:3000/api/atencion/verificar-descuento/${clienteId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}` // <--- ESTO ES LO QUE TE FALTABA
-        },
-        body: JSON.stringify(payload),
-      })
-        .then((res) => {
-          if (!res.ok) throw new Error("Error en la autenticación o servidor");
-          return res.json();
-        })
-        .then((data) => {
-          setSubtotal(data.subtotal);
-          setPrecioFinal(data.precioTotal);
-          setInfoDescuento({
-            aplica: data.aplicaDescuento,
-            porcentaje: data.porcentaje,
-          });
-        })
-        .catch((err) => console.error("Error al verificar descuento:", err));
-    }
-  }, [step, serviciosSeleccionados]);
-
-  
-  // 2. CÁLCULO DEL TOTAL CON DESCUENTO
-  // const montoDescuento = infoDescuento.aplica 
-  //   ? (subtotal * infoDescuento.detalle.porcentaje) / 100 
-  //   : 0;
-  // const totalPrecio = subtotal - montoDescuento;
+    setSubtotal(serviciosSeleccionados.reduce((sum, s) => sum + (s.precio ?? 0), 0));
+      if (step === 3 && user && serviciosSeleccionados.length > 0) { // <--- VALIDAMOS QUE EXISTA EL TOKEN
+        const payload = {
+          servicios: serviciosSeleccionados.map((s) => s.codServicio),
+        };
+        apiFetch(`/atencion/verificar-descuento/${user.idPersona}`, {
+                method: "POST",
+                body: JSON.stringify(payload),
+              })
+                .then((data) => {
+                  setSubtotal(data.subtotal);
+                  setPrecioFinal(data.precioTotal);
+                  setInfoDescuento({
+                    aplica: data.aplicaDescuento,
+                    porcentaje: data.porcentaje,
+                  });
+                })
+                .catch((err) => console.error("Error al verificar descuento:", err));
+            }
+          }, [step, serviciosSeleccionados, user]);
 
   const totalDuracionMin = serviciosSeleccionados.reduce(
     (sum, s) => sum + s.cantTurnos * 45,
@@ -93,17 +77,14 @@ export default function Precio({
   };
 
   const confirmarReserva = async () => {
-    const clienteIdString = localStorage.getItem("idPersona");
-    const token = localStorage.getItem("token");
-
-    if (!peluquero || bloquesSeleccionados.length === 0 || serviciosSeleccionados.length === 0 || !diaSeleccionado || !clienteIdString || !token) {
+    if (!peluquero || bloquesSeleccionados.length === 0 || serviciosSeleccionados.length === 0 || !diaSeleccionado || !user) {
       alert("Faltan datos para confirmar la reserva.");
       return;
     }
 
     // 3. ENVIAR idDescuento EN EL PAYLOAD
     const payload = {
-      clienteId: parseInt(clienteIdString),
+      clienteId: user?.idPersona,
       peluqueroId: peluquero.idPersona,
       fecha: diaSeleccionado,
       horaInicio: bloquesSeleccionados[0].inicio,
@@ -113,24 +94,19 @@ export default function Precio({
     };
 
     try {
-      const res = await fetch("http://localhost:3000/api/atencion/crear", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) throw new Error(`Error: ${res.statusText}`);
-      
-      setStep(4);
-      setShowModal(true);
-    } catch (err) {
-      console.error("Error al crear atención:", err);
-      alert("Error al confirmar reserva.");
-    }
-  };
+          // 🚨 5. Reemplazamos por apiFetch limpio sin token manual
+          await apiFetch("/atencion/crear", {
+            method: "POST",
+            body: JSON.stringify(payload),
+          });
+          
+          setStep(4);
+          setShowModal(true);
+        } catch (err) {
+          console.error("Error al crear atención:", err);
+          alert("Error al confirmar reserva.");
+        }
+      };
 
   const handleContinue = () => {
     if (step === 3) confirmarReserva();

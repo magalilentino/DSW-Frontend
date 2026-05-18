@@ -19,8 +19,6 @@ import Producto from "./components/Admin/producto/Producto.tsx";
 import CrearProducto from "./components/Admin/producto/CrearProducto.tsx";
 import CrearPeluquero from "./components/Admin/peluquero/CrearPeluquero.tsx";
 import ActualizarProducto from "./components/Admin/producto/ActualizarProducto.tsx";
-
-import SobreNosotrosContacto from "./pages/NosotrosContacto.tsx";
 import Servicios from "./components/Admin/servicio/Servicios.tsx";
 import CrearServicio from "./components/Admin/servicio/CrearServicio.tsx";
 import ModificarServicio from "./components/Admin/servicio/ModificarServivicios.tsx";
@@ -29,75 +27,58 @@ import CrearTono from "./components/Admin/tono/CrearTono.tsx";
 import VerFormula from "./components/Admin/tono/VerFormula.tsx";
 import PerfilPeluquero from "./components/Admin/peluquero/perfilPeluquero.tsx";
 import Calendario from "./components/Admin/calendario/Bloqueardia.tsx";
-
 // NUEVOS IMPORTS DE DESCUENTO
 import Descuento from "./components/Admin/descuento/Descuento.tsx";
 import CrearDescuento from "./components/Admin/descuento/CrearDescuento.tsx";
 import ActualizarDescuento from "./components/Admin/descuento/ActualizarDescuento.tsx";
+import ProtectedRoute from "./components/general/ProtectedRoute.tsx";
 
 function App() {
   return (
     <Router>
       <Routes>
+        {/* RUTAS PÚBLICAS */}
         <Route path="/" element={<Home />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/reserve" element={<Reserve />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/Servicio" element={<Servicio />} />
-        <Route path="/categoria" element={<Categoria />} />
-        <Route path="/categoria/crear" element={<CrearCategoria />} />
-        <Route
-          path="/categoria/actualizar/:idCategoria"
-          element={<ActualizarCategoria />}
-        />
-        <Route path="/atencion" element={<Atencion />} />
-        <Route
-          path="/atencion/serviciosDeAtencion/:idAtencion"
-          element={<AtencionServicio />}
-        />
-        <Route
-          path="/atencion/modificarAtSer/:idAtSer"
-          element={<ModificarAtSer />}
-        />
-        <Route path="/perfil" element={<MiPerfil />} />
         <Route path="/info" element={<NosotrosContacto />} />
-        <Route path="/marca" element={<Marca />} />
-        <Route path="/marca/crear" element={<CrearMarca />} />
-        <Route
-          path="/marca/actualizar/:idMarca"
-          element={<ActualizarMarca />}
-        />
-        <Route path="/producto" element={<Producto />} />
-        <Route path="/producto/crear" element={<CrearProducto />} />
-        <Route
-          path="/producto/actualizar/:idProducto"
-          element={<ActualizarProducto />}
-        />
-        <Route path="/peluquero/CrearPeluquero" element={<CrearPeluquero />} />
-        <Route path="/NosotrosContacto" element={<SobreNosotrosContacto />} />
-        <Route path="/servicios" element={<Servicios />} />
-        <Route path="/servicio/crear" element={<CrearServicio />} />
-        <Route
-          path="/servicio/actualizar/:codServicio"
-          element={<ModificarServicio />}
-        />
-        <Route path="/tono" element={<Tono />} />
-        <Route path="/tono/crear" element={<CrearTono />} />
-        <Route path="/tono/formulas/:idTono" element={<VerFormula />} />
-        <Route
-          path="/peluquero/perfilPeluquero"
-          element={<PerfilPeluquero />}
-        />
-        <Route path="/Calendario" element={<Calendario />} />
 
-        {/* RUTAS DE DESCUENTO */}
-        <Route path="/descuento" element={<Descuento />} />
-        <Route path="/descuento/crear" element={<CrearDescuento />} />
-        <Route
-          path="/descuento/actualizar/:idDescuento"
-          element={<ActualizarDescuento />}
-        />
+        {/* RUTAS PROTEGIDAS: CLIENTES */}
+        <Route element={<ProtectedRoute rolPermitido="cliente" />}>
+          <Route path="/reserve" element={<Reserve />} />
+          <Route path="/perfil" element={<MiPerfil />} />
+        </Route>
+
+        {/* RUTAS PROTEGIDAS: PELUQUEROS */}
+        <Route element={<ProtectedRoute rolPermitido="peluquero" />}>
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/Servicio" element={<Servicio />} />
+          <Route path="/categoria" element={<Categoria />} />
+          <Route path="/categoria/crear" element={<CrearCategoria />} />
+          <Route path="/categoria/actualizar/:idCategoria" element={<ActualizarCategoria />} />
+          <Route path="/atencion" element={<Atencion />} />
+          <Route path="/atencion/serviciosDeAtencion/:idAtencion" element={<AtencionServicio />} />
+          <Route path="/atencion/modificarAtSer/:idAtSer" element={<ModificarAtSer />} />
+          <Route path="/marca" element={<Marca />} />
+          <Route path="/marca/crear" element={<CrearMarca />} />
+          <Route path="/marca/actualizar/:idMarca" element={<ActualizarMarca />} />
+          <Route path="/producto" element={<Producto />} />
+          <Route path="/producto/crear" element={<CrearProducto />} />
+          <Route path="/producto/actualizar/:idProducto" element={<ActualizarProducto />} />
+          <Route path="/peluquero/CrearPeluquero" element={<CrearPeluquero />} />
+          <Route path="/servicios" element={<Servicios />} />
+          <Route path="/servicio/crear" element={<CrearServicio />} />
+          <Route path="/servicio/actualizar/:codServicio" element={<ModificarServicio />} />
+          <Route path="/tono" element={<Tono />} />
+          <Route path="/tono/crear" element={<CrearTono />} />
+          <Route path="/tono/formulas/:idTono" element={<VerFormula />} />
+          <Route path="/peluquero/perfilPeluquero" element={<PerfilPeluquero />} />
+          <Route path="/Calendario" element={<Calendario />} />
+          <Route path="/descuento" element={<Descuento />} />
+          <Route path="/descuento/crear" element={<CrearDescuento />} />
+          <Route path="/descuento/actualizar/:idDescuento" element={<ActualizarDescuento />} />
+        </Route>
+
       </Routes>
     </Router>
   );

@@ -4,6 +4,7 @@ import type { ServicioItem } from "../home/Servicio";
 import type { PeluqueroItem } from "../home/Peluqueros";
 import { CalendarioDias } from "./Calendar";
 import Foto3 from "../../assets/foto3.avif";
+import { apiFetch } from "../../shared/apiFetch.ts";
 
 interface ReservasProps {
   step: number;
@@ -42,40 +43,58 @@ export default function Reservas({
   const [bloquesDisponibles, setBloquesDisponibles] = useState<
     { hora_inicio: string; hora_fin: string }[]
   >([]);
+
+  const [minPrecio, setMinPrecio] = useState<number | null>(null);
+  const [maxPrecio, setMaxPrecio] = useState<number | null>(null);
+
+  const [serviciosFiltrados, setServiciosFiltrados] = useState<
+    ServicioItem[]
+  >([]);
+
+  const [filtroActivo, setFiltroActivo] = useState(false);
+
   const totalDuracionMin = serviciosSeleccionados.reduce(
     (sum, s) => sum + s.cantTurnos * 45,
     0,
   );
 
+  const serviciosMostrados = filtroActivo
+    ? serviciosFiltrados
+    : servicios;
+
   useEffect(() => {
     const fetchPeluqueros = async () => {
       try {
-        const res = await fetch(
-          "http://localhost:3000/api/persona/peluquero/findAllPeluquero",
-        );
-        const data = await res.json();
+        const data = await apiFetch("/persona/peluquero/findAllPeluquero");
         setPeluqueros(data.data || data);
       } catch (err) {
-        console.error(err);
+        console.error("Error al cargar peluqueros:", err);
       }
     };
+
     fetchPeluqueros();
   }, []);
 
   useEffect(() => {
     const fetchBloques = async () => {
-      if (!peluqueroSeleccionado || !diaSeleccionado || totalDuracionMin === 0)
+      if (
+        !peluqueroSeleccionado ||
+        !diaSeleccionado ||
+        totalDuracionMin === 0
+      )
         return;
+
       try {
-        const res = await fetch(
-          `http://localhost:3000/api/bloque/disponibles?fecha=${diaSeleccionado}&peluqueroId=${peluqueroSeleccionado.idPersona}&duracionTotal=${totalDuracionMin}`,
+        const data = await apiFetch(
+          `/bloque/disponibles?fecha=${diaSeleccionado}&peluqueroId=${peluqueroSeleccionado.idPersona}&duracionTotal=${totalDuracionMin}`,
         );
-        const data = await res.json();
+
         setBloquesDisponibles(data);
       } catch (err) {
-        console.error(err);
+        console.error("Error al cargar bloques horarios:", err);
       }
     };
+
     fetchBloques();
   }, [peluqueroSeleccionado, diaSeleccionado, totalDuracionMin]);
 
@@ -85,12 +104,15 @@ export default function Reservas({
         <span className={step === 1 ? "current" : step > 1 ? "active" : ""}>
           Servicios <i className="bi bi-chevron-right"></i>
         </span>
+
         <span className={step === 2 ? "current" : step > 2 ? "active" : ""}>
           Profesional <i className="bi bi-chevron-right"></i>
         </span>
+
         <span className={step === 3 ? "current" : step > 3 ? "active" : ""}>
           Hora <i className="bi bi-chevron-right"></i>
         </span>
+
         <span className={step === 4 ? "current" : ""}>
           Confirmar <i className="bi bi-chevron-right"></i>
         </span>
@@ -99,20 +121,105 @@ export default function Reservas({
       {step === 1 && (
         <>
           <h2>Servicios</h2>
+
+          <div className="filtro-precio mb-4 mt-3">
+            <h5>Filtrar servicios por precio</h5>
+
+            <div className="d-flex gap-2 flex-wrap align-items-center">
+              <input
+                type="number"
+                placeholder="Precio mínimo"
+                value={minPrecio ?? ""}
+                onChange={(e) =>
+                  setMinPrecio(
+                    e.target.value ? parseInt(e.target.value) : null,
+                  )
+                }
+                className="form-control"
+                style={{ maxWidth: "150px" }}
+              />
+
+              <input
+                type="number"
+                placeholder="Precio máximo"
+                value={maxPrecio ?? ""}
+                onChange={(e) =>
+                  setMaxPrecio(
+                    e.target.value ? parseInt(e.target.value) : null,
+                  )
+                }
+                className="form-control"
+                style={{ maxWidth: "150px" }}
+              />
+
+              <button
+                className="btn btn-success"
+                onClick={async () => {
+                  try {
+                    const query = `?min=${minPrecio ?? 0}&max=${
+                      maxPrecio ?? Number.MAX_SAFE_INTEGER
+                    }`;
+
+                    const data = await apiFetch(
+                      `/servicio/listarPorPrecio${query}`,
+                    );
+
+                    setServiciosFiltrados(data || []);
+                    setFiltroActivo(true);
+                  } catch (err) {
+                    console.error("Error al filtrar servicios:", err);
+                  }
+                }}
+              >
+                Filtrar
+              </button>
+
+              <button
+                className="btn btn-outline-secondary"
+                onClick={() => {
+                  setMinPrecio(null);
+                  setMaxPrecio(null);
+                  setServiciosFiltrados([]);
+                  setFiltroActivo(false);
+                }}
+              >
+                Limpiar filtros
+              </button>
+            </div>
+
+            {filtroActivo && serviciosFiltrados.length > 0 && (
+              <p className="mt-2 text-muted">
+                Mostrando {serviciosFiltrados.length} servicio
+                {serviciosFiltrados.length > 1 ? "s" : ""} filtrado
+                {serviciosFiltrados.length > 1 ? "s" : ""}.
+              </p>
+            )}
+
+            {filtroActivo && serviciosFiltrados.length === 0 && (
+              <p className="mt-2 text-danger">
+                No se encontraron servicios en ese rango de precio.
+              </p>
+            )}
+          </div>
+
           <ul className="list-group">
-            {servicios.map((s, i) => (
+            {serviciosMostrados.map((s, i) => (
               <motion.li
                 key={i}
                 className="reservas-servicio-item d-flex justify-content-between align-items-center mb-3"
               >
                 <div>
                   <h5>{s.nombreServicio}</h5>
+
                   <p className="mb-1">
-                    Duración: {Math.floor((s.cantTurnos * 45) / 60)}h{" "}
+                    Duración:{" "}
+                    {Math.floor((s.cantTurnos * 45) / 60)}h{" "}
                     {(s.cantTurnos * 45) % 60}min
                   </p>
+
                   <small>{s.precio} ARS</small>
                 </div>
+
                 <button
                   type="button"
                   className={`servicio-btn ${
@@ -124,9 +231,12 @@ export default function Reservas({
                   }`}
                   onClick={() =>
                     setServiciosSeleccionados((prev) =>
-                      prev.some((serv) => serv.codServicio === s.codServicio)
+                      prev.some(
+                        (serv) => serv.codServicio === s.codServicio,
+                      )
                         ? prev.filter(
-                            (serv) => serv.codServicio !== s.codServicio,
+                            (serv) =>
+                              serv.codServicio !== s.codServicio,
                           )
                         : [...prev, s],
                     )
@@ -143,6 +253,7 @@ export default function Reservas({
           </ul>
         </>
       )}
+
       {step === 2 && (
         <div className="row my-4">
           {peluqueros.map((p, i) => (
@@ -170,18 +281,21 @@ export default function Reservas({
                   whileTap={{ scale: 0.8 }}
                   onClick={() => setPeluqueroSeleccionado(p)}
                 />
+
                 <h5 className="mb-0">{p.nombre}</h5>
               </div>
             </motion.div>
           ))}
         </div>
       )}
+
       {step === 3 && peluqueroSeleccionado && (
         <div>
           <CalendarioDias
             diaSeleccionado={diaSeleccionado}
             onSelectDia={setDiaSeleccionado}
           />
+
           <h4 className="mt-4">Horarios disponibles</h4>
 
           <ul className="list-group">
@@ -192,6 +306,7 @@ export default function Reservas({
                     sel.inicio === bloque.hora_inicio &&
                     sel.fin === bloque.hora_fin,
                 );
+
                 return (
                   <motion.li
                     key={i}
@@ -206,12 +321,18 @@ export default function Reservas({
                         {bloque.hora_inicio} - {bloque.hora_fin}
                       </span>
                     </div>
+
                     <button
                       type="button"
-                      className={`servicio-btn ${seleccionado ? "selected" : ""}`}
+                      className={`servicio-btn ${
+                        seleccionado ? "selected" : ""
+                      }`}
                       onClick={() => {
                         setBloquesSeleccionados([
-                          { inicio: bloque.hora_inicio, fin: bloque.hora_fin },
+                          {
+                            inicio: bloque.hora_inicio,
+                            fin: bloque.hora_fin,
+                          },
                         ]);
                       }}
                     >
@@ -226,6 +347,7 @@ export default function Reservas({
           </ul>
         </div>
       )}
+
       {step === 4}
     </div>
   );
