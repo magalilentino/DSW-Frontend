@@ -103,7 +103,7 @@ export default function TonoPage() {
             </tr>
           </thead>
           <tbody>
-            {tonos.map((t, i) => (
+            {tonos.map((t) => (
               <tr key={t.idTono}>
                 <td>{t.idTono}</td>
                 <td>{t.nombre}</td>

@@ -1,4 +1,5 @@
 import { useAuth } from "../components/general/AuthContext";
+import { apiFetch } from "../shared/apiFetch";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/perfil.css";
@@ -52,32 +53,15 @@ export default function MiPerfil() {
     const fetchData = async () => {
       try {
         // Perfil
-        const resPerfil = await fetch(
-          `http://localhost:3000/api/persona/${user?.idPersona}`,
-          { headers: { Authorization: `Bearer ${user?.token}` } },
-        );
-        const dataPerfil = await resPerfil.json();
-        if (!resPerfil.ok) throw new Error(dataPerfil.message);
+        const dataPerfil: Persona = await apiFetch(`/persona/${user?.idPersona}`);
         setPersona(dataPerfil);
         setFormData(dataPerfil);
 
         // Histórico y pendientes
-        const [resHist, resPend] = await Promise.all([
-          fetch(
-            `http://localhost:3000/api/atencion/historico/${user?.idPersona}`,
-            { headers: { Authorization: `Bearer ${user?.token}` } },
-          ),
-          fetch(
-            `http://localhost:3000/api/atencion/pendientes/${user?.idPersona}`,
-            { headers: { Authorization: `Bearer ${user?.token}` } },
-          ),
+        const [dataHist, dataPend]: [Atencion[], Atencion[]] = await Promise.all([
+          apiFetch(`/atencion/historico/${user?.idPersona}`),
+          apiFetch(`/atencion/pendientes/${user?.idPersona}`),
         ]);
-
-        const dataHist = await resHist.json();
-        const dataPend = await resPend.json();
-
-        if (!resHist.ok) throw new Error(dataHist.message);
-        if (!resPend.ok) throw new Error(dataPend.message);
 
         setHistorico(dataHist);
         setPendientes(dataPend);
@@ -98,20 +82,10 @@ export default function MiPerfil() {
   const handleSave = async () => {
     if (!persona) return;
     try {
-      const res = await fetch(
-        `http://localhost:3000/api/persona/cliente/${persona.idPersona}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user?.token}`,
-          },
-          body: JSON.stringify(formData),
-        },
-      );
-
-      const response = await res.json();
-      if (!res.ok) throw new Error(response.message);
+      const response = await apiFetch(`/persona/cliente/${persona.idPersona}`, {
+        method: "PUT",
+        body: JSON.stringify(formData),
+      });
 
       setPersona(response.data);
       setFormData(response.data);

@@ -4,10 +4,6 @@ import { motion } from "framer-motion";
 import "../../../styles/Admin.css";
 import { apiFetch } from "../../../shared/apiFetch.ts";
 
-interface RegisterResponse {
-  message: string;
-}
-
 export default function CrearPeluquero() {
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");

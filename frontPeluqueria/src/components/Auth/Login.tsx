@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../general/AuthContext";
+import { API_URL } from "../../shared/config";
 
 interface LoginProps {
   onToggleMode: () => void;
@@ -28,7 +29,7 @@ function Login({ onToggleMode }: LoginProps) {
     setError("");
     setLoading(true);
       try {
-      const res = await fetch("http://localhost:3000/api/persona/login", {
+      const res = await fetch(`${API_URL}/persona/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, clave }),

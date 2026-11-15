@@ -75,7 +75,7 @@ export default function ActualizarProducto() {
     const payload = { descripcion, categoria: categoriaId };
 
     try {
-      const data = await apiFetch(`/producto/${idProducto}`,
+      await apiFetch(`/producto/${idProducto}`,
         {
           method: "PUT",
           body: JSON.stringify(payload),
