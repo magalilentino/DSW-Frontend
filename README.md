@@ -88,8 +88,10 @@ puede entrar a las páginas del otro.
 | `peluquero` | Panel con el resumen del día (`/admin`); administración de servicios, productos, categorías, marcas, tonos y fórmulas, y descuentos; gestión de atenciones; bloqueo de días en la agenda; alta de peluqueros. |
 
 Cualquier persona puede registrarse desde la pantalla de ingreso, y queda como `cliente`. Los
-peluqueros los da de alta otro peluquero desde el panel. El primer peluquero se crea desde el
-backend: ver [Crear usuarios de prueba](https://github.com/magalilentino/DSW-Backend#crear-usuarios-de-prueba).
+peluqueros los da de alta otro peluquero desde el panel. Para probar la aplicación, el backend
+incluye [datos de prueba](https://github.com/magalilentino/DSW-Backend#datos-de-prueba) con un
+peluquero (`peluquero@peluqueria.com` / `peluquero123`) y un cliente (`cliente@peluqueria.com` /
+`cliente123`).
 
 La sesión dura 2 horas. Al vencer, la aplicación avisa y vuelve a la pantalla de ingreso.
 
