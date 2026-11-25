@@ -7,8 +7,8 @@ Este repositorio contiene solo el frontend. Se comunica por HTTP con la API del 
 [DSW-Backend](https://github.com/magalilentino/DSW-Backend). El código de la aplicación está en la
 carpeta `frontPeluqueria/`.
 
-La documentación del trabajo práctico (propuesta, pull requests, minutas, tracking, evidencia de
-tests, demo y deploy) está en **[docs/README.md](docs/README.md)**.
+La documentación del trabajo práctico (propuesta, documentación de la API, evidencia de tests y
+demo en video) está en **[docs/README.md](docs/README.md)**.
 
 ## Tecnologías
 

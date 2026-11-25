@@ -1,14 +1,14 @@
 # Evidencia de ejecución de los tests — Frontend
 
-**Fecha de ejecución:** 15/11/2026
-**Entorno:** Windows 11, Node.js 24.15.0, pnpm 10.10.0
+**Fecha de ejecución:** 15/11/2026 (unitario) y 25/11/2026 (end-to-end)
+**Entorno:** Windows 11, Node.js 24.15.0, pnpm 10.10.0, Playwright con Chromium, backend y MySQL locales
 
 ## Resumen
 
 | Tipo | Comando | Tests | Resultado |
 |---|---|---|---|
 | Unitario de componente | `pnpm test` | 2 | ✅ 2 pasan, 0 fallan |
-| End-to-end | `pnpm e2e` | 1 | _Pendiente de ejecutar_ |
+| End-to-end | `pnpm e2e` | 1 | ✅ 1 pasa, 0 fallan |
 
 ## Qué prueba cada test
 
@@ -51,4 +51,17 @@ $ pnpm exec vitest run --reporter=verbose
 
 ### Test end-to-end
 
-_Pendiente: ejecutar `pnpm e2e` con el backend levantado y pegar acá la salida._
+Con el backend levantado en `http://localhost:3000` (Playwright levanta el frontend con `pnpm dev`):
+
+```
+$ pnpm e2e --reporter=list
+
+> front-peluqueria@0.0.0 e2e
+> playwright test "--reporter=list"
+
+Running 1 test using 1 worker
+
+  ok 1 e2e\crear-servicio.spec.ts:3:1 › permitir crear un nuevo servicio (19.7s)
+
+  1 passed (36.1s)
+```
