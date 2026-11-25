@@ -66,17 +66,20 @@ const Admin = () => {
   const [pendientesHoy, setPendientesHoy] = useState<number>(0);
   const [completadasHoy, setCompletadasHoy] = useState<number>(0);
   const [gananciasHoy, setGananciasHoy] = useState<number>(0);
-  const [turnosHoy, setTurnosHoy] = useState<{ hora: string; cliente: string; servicios: string }[]>([]);
+  const [turnosHoy, setTurnosHoy] = useState<{ hora: string; cliente: string; servicios: string; requiereColor?: boolean }[]>([]);
   const [servicios, setServicios] = useState<{ codServicio: number; nombreServicio: string }[]>([]);
   const [servicioSeleccionado, setServicioSeleccionado] = useState<number | "">("");
+  const [soloColor, setSoloColor] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchTurnosHoy = async () => {
       try {
-        const url = servicioSeleccionado
-          ? `/atencion/turnos-hoy?servicio=${servicioSeleccionado}`
-          : "/atencion/turnos-hoy";
+        const params = new URLSearchParams();
+        if (servicioSeleccionado) params.append("servicio", String(servicioSeleccionado));
+        if (soloColor) params.append("color", "true");
+        const query = params.toString();
+        const url = query ? `/atencion/turnos-hoy?${query}` : "/atencion/turnos-hoy";
 
         const data = await apiFetch(url);
         setTurnosHoy(data);
@@ -86,7 +89,7 @@ const Admin = () => {
     };
 
     fetchTurnosHoy();
-  }, [servicioSeleccionado]);
+  }, [servicioSeleccionado, soloColor]);
 
   useEffect(() => {
     const fetchDatosDashboard = async () => {
@@ -250,6 +253,19 @@ const Admin = () => {
                 </option>
               ))}
             </select>
+
+            <div className="form-check mt-2">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="soloColor"
+                checked={soloColor}
+                onChange={(e) => setSoloColor(e.target.checked)}
+              />
+              <label className="form-check-label" htmlFor="soloColor">
+                Solo turnos de clientes que requieren color
+              </label>
+            </div>
           </div>
           
           {/* Resto de tu código... */}
@@ -261,6 +277,9 @@ const Admin = () => {
                 <div key={i} className="turno-card">
                   <div className="turno-header">
                     <span className="turno-hora">{turno.hora}</span>
+                    {turno.requiereColor && (
+                      <span className="badge bg-warning text-dark ms-2">Requiere color</span>
+                    )}
                   </div>
                   <div className="turno-body">
                     <p><strong>Cliente:</strong> {turno.cliente}</p>

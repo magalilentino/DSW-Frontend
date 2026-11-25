@@ -31,6 +31,7 @@ interface Atencion {
   idAtencion: number;
   fecha: string;
   estado: "pendiente" | "finalizado" | "cancelado";
+  porcentajeDescuento?: number | null;
   atencionServicios?: AtencionServicio[];
 }
 
@@ -175,6 +176,11 @@ export default function MiPerfil() {
                   <ul>
                     <strong>Servicios:</strong> {renderServicios(a)}
                   </ul>
+                  {a.porcentajeDescuento ? (
+                    <p className="text-success mb-0">
+                      Descuento aplicado: {a.porcentajeDescuento}%
+                    </p>
+                  ) : null}
                 </li>
               ))}
             </ul>

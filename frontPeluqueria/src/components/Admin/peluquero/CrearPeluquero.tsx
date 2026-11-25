@@ -23,7 +23,7 @@ export default function CrearPeluquero() {
     setLoading(true);
 
     try {
-      const data = await apiFetch("/persona/register", {
+      await apiFetch("/persona/peluquero", {
         method: "POST",
         body: JSON.stringify({
           dni,
@@ -32,11 +32,10 @@ export default function CrearPeluquero() {
           apellido,
           telefono,
           email,
-          type: "peluquero",
         }),
       });
 
-      setSuccess(data.message);
+      setSuccess("Peluquero registrado correctamente.");
       setTimeout(() => navigate("/admin"), 1500);
     } catch (err) {
       setError(

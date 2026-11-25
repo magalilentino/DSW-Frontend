@@ -18,7 +18,7 @@ export default function ActualizarDescuento() {
   useEffect(() => {
     const fetchDescuento = async () => {
       try {
-        const descuentoData = await apiFetch(`/descuento/${idDescuento}`);
+        const descuentoData = await apiFetch(`/voucher/${idDescuento}`);
         setFormData({
           porcentaje: descuentoData.data.porcentaje,
           cantAtencionNecesaria: descuentoData.data.cantAtencionNecesaria,
@@ -40,7 +40,7 @@ export default function ActualizarDescuento() {
     setLoading(true);
 
     try {
-      const data = await apiFetch(`/descuento/${idDescuento}`, {
+      const data = await apiFetch(`/voucher/${idDescuento}`, {
         method: "PUT",
         body: JSON.stringify({
           porcentaje: Number(formData.porcentaje),

@@ -19,7 +19,7 @@ export default function DescuentoPage() {
 
   const fetchDescuentos = async () => {
     try {
-      const data = await apiFetch("/descuento");
+      const data = await apiFetch("/voucher");
       setDescuentos(data.data || []);
     } catch (err) {
       setError((err as Error).message);
@@ -34,7 +34,7 @@ export default function DescuentoPage() {
         setError(null);
         setSuccessMessage(null);
 
-        const data = await apiFetch(`/descuento/${idDescuento}`, {
+        const data = await apiFetch(`/voucher/${idDescuento}`, {
           method: "DELETE",
         });
 

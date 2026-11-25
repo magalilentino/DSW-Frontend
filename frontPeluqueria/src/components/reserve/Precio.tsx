@@ -36,6 +36,7 @@ export default function Precio({
   });
   const [precioFinal, setPrecioFinal] = useState<number | null>(null);
   const [subtotal, setSubtotal] = useState<number>(0);
+  const [aplicarDescuento, setAplicarDescuento] = useState(true);
   const navigate = useNavigate();
 
   // 1. EFECTO: Verificar descuento al llegar al paso 3 (Resumen)
@@ -82,7 +83,6 @@ export default function Precio({
       return;
     }
 
-    // 3. ENVIAR idDescuento EN EL PAYLOAD
     const payload = {
       clienteId: user?.idPersona,
       peluqueroId: peluquero.idPersona,
@@ -90,7 +90,7 @@ export default function Precio({
       horaInicio: bloquesSeleccionados[0].inicio,
       duracion: totalDuracionMin,
       servicios: serviciosSeleccionados.map((s) => s.codServicio),
-      // idDescuento: infoDescuento.aplica ? infoDescuento.detalle.idDescuento : null, // Mandamos el ID al back
+      aplicarDescuento: infoDescuento.aplica && aplicarDescuento,
     };
 
     try {
@@ -145,8 +145,24 @@ export default function Precio({
         {/* 4. UI DEL DESCUENTO */}
         {infoDescuento.aplica && (
           <div className="alert alert-success p-2 small mb-2">
-            <strong>¡Descuento aplicado!</strong> ({infoDescuento.porcentaje}%) <br/>
-            {/* {infoDescuento.detalle.descripcion} */}
+            <strong>¡Tenés un descuento del {infoDescuento.porcentaje}% desbloqueado!</strong>
+            <div className="form-check mt-1">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="aplicarDescuento"
+                checked={aplicarDescuento}
+                onChange={(e) => setAplicarDescuento(e.target.checked)}
+              />
+              <label className="form-check-label" htmlFor="aplicarDescuento">
+                Aplicar mi descuento en este turno
+              </label>
+            </div>
+            {!aplicarDescuento && (
+              <small className="d-block mt-1">
+                Si no lo aplicás ahora, el descuento no se guarda para el próximo turno.
+              </small>
+            )}
           </div>
         )}
 
@@ -156,7 +172,9 @@ export default function Precio({
         </div>
 
         {precioFinal !== null ? (
-          <h5 className="mt-2">Total (definitivo): {precioFinal} ARS</h5>
+          <h5 className="mt-2">
+            Total (definitivo): {infoDescuento.aplica && !aplicarDescuento ? subtotal : precioFinal} ARS
+          </h5>
         ) : (
           <h5 className="mt-2">Total (estimado): {subtotal} ARS</h5>
         )}

@@ -20,7 +20,7 @@ export default function CrearDescuento() {
     setLoading(true);
 
     try {
-      const data = await apiFetch("/descuento", {
+      const data = await apiFetch("/voucher", {
         method: "POST",
         body: JSON.stringify({
           porcentaje: Number(formData.porcentaje),
